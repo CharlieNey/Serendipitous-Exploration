@@ -8,17 +8,6 @@ function App() {
 
   const [data, setData] = useState([]);
 
-  // parse CSV data -- code taken from WebStylePress youtube video
-  // const handleFileUpload = (e) => {
-  //   const file = e.target.files[0];
-  //   Papa.parse(file, {
-  //     header: true,
-  //     complete: (results) => {
-  //       setData(results.data);
-  //     },
-  //   });
-  // };
-
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch(Data);
@@ -37,7 +26,7 @@ function App() {
 
   return (
     <div className="App">
-      {/* <input type = "file" accept = ".csv" onChange = {handleFileUpload}/> */}
+    
       {data.length ? (
         <table className = "table">
           <thead>
