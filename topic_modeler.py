@@ -5,9 +5,10 @@
 import string
 import nltk
 import pandas as pd
-file_path = "courses.csv"
+file_path = "filtered_courses.csv"
 courses_df = pd.read_csv(file_path)
 course_descriptions = courses_df['Description'].dropna().tolist()  # Remove any NaN entries
+print(course_descriptions)
 course_titles = courses_df['Course Number'].dropna().tolist()
 
 nltk.download('stopwords')
@@ -18,29 +19,41 @@ from nltk.stem.wordnet import WordNetLemmatizer
 
 from gensim import corpora
 from gensim.models import LsiModel
+from gensim.models import LdaModel
 
 # remove stopwords, punctuation, and normalize the corpus
 stop = set(stopwords.words('english'))
+#stop.add("student")
+#stop.add("course")
+
 exclude = set(string.punctuation)
 lemma = WordNetLemmatizer()
 
-def clean(course_descriptions):
-    stop_free = " ".join([i for i in doc.lower().split() if i not in stop])
+def clean(course_description):
+    stop_free = " ".join([i for i in course_description.lower().split() if i not in stop])
     punc_free = "".join(ch for ch in stop_free if ch not in exclude)
     normalized = " ".join(lemma.lemmatize(word) for word in punc_free.split())
     return normalized
 
-clean_corpus = [clean(course_descriptions).split() for course_titles in courses.df]
+clean_corpus = [clean(description).split() for description in course_descriptions]
+#print(clean_corpus)
 
 # Creating document-term matrix 
 dictionary = corpora.Dictionary(clean_corpus)
-doc_term_matrix = [dictionary.doc2bow(course_descriptions) for course_titles in clean_corpus]
+#doc_term_matrix = [dictionary.doc2bow(course_descriptions) for course_titles in clean_corpus]
+doc_term_matrix = [dictionary.doc2bow(text) for text in clean_corpus]
 
 # LSA model
 lsa = LsiModel(doc_term_matrix, num_topics=3, id2word = dictionary)
 
 # LSA model
 print(lsa.print_topics(num_topics=3, num_words=3))
+
+# LDA model
+lda = LdaModel(doc_term_matrix, num_topics=3, id2word = dictionary)
+
+# Results
+print(lda.print_topics(num_topics=5, num_words=5))
 
 """
 [
