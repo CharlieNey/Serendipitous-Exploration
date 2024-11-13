@@ -6,28 +6,28 @@ import Data from './courses2.csv';
 
 function App() {
 
-  const [data, setData] = useState([]);
+  // const [data, setData] = useState([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch(Data);
-      const reader = response.body.getReader();
-      const result = await reader.read();
-      const decoder = new TextDecoder("utf-8");
-      const csvData = decoder.decode(result.value);
-      const parsedData = Papa.parse(csvData, {
-        header: true,
-        skipEmptyLines: true
-      }).data;
-      setData(parsedData);
-    };
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const response = await fetch(Data);
+  //     const reader = response.body.getReader();
+  //     const result = await reader.read();
+  //     const decoder = new TextDecoder("utf-8");
+  //     const csvData = decoder.decode(result.value);
+  //     const parsedData = Papa.parse(csvData, {
+  //       header: true,
+  //       skipEmptyLines: true
+  //     }).data;
+  //     setData(parsedData);
+  //   };
+  //   fetchData();
+  // }, []);
 
   return (
     <div className="App">
     
-      {data.length ? (
+      {/* {data.length ? (
         <table className = "table">
           <thead>
             <tr>
@@ -47,7 +47,7 @@ function App() {
             ))}
           </tbody>
         </table>
-      ) : null}
+      ) : null} */}
        {/* //conditional rendering expression; if greater than 0, render the content */}
 
 
