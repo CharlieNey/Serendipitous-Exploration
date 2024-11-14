@@ -25,6 +25,8 @@ def filter_courses(df):
         # Remove MUSC courses that are 1 or 2 credits
         ((df['Course Number'].str.startswith('MUSC', na=False)) & 
          (df['Credits'].isin([1, 2])))
+         |
+        df['Course Number'].str.contains(r'\b400\b', na=False)
     )
     
     # Apply filter

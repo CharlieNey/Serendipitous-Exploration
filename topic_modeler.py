@@ -23,8 +23,10 @@ from gensim.models import LdaModel
 
 # remove stopwords, punctuation, and normalize the corpus
 stop = set(stopwords.words('english'))
-#stop.add("student")
-#stop.add("course")
+# stop.add("student")
+# stop.add("Student")
+
+# stop.add("course")
 
 exclude = set(string.punctuation)
 lemma = WordNetLemmatizer()
