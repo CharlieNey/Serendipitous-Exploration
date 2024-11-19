@@ -5,21 +5,21 @@ from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 import pandas as pd
 from gensim.models import KeyedVectors
+import gensim.downloader as api
 
 # Download necessary NLTK resources
 nltk.download('punkt')
 nltk.download('stopwords')
 
-import gensim.downloader as api
-
 glove_model = api.load("glove-wiki-gigaword-50")
+word2vec_model = api.load("word2vec-google-news-300")
+
 # Load the course descriptions and titles from the CSV file
-file_path = "filtered_courses.csv"  # Make sure this file exists in the same directory
+file_path = "filtered_courses.csv" 
 courses_df = pd.read_csv(file_path)
-course_descriptions = courses_df['Description'].dropna().tolist()  # Remove any NaN entries
+course_descriptions = courses_df['Description'].dropna().tolist()  
 course_titles = courses_df['Course Number'].dropna().tolist()
 
-# Preprocess text by tokenizing and removing stopwords
 stop_words = set(stopwords.words("english"))
 
 def preprocess(text):
@@ -27,7 +27,7 @@ def preprocess(text):
     tokens = [word for word in tokens if word.isalpha() and word not in stop_words]
     return tokens
 
-# Create a vector for a piece of text by averaging the vectors of the words
+# Create a vector for each description
 def text_to_vector(text, model):
     tokens = preprocess(text)
     word_vectors = [model[word] for word in tokens if word in model]
@@ -36,31 +36,50 @@ def text_to_vector(text, model):
     else:
         return np.zeros(model.vector_size)
 
-# Create vectors for all course descriptions
+# Vectorize course descriptions for both models
 print("Vectorizing course descriptions...")
-vectors = [text_to_vector(desc, glove_model) for desc in course_descriptions]
+glove_vectors = [text_to_vector(desc, glove_model) for desc in course_descriptions]
+word2vec_vectors = [text_to_vector(desc, word2vec_model) for desc in course_descriptions]
 
-# Calculate cosine similarity
+# Calculate cosine similarity matrices for both models
 print("Calculating cosine similarity...")
-cosine_sim = cosine_similarity(vectors)
+
+glove_cosine_sim = cosine_similarity(glove_vectors)
+word2vec_cosine_sim = cosine_similarity(word2vec_vectors)
 
 # Function to find most similar courses for each course
-def find_most_similar_courses(sim_matrix, titles, descriptions, top_n=3):
+def find_most_similar_courses(sim_matrix, titles, descriptions, model_name, top_n=3):
+    print(f"\nFinding most similar courses using {model_name}...")
     for idx, desc in enumerate(descriptions):
         # Get similarity scores for each course
         sim_scores = list(enumerate(sim_matrix[idx]))
-        # Sort courses by similarity, excluding itself
+        # Sort courses by similarity
         sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)[1:top_n+1]
-        # Display the most similar courses by title
-        print(f"\nMost similar courses to '{titles[idx]}':")
+
+        print(f"\nMost similar courses to '{titles[idx]}' using {model_name}:")
         for i, score in sim_scores:
             print(f"  - {titles[i]} (similarity: {score:.3f})")
 
-# Find the top 3 most similar courses for each course
-find_most_similar_courses(cosine_sim, course_titles, course_descriptions)
+# Compare the similarity matrices between the models
+def compare_similarity_matrices(glove_sim, word2vec_sim):
+    differences = []
+    for i in range(len(glove_sim)):
+        for j in range(len(glove_sim[i])):
 
-# Find the top 10 most similar pairs of courses
-def find_top_similar_pairs(sim_matrix, titles, max_pairs=10):
+            # Using Apsolute Value...
+            differences.append(abs(glove_sim[i][j] - word2vec_sim[i][j]))
+    avg_difference = np.mean(differences)
+    print(f"\nAverage difference in similarity scores: {avg_difference:.4f}")
+
+# Find most similar courses and compare top pairs for each model
+find_most_similar_courses(glove_cosine_sim, course_titles, course_descriptions, "GloVe")
+find_most_similar_courses(word2vec_cosine_sim, course_titles, course_descriptions, "Word2Vec")
+
+# Compare similarity matrices
+compare_similarity_matrices(glove_cosine_sim, word2vec_cosine_sim)
+
+# Function to find the top N most similar course pairs
+def find_top_similar_pairs(sim_matrix, titles, model_name, max_pairs=10):
     pairs = []
     for i in range(len(sim_matrix)):
         for j in range(i + 1, len(sim_matrix)):  # Avoid duplicate pairs and self-comparisons
@@ -70,9 +89,10 @@ def find_top_similar_pairs(sim_matrix, titles, max_pairs=10):
     # Sort pairs by similarity score in descending order
     pairs = sorted(pairs, key=lambda x: x[2], reverse=True)
     # Get the top `max_pairs` pairs
-    print(f"\nTop {max_pairs} most similar course pairs (excluding perfect matches):")
+    print(f"\nTop {max_pairs} most similar course pairs using {model_name} (excluding perfect matches):")
     for title1, title2, score in pairs[:max_pairs]:
         print(f"  - {title1} <--> {title2} (similarity: {score:.2f})")
 
-# Find and print the top 10 most similar course pairs
-find_top_similar_pairs(cosine_sim, course_titles, max_pairs=10)
+# Print top similar pairs for each model
+find_top_similar_pairs(glove_cosine_sim, course_titles, "GloVe")
+find_top_similar_pairs(word2vec_cosine_sim, course_titles, "Word2Vec")
