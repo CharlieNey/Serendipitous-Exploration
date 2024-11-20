@@ -1,5 +1,6 @@
 # Code source: https://www.analyticsvidhya.com/blog/2016/08/beginners-guide-to-topic-modeling-in-python/
 # Tutorial: https://www.datacamp.com/tutorial/what-is-topic-modeling
+# BERTOPIC SOURCE: https://maartengr.github.io/BERTopic/index.html#quick-start
 # Author/Comments: Markus Gunadi
 
 import string
@@ -20,6 +21,9 @@ from nltk.stem.wordnet import WordNetLemmatizer
 from gensim import corpora
 from gensim.models import LsiModel
 from gensim.models import LdaModel
+import pyLDAvis
+import pyLDAvis.gensim_models as gensimvis  # Import for Gensim version
+import matplotlib.pyplot as plt
 
 # remove stopwords, punctuation, and normalize the corpus
 stop = set(stopwords.words('english'))
@@ -47,10 +51,44 @@ doc_term_matrix = [dictionary.doc2bow(text) for text in clean_corpus]
 #print(lsa.print_topics(num_topics=3, num_words=3))
 
 # LDA model
-lda = LdaModel(doc_term_matrix, num_topics=10, id2word = dictionary)
+lda = LdaModel(doc_term_matrix, num_topics=8, id2word = dictionary)
 
 # Results
 print(lda.print_topics(num_topics=5, num_words=10))
+
+# Visualize the topics
+lda_vis = gensimvis.prepare(lda, doc_term_matrix, dictionary)
+
+# For saving the visualization to an HTML file
+pyLDAvis.save_html(lda_vis, 'lda_visualization.html')
+
+
+
+# BERTOPIC MODEL
+
+
+from bertopic import BERTopic
+docs = course_descriptions
+
+
+from bertopic.representation import KeyBERTInspired
+
+from umap import UMAP
+from hdbscan import HDBSCAN
+representation_model = KeyBERTInspired()
+
+umap_model = UMAP(n_neighbors=15, n_components=5, min_dist=0.0, metric='cosine')
+hdbscan_model = HDBSCAN(min_cluster_size=10, metric='euclidean', cluster_selection_method='eom')
+topic_model = BERTopic(umap_model=umap_model, hdbscan_model=hdbscan_model, representation_model=representation_model)
+
+topics, probs = topic_model.fit_transform(docs)
+print(topic_model.get_topic_info(2))
+# Fine-tune your topic representations
+#topic_model = BERTopic(representation_model=representation_model)
+
+#topics, probs = topic_model.fit_transform(docs)
+#print(topic_model.get_topic_info(0))
+#print(topic_model.get_topic_info())
 
 #show_topics(num_topics=4, num_words=10, log=False, formatted=True)
 """
