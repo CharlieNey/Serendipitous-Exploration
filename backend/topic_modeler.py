@@ -5,7 +5,7 @@
 import string
 import nltk
 import pandas as pd
-file_path = "filtered_courses.csv"
+file_path = "backend/filtered_courses.csv"
 courses_df = pd.read_csv(file_path)
 course_descriptions = courses_df['Description'].dropna().tolist()  # Remove any NaN entries
 print(course_descriptions)
@@ -23,11 +23,6 @@ from gensim.models import LdaModel
 
 # remove stopwords, punctuation, and normalize the corpus
 stop = set(stopwords.words('english'))
-# stop.add("student")
-# stop.add("Student")
-
-# stop.add("course")
-
 exclude = set(string.punctuation)
 lemma = WordNetLemmatizer()
 
@@ -46,17 +41,18 @@ dictionary = corpora.Dictionary(clean_corpus)
 doc_term_matrix = [dictionary.doc2bow(text) for text in clean_corpus]
 
 # LSA model
-lsa = LsiModel(doc_term_matrix, num_topics=3, id2word = dictionary)
+#lsa = LsiModel(doc_term_matrix, num_topics=3, id2word = dictionary)
 
 # LSA model
-print(lsa.print_topics(num_topics=3, num_words=3))
+#print(lsa.print_topics(num_topics=3, num_words=3))
 
 # LDA model
-lda = LdaModel(doc_term_matrix, num_topics=3, id2word = dictionary)
+lda = LdaModel(doc_term_matrix, num_topics=10, id2word = dictionary)
 
 # Results
-print(lda.print_topics(num_topics=5, num_words=5))
+print(lda.print_topics(num_topics=5, num_words=10))
 
+#show_topics(num_topics=4, num_words=10, log=False, formatted=True)
 """
 [
 (0, '0.555*"water" + 0.489*"percent" + 0.239*"planet"'), 
