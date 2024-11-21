@@ -1,16 +1,48 @@
-import logo from '../carleton_logo.png';
-import './App.css';
+import React, { useState } from "react";
+import "./App.css";
 
 function App() {
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // dummy
+  const courseList = [
+    { id: "SOAN111", name: "Intro to Sociology" },
+    { id: "SOAN110", name: "Intro to Anthropology" },
+    { id: "STAT120", name: "Intro to Statistics" },
+    { id: "CS201", name: "Data Structures" },
+  ];
+
+  const filteredCourses = searchTerm
+    ? courseList.filter((course) =>
+        course.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : [];
 
   return (
     <div className="App">
+      <div className="sidebar">
+        <div className="search-section">
 
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <h1>CS399: Serendipitous Exploration of the Carleton Curriculum </h1>
-        <h3>Cathy Duan, Charlie Ney, Markus Gunadi, Kai Weiner, Zoey La, Willow Gu</h3>
-      </header>
+          <input
+            type="text"
+            placeholder="input courses, topics,..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-input"
+          />
+
+          {searchTerm && (
+            <ul className="course-list">
+              {filteredCourses.map((course) => (
+                <li key={course.id} className="course-item">
+                  {course.id} - {course.name}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+        <div className="divider"></div>
+      </div>
     </div>
   );
 }
