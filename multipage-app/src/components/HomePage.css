@@ -1,0 +1,59 @@
+.homepage-container {
+    text-align: center;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(139, 153, 181);
+  }
+  
+  .homepage-header {
+    font-family: 'Arial', sans-serif;
+    font-weight: bold;
+    font-style: italic;
+    color: #003069;
+  }
+  
+  .homepage-logo {
+    height: 40vmin;
+    pointer-events: none;
+    margin-bottom: 30px;
+    animation: homepage-logo-spin infinite 0.5s linear;
+  }
+
+  @keyframes homepage-logo-spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .homepage-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #003069;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  
+  .homepage-button:hover {
+    background-color: #FFD24F;
+  }
+
+  .learn-more-link {
+    display: block;
+    margin-top: 20px;
+    color: #003069;
+    text-decoration: underline;
+    font-size: 18px;
+  }
+
+  .learn-more-link:hover {
+    color: #FFD24F;
+  }
