@@ -17,7 +17,8 @@ word2vec_model = api.load("word2vec-google-news-300")
 # Load the course descriptions and titles from the CSV file
 file_path = "filtered_courses.csv" 
 courses_df = pd.read_csv(file_path)
-course_descriptions = courses_df['Description'].dropna().tolist()  
+course_descriptions = courses_df['Description'].dropna().tolist() 
+ 
 course_titles = courses_df['Course Number'].dropna().tolist()
 
 stop_words = set(stopwords.words("english"))
