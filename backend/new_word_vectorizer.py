@@ -17,7 +17,8 @@ file_path = "Serendipitous-Exploration/backend/filtered_courses.csv"
 courses_df = pd.read_csv(file_path)
 
 #Check indexing
-course_descriptions = courses_df['Description'].dropna().tolist()  
+course_descriptions = courses_df['Description'].dropna().tolist() 
+ 
 course_titles = courses_df['Course Number'].dropna().tolist()
 
 
