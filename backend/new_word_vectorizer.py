@@ -1,4 +1,4 @@
-import nltk
+import nltk 
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from sklearn.metrics.pairwise import cosine_similarity
@@ -7,18 +7,19 @@ import pandas as pd
 from gensim.models import KeyedVectors
 import gensim.downloader as api
 
-# Download necessary NLTK resources
-nltk.download('punkt')
 nltk.download('stopwords')
 
 glove_model = api.load("glove-wiki-gigaword-50")
 word2vec_model = api.load("word2vec-google-news-300")
 
 # Load the course descriptions and titles from the CSV file
-file_path = "filtered_courses.csv" 
+file_path = "Serendipitous-Exploration/backend/filtered_courses.csv" 
 courses_df = pd.read_csv(file_path)
+
+#Check indexing
 course_descriptions = courses_df['Description'].dropna().tolist()  
 course_titles = courses_df['Course Number'].dropna().tolist()
+
 
 stop_words = set(stopwords.words("english"))
 
@@ -33,6 +34,7 @@ def text_to_vector(text, model):
     word_vectors = [model[word] for word in tokens if word in model]
     if word_vectors:
         return np.mean(word_vectors, axis=0)
+    # If there is no words that are recognized
     else:
         return np.zeros(model.vector_size)
 
@@ -88,11 +90,18 @@ def find_top_similar_pairs(sim_matrix, titles, model_name, max_pairs=10):
                 pairs.append((titles[i], titles[j], similarity))
     # Sort pairs by similarity score in descending order
     pairs = sorted(pairs, key=lambda x: x[2], reverse=True)
-    # Get the top `max_pairs` pairs
-    print(f"\nTop {max_pairs} most similar course pairs using {model_name} (excluding perfect matches):")
+    
+    
+    # Get the top ~10 pairs
+    print(f"\nTop {max_pairs} most similar course pairs using {model_name}:")
     for title1, title2, score in pairs[:max_pairs]:
-        print(f"  - {title1} <--> {title2} (similarity: {score:.2f})")
+        print(f"  {title1} <--> {title2} (similarity: {score:.4f})")
 
 # Print top similar pairs for each model
 find_top_similar_pairs(glove_cosine_sim, course_titles, "GloVe")
 find_top_similar_pairs(word2vec_cosine_sim, course_titles, "Word2Vec")
+
+
+print("descriptions len: ", len(course_descriptions))
+print("titles len: ", len(course_titles))
+
