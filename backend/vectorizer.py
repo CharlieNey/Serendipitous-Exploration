@@ -1,4 +1,5 @@
 import nltk
+import csv
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from sklearn.metrics.pairwise import cosine_similarity
@@ -47,15 +48,35 @@ cosine_sim = cosine_similarity(vectors)
 
 # Function to find most similar courses for each course
 def find_most_similar_courses(sim_matrix, titles, descriptions, top_n=3):
-    for idx, desc in enumerate(descriptions):
-        # Get similarity scores for each course
-        sim_scores = list(enumerate(sim_matrix[idx]))
-        # Sort courses by similarity, excluding itself
-        sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)[1:top_n+1]
-        # Display the most similar courses by title
-        print(f"\nMost similar courses to '{titles[idx]}':")
-        for i, score in sim_scores:
-            print(f"  - {titles[i]} (similarity: {score:.2f})")
+    # for idx, desc in enumerate(descriptions):
+    #     # Get similarity scores for each course
+    #     sim_scores = list(enumerate(sim_matrix[idx]))
+    #     # Sort courses by similarity, excluding itself
+    #     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)[1:top_n+1]
+    #     # Display the most similar courses by title
+    #     print(f"\nMost similar courses to '{titles[idx]}':")
+    #     for i, score in sim_scores:
+    #         print(f"  - {titles[i]} (similarity: {score:.2f})")
+     # Open a CSV file for writing
+    with open(output_file, mode='w', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        
+        # Write the header row
+        writer.writerow(['Course Title', 'Similar Course', 'Similarity Score'])
+        
+        for idx, desc in enumerate(descriptions):
+            # Get similarity scores for each course
+            sim_scores = list(enumerate(sim_matrix[idx]))
+            # Sort courses by similarity, excluding itself
+            sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)[1:top_n+1]
+            
+            # Write the most similar courses by title to the CSV file
+            for i, score in sim_scores:
+                writer.writerow([titles[idx], titles[i], f"{score:.2f}"])
+
+#Save the output to 'similar_courses.csv'
+output_file = 'similar_courses.csv'
 
 # Find the top 3 most similar courses for each course
 find_most_similar_courses(cosine_sim, course_titles, course_descriptions)
+
