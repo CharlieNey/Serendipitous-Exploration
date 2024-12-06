@@ -4,7 +4,7 @@ function Calendar() {
 
      return (
        <div>
-         <p>This is the second page.</p>
+         <p>This is the calendar page.</p>
        </div>
      );
 

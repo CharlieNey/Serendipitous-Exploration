@@ -1,22 +1,24 @@
-import React from "react";
-import {Link } from "react-router-dom";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import carleton_logo from '../images/carleton_logo.png';
+import './HomePage.css';
 
- function Homepage() {
+const HomePage = () => {
+  return (
+    <div className="homepage-container">
+      <header className="homepage-header">
+        <img src={carleton_logo} className="homepage-logo" alt="Carleton Logo" />
+        <h1>
+         Curriculum Exploration
+        </h1>
+        <Link to="/explore">
+          <button className="homepage-button">Start!</button>
+        </Link>
+        <br />
+        <Link to="/about" className="learn-more-link">Learn more about this website</Link>
+      </header>
+    </div>
+  );
+};
 
-     return (
-       <div>
-         <p>
-           This is the first page.
-           <br />
-           Click on the button below.
-         </p>
-         <Link to="/page2"><button>
-           Go to Page 2 
-         </button>
-         </Link>
-       </div>
-     );
-
- }
-
- export default Homepage;
+export default HomePage;
