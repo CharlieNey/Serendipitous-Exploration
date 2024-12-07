@@ -14,9 +14,21 @@ nltk.download('stopwords')
 # Load the course descriptions and titles from the CSV file
 file_path = "courses.csv"  # Make sure this file exists in the same directory
 courses_df = pd.read_csv(file_path)
+courses_df = courses_df.dropna(subset=['Description', 'Course Number'])
+courses_df = courses_df.drop_duplicates(subset=['Course Title', 'Course Number'])
+
+
 course_descriptions = courses_df['Description'].dropna().tolist()  # Remove any NaN entries
 course_titles = courses_df['Course Number'].dropna().tolist()
+course_credits = courses_df['Credits'].dropna().tolist()
 
+#courses_df = courses_df[courses_df['Course Title'] != 'Integrative Exercise']
+#courses_df = courses_df[courses_df['Course Number'] != 'OCP 307']
+
+#courses_df = courses_df.query("`Course Title` != 'Integrative Exercise' and `Course Number` != 'OCP 307'")
+#print(courses_df[['Course Title', 'Course Number']].tail())
+#print(courses_df[['Course Title', 'Course Number']].head())
+#print(courses_df.columns)
 # Preprocess text by tokenizing and removing stopwords
 stop_words = set(stopwords.words("english"))
 
@@ -75,8 +87,9 @@ def find_most_similar_courses(sim_matrix, titles, descriptions, top_n=3):
                 writer.writerow([titles[idx], titles[i], f"{score:.2f}"])
 
 #Save the output to 'similar_courses.csv'
-output_file = 'similar_courses.csv'
+output_file = 'similar_courses3.csv'
 
 # Find the top 3 most similar courses for each course
 find_most_similar_courses(cosine_sim, course_titles, course_descriptions)
-
+#print(len(course_titles))
+#print(len(course_descriptions))
