@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./ExplorePage.css";
 
-function App() {
+function Explore() {
   const [searchTerm, setSearchTerm] = useState("");
 
   // dummy
@@ -19,7 +19,7 @@ function App() {
     : [];
 
   return (
-    <div className="App">
+    <div className="Explore">
       <div className="sidebar">
         <div className="search-section">
 
@@ -47,4 +47,4 @@ function App() {
   );
 }
 
-export default App;
+export default Explore;
