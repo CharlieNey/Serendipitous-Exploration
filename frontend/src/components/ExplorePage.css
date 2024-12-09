@@ -1,8 +1,20 @@
 /* General Layout */
-.App {
+.Explore {
   display: flex;
   font-family: Arial, sans-serif;
   height: 100vh;
+}
+
+.calendar-button {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+}
+
+.calendar-button img {
+  width: 6vh;
+  height: 6vh;
+  object-fit: contain;
 }
 
 .sidebar {

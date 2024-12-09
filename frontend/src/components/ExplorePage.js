@@ -1,5 +1,7 @@
 import React, { useState } from "react";
+import { Link } from 'react-router-dom';
 import "./ExplorePage.css";
+import shopping_cart_logo from '../images/shopping_cart_logo.png';
 
 function Explore() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -20,6 +22,12 @@ function Explore() {
 
   return (
     <div className="Explore">
+      <div className="calendar-button">
+        <Link to="/calendar">
+            <img src={shopping_cart_logo} alt="Shopping Cart" />
+        </Link>
+      </div>
+
       <div className="sidebar">
         <div className="search-section">
 
