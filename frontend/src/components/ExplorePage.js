@@ -1,10 +1,45 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import * as d3 from "d3";
 import { Link } from 'react-router-dom';
 import "./ExplorePage.css";
 import shopping_cart_logo from '../images/shopping_cart_logo.png';
 
 function Explore() {
   const [searchTerm, setSearchTerm] = useState("");
+
+  //for the graph
+  const width = 1000;
+  const height = 300;
+  const nodes = [{}, {}, {}, {}, {}];
+
+
+  useEffect(() => {
+    // Select the SVG and set up the D3 force simulation
+    const svg = d3
+      .select("#simulation-svg")
+      .attr("width", width)
+      .attr("height", height);
+
+    const simulation = d3
+      .forceSimulation(nodes)
+      .force("charge", d3.forceManyBody().strength(-20))
+      .force("center", d3.forceCenter(width / 2, height / 2))
+      .on("tick", () => {
+        svg
+          .selectAll("circle")
+          .data(nodes)
+          .join("circle")
+          .attr("r", 5)
+          .attr("cx", (d) => d.x)
+          .attr("cy", (d) => d.y);
+      });
+
+    // Cleanup simulation on component unmount
+    return () => {
+      simulation.stop();
+    };
+  }, [nodes]);
+
 
   // dummy
   const courseList = [
@@ -54,8 +89,19 @@ function Explore() {
         </div>
         <div className="divider"></div>
       </div>
+
+
+      {/* SVG container for the force simulation */}
+      <div className="simulation-container">
+        <svg id="simulation-svg"></svg>
+      </div>
+
+
     </div>
+    
   );
+
+  
 }
 
 export default Explore;
