@@ -24,7 +24,7 @@ function Explore() {
     <div className="Explore">
       <div className="calendar-button">
         <Link to="/calendar">
-            <img src={shopping_cart_logo} alt="Shopping Cart" />
+            <img src={shopping_cart_logo} alt="Go to Calendar" />
         </Link>
       </div>
 
@@ -44,6 +44,9 @@ function Explore() {
               {filteredCourses.map((course) => (
                 <li key={course.id} className="course-item">
                   {course.id} - {course.name}
+                  <Link to={`/calendar/${course.id}/${encodeURIComponent(course.name)}`} className="add-to-calendar-button">
+                    <img src={shopping_cart_logo} alt="Add to Calendar" />
+                  </Link>
                 </li>
               ))}
             </ul>
