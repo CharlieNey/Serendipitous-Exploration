@@ -16,7 +16,12 @@ file_path = "courses.csv"  # Make sure this file exists in the same directory
 courses_df = pd.read_csv(file_path)
 courses_df = courses_df.dropna(subset=['Description', 'Course Number'])
 courses_df = courses_df.drop_duplicates(subset=['Course Title', 'Course Number'])
-
+# courses_df = courses_df[~(courses_df['Course Title'].str.contains('MUSC', case=False, na=False) & (courses_df['Credits'] < '3'))]
+# courses_df = courses_df[~(courses_df['Course Title'].str.contains('PE', case=False, na=False) & (courses_df['Credits'] < '3'))]
+courses_df = courses_df[~(
+    (courses_df['Course Title'].str.contains('MUSC|PE', case=False, na=False)) &
+    (courses_df['Credits'].astype(float) < 3)
+)]
 
 course_descriptions = courses_df['Description'].dropna().tolist()  # Remove any NaN entries
 course_titles = courses_df['Course Number'].dropna().tolist()
@@ -87,9 +92,9 @@ def find_most_similar_courses(sim_matrix, titles, descriptions, top_n=3):
                 writer.writerow([titles[idx], titles[i], f"{score:.2f}"])
 
 #Save the output to 'similar_courses.csv'
-output_file = 'similar_courses3.csv'
+output_file = 'similar_courses4.csv'
 
 # Find the top 3 most similar courses for each course
 find_most_similar_courses(cosine_sim, course_titles, course_descriptions)
 #print(len(course_titles))
-#print(len(course_descriptions))
+print(len(course_descriptions))
