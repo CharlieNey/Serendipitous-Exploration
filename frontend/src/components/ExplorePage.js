@@ -5,77 +5,39 @@ import "./ExplorePage.css";
 import shopping_cart_logo from '../images/shopping_cart_logo.png';
 
 function Explore() {
-  const [searchTerm, setSearchTerm] = useState("")
-  // Mock dummy graph. Code adapted from d3indepth.com. only text, maybe go back to circle  with hover.
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Mock dummy graph. Code adapted from d3indepth.com
   const width = 1000;
-  const height = 500;
-    const nodes = [
-      {name: 'SOAN111'},
-      {name: 'SOAN110'},
-      {name: 'STAT120'},
-      {name: 'CS201'},
-      {name: 'CAMS254'},
-      {name: 'CHEM123'},
-      {name: 'CGSC130'},
-      {name: 'ECON265'}
-    ]
+  const height = 300;
+  const nodes = [{}, {}, {}, {}, {}];
 
-    const links = [
-      {source: 0, target: 1},
-      {source: 0, target: 2},
-      {source: 0, target: 3},
-      {source: 6, target: 4},
-      {source: 3, target: 5},
-      {source: 3, target: 6},
-      {source: 6, target: 7}
-    ]
 
-    useEffect(() => {
-      const svg = d3
-        .select("#simulation-svg")
-        .attr("width", width)
-        .attr("height", height);
+  useEffect(() => {
+    const svg = d3
+      .select("#simulation-svg")
+      .attr("width", width)
+      .attr("height", height);
 
-      svg.append("g").attr("class", "links");
-      svg.append("g").attr("class", "nodes");
-    
-      const simulation = d3
-        .forceSimulation(nodes)
-        .force("charge", d3.forceManyBody().strength(-100))
-        .force("center", d3.forceCenter(width / 2, height / 2))
-        .force("link", d3.forceLink().links(links).distance(100)) 
-        .on("tick", () => {
-          d3.select(".links")
-            .selectAll("line")
-            .data(links)
-            .join("line")
-            .attr("x1", (d) => d.source.x)
-            .attr("y1", (d) => d.source.y)
-            .attr("x2", (d) => d.target.x)
-            .attr("y2", (d) => d.target.y)
-            .attr("stroke", "black")
-            .attr("stroke-width", 2);
-    
-          d3.select(".nodes")
-            .selectAll("text")
-            .data(nodes)
-            .join("text")
-            .text((d) => d.name)
-            .attr("x", (d) => d.x)
-            .attr("y", (d) => d.y)
-            .attr("dy", 5)
-            .attr("text-anchor", "middle")
-            .attr("font-size", 12)
-            .attr("fill", "blue");
-        });
-    
-      return () => {
-        simulation.stop();
-        svg.selectAll(".links").remove();
-        svg.selectAll(".nodes").remove();
-      };
-    }, [nodes, links]);
-  
+    const simulation = d3
+      .forceSimulation(nodes)
+      .force("charge", d3.forceManyBody().strength(-20))
+      .force("center", d3.forceCenter(width / 2, height / 2))
+      .on("tick", () => { 
+        svg
+          .selectAll("circle")
+          .data(nodes)
+          .join("circle")
+          .attr("r", 5)
+          .attr("cx", (d) => d.x)
+          .attr("cy", (d) => d.y);
+      });
+
+    return () => {
+      simulation.stop();
+    };
+  }, [nodes]);
+
 
   // dummy
   const courseList = [
@@ -126,6 +88,8 @@ function Explore() {
         <div className="divider"></div>
       </div>
 
+
+      {/* SVG container for the force simulation */}
       <div className="simulation-container">
         <svg id="simulation-svg"></svg>
       </div>
