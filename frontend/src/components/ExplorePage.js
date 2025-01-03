@@ -44,6 +44,7 @@ function Explore() {
         .force("charge", d3.forceManyBody().strength(-100))
         .force("center", d3.forceCenter(width / 2, height / 2))
         .force("link", d3.forceLink().links(links).distance(100)) 
+
         .on("tick", () => {
           d3.select(".links")
             .selectAll("line")
@@ -55,18 +56,44 @@ function Explore() {
             .attr("y2", (d) => d.target.y)
             .attr("stroke", "black")
             .attr("stroke-width", 2);
-    
-          d3.select(".nodes")
-            .selectAll("text")
-            .data(nodes)
-            .join("text")
-            .text((d) => d.name)
-            .attr("x", (d) => d.x)
-            .attr("y", (d) => d.y)
-            .attr("dy", 5)
-            .attr("text-anchor", "middle")
-            .attr("font-size", 12)
-            .attr("fill", "blue");
+
+          // d3.select(".nodes")
+          //   .selectAll("text")
+          //   .data(nodes)
+          //   .join("text")
+          //   .text((d) => d.name)
+          //   .attr("x", (d) => d.x)
+          //   .attr("y", (d) => d.y)
+          //   .attr("dy", 5)
+          //   .attr("text-anchor", "middle")
+          //   .attr("font-size", 12)
+          //   .attr("fill", "blue");
+
+          // d3.selectAll("circle")
+          //   .data("circle")
+          //   .join("text")
+          //   .attr("r", 20)
+
+        const nodeGroup = d3.select(".nodes")
+        .selectAll("g")
+        .data(nodes)
+        .join("g")
+        .attr("transform", (d) => `translate(${d.x},${d.y})`);
+      
+        // creating the circles
+        nodeGroup
+          .selectAll("circle")
+          .data((d) => [d]) 
+          .join("circle")
+          .attr("r", 40)
+        
+        // adding the text to the circles
+        nodeGroup
+          .selectAll("text")
+          .data((d) => [d]) 
+          .join("text")
+          .text((d) => d.name)
+          .attr("dy", 5)
         });
     
       return () => {
