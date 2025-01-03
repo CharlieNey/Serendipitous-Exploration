@@ -15,14 +15,13 @@ app.use(express.json());
 const pool = new Pool({ 
     user: "postgres",           
     host: "localhost",          
-    database: "coursesdb",      
+    database: "courses",      
     password: "skibidi", // my postgres password
     port: 5432, // default port num         
 });
 
-// server sends an homepage.html file to the user's browser when they visit the root URL (/) of our server
 app.get('/', function(req, res) { 
-    res.sendFile(path.join(__dirname, '/homepage.html')); 
+    res.sendFile(path.join(__dirname, '/')); 
 });
 
 // defining the /api/courses api route
