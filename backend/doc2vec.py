@@ -5,16 +5,12 @@ from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 
 # Load the CSV file.
-file_path = 'filtered_courses.csv'  # Update the path if necessary.
+file_path = 'data/filtered_courses.csv'  # Update the path if necessary.
 data_frame = pd.read_csv(file_path)
 
 # Extract the "Description" column.
 data = data_frame["Description"].dropna().tolist()  # Drop NaN values and convert to a list.
 course_titles = data_frame['Course Number'].dropna().tolist()
-
-print(len(data))
-print(len(course_titles))
-
 # Preprocess the documents and create TaggedDocuments.
 tagged_data = [TaggedDocument(words=word_tokenize(doc.lower()),
                               tags=[str(i)]) for i, doc in enumerate(data)]
@@ -42,6 +38,13 @@ for i, doc in enumerate(data):
 
 # Convert to DataFrame and save to CSV.
 similarity_df = pd.DataFrame(similarity_scores)
-similarity_df.to_csv('course_similarity_scores.csv', index=False)
 
-print("Similarity scores have been written to 'course_similarity_scores.csv'.")
+# Sort by Course_1, then by Similarity in descending order.
+sorted_similarity_df = similarity_df.sort_values(by=["Course_1", "Similarity"], ascending=[True, False])
+
+# Save to CSV.
+sorted_similarity_df.to_csv('doc2vec_similarity_scores_sorted.csv', index=False)
+
+similarity_df.to_csv('doc2vec_similarity_scores.csv', index=False)
+
+print("Similarity scores have been written to 'doc2vec_similarity_scores.csv'.")

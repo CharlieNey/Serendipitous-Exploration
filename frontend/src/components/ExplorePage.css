@@ -68,7 +68,7 @@
 }
 
 circle {
-  fill: rgb(74, 145, 202); 
+  fill: rgb(123, 165, 199); 
   stroke: #fff; 
   stroke-width: 2px;
   transition: transform 0.2s ease; 

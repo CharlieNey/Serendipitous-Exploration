@@ -6,7 +6,7 @@
 import string
 import nltk
 import pandas as pd
-file_path = "backend/filtered_courses.csv"
+file_path = "backend/data/filtered_courses.csv"
 courses_df = pd.read_csv(file_path)
 course_descriptions = courses_df['Description'].dropna().tolist()  # Remove any NaN entries
 print(course_descriptions)

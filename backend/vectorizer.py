@@ -12,12 +12,27 @@ nltk.download('punkt')
 nltk.download('stopwords')
 
 # Load the course descriptions and titles from the CSV file
-file_path = "courses.csv"  # Make sure this file exists in the same directory
+file_path = "data/courses.csv"  # Make sure this file exists in the same directory
 courses_df = pd.read_csv(file_path)
 courses_df = courses_df.dropna(subset=['Description', 'Course Number'])
 courses_df = courses_df.drop_duplicates(subset=['Course Title', 'Course Number'])
-# courses_df = courses_df[~(courses_df['Course Title'].str.contains('MUSC', case=False, na=False) & (courses_df['Credits'] < '3'))]
-# courses_df = courses_df[~(courses_df['Course Title'].str.contains('PE', case=False, na=False) & (courses_df['Credits'] < '3'))]
+def clean_credits(credit):
+    if isinstance(credit, float):  # If it's already a float, return as-is
+        return credit
+    if isinstance(credit, str):  # If it's a string, clean and convert
+        try:
+            # Extract numeric part of the credit string
+            return float(''.join(c for c in credit if c.isdigit() or c == '.'))
+        except ValueError:
+            return None  # Handle cases where conversion is not possible
+    return None  # Return None for other data types
+
+# Apply the cleaning function to the 'Credits' column
+courses_df['Credits'] = courses_df['Credits'].apply(clean_credits)
+
+# Drop rows where 'Credits' could not be converted
+courses_df = courses_df.dropna(subset=['Credits'])
+
 courses_df = courses_df[~(
     (courses_df['Course Title'].str.contains('MUSC|PE', case=False, na=False)) &
     (courses_df['Credits'].astype(float) < 3)
@@ -65,21 +80,13 @@ cosine_sim = cosine_similarity(vectors)
 
 # Function to find most similar courses for each course
 def find_most_similar_courses(sim_matrix, titles, descriptions, top_n=3):
-    # for idx, desc in enumerate(descriptions):
-    #     # Get similarity scores for each course
-    #     sim_scores = list(enumerate(sim_matrix[idx]))
-    #     # Sort courses by similarity, excluding itself
-    #     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)[1:top_n+1]
-    #     # Display the most similar courses by title
-    #     print(f"\nMost similar courses to '{titles[idx]}':")
-    #     for i, score in sim_scores:
-    #         print(f"  - {titles[i]} (similarity: {score:.2f})")
-     # Open a CSV file for writing
+    
+    # Open a CSV file for writing
     with open(output_file, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
         
         # Write the header row
-        writer.writerow(['Course Title', 'Similar Course', 'Similarity Score'])
+        writer.writerow(['Course Title', 'Course Description', 'Similar Course', 'Similar Course Description', 'Similarity Score'])
         
         for idx, desc in enumerate(descriptions):
             # Get similarity scores for each course
@@ -87,9 +94,9 @@ def find_most_similar_courses(sim_matrix, titles, descriptions, top_n=3):
             # Sort courses by similarity, excluding itself
             sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)[1:top_n+1]
             
-            # Write the most similar courses by title to the CSV file
+            # Write the most similar courses by title and description to the CSV file
             for i, score in sim_scores:
-                writer.writerow([titles[idx], titles[i], f"{score:.2f}"])
+                writer.writerow([titles[idx], descriptions[idx], titles[i], descriptions[i], f"{score:.2f}"])
 
 #Save the output to 'similar_courses.csv'
 output_file = 'similar_courses4.csv'

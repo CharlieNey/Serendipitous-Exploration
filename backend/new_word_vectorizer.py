@@ -13,7 +13,7 @@ glove_model = api.load("glove-wiki-gigaword-50")
 word2vec_model = api.load("word2vec-google-news-300")
 
 # Load the course descriptions and titles from the CSV file
-file_path = "filtered_courses.csv" 
+file_path = "data/filtered_courses.csv" 
 courses_df = pd.read_csv(file_path)
 
 #Check indexing
