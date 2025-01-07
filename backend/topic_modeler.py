@@ -6,7 +6,7 @@
 import string
 import nltk
 import pandas as pd
-file_path = "backend/data/filtered_courses.csv"
+file_path = "data/filtered_courses.csv"
 courses_df = pd.read_csv(file_path)
 course_descriptions = courses_df['Description'].dropna().tolist()  # Remove any NaN entries
 print(course_descriptions)
@@ -24,6 +24,7 @@ from gensim.models import LdaModel
 import pyLDAvis
 import pyLDAvis.gensim_models as gensimvis  # Import for Gensim version
 import matplotlib.pyplot as plt
+import csv
 
 # remove stopwords, punctuation, and normalize the corpus
 stop = set(stopwords.words('english'))
@@ -82,7 +83,25 @@ hdbscan_model = HDBSCAN(min_cluster_size=10, metric='euclidean', cluster_selecti
 topic_model = BERTopic(umap_model=umap_model, hdbscan_model=hdbscan_model, representation_model=representation_model)
 
 topics, probs = topic_model.fit_transform(docs)
-print(topic_model.get_topic_info(2))
+# Prepare CSV output
+output_file = "topic_modeling_results.csv"
+
+with open(output_file, mode='w', newline='', encoding='utf-8') as file:
+    writer = csv.writer(file)
+    
+    # Write LDA topics
+    writer.writerow(["LDA Topics"])
+    writer.writerow(["Topic Number", "Top Words"])
+    for topic_num, topic_words in lda_topics:
+        writer.writerow([topic_num, topic_words])
+    
+    writer.writerow([])  # Add a blank row for separation
+
+    # Write BERTopic topics
+    writer.writerow(["BERTopic Topics"])
+    bertopic_info.to_csv(file, index=False)
+
+# print(topic_model.get_topic_info(2))
 # Fine-tune your topic representations
 #topic_model = BERTopic(representation_model=representation_model)
 
