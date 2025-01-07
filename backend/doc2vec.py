@@ -33,6 +33,8 @@ for i, doc in enumerate(data):
         similarity_scores.append({
             "Course_1": course_titles[i],
             "Course_2": course_titles[j],
+            "Description_1": data[i],
+            "Description_2": data[j],
             "Similarity": score
         })
 
