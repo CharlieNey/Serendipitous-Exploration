@@ -1,168 +1,88 @@
-import React, { useState, useEffect } from "react";
-import * as d3 from "d3";
-import { Link } from 'react-router-dom';
-import "./ExplorePage.css";
-import shopping_cart_logo from '../images/shopping_cart_logo.png';
+import React, { useState, useEffect } from "react"; // useState manages component state; useEffect handles side effects (like data fetching)
+import { Link } from 'react-router-dom'; // Link is used for navigation between pages
+import "./ExplorePage.css"; 
+import shopping_cart_logo from '../images/shopping_cart_logo.png'; 
 
 function Explore() {
-  const [searchTerm, setSearchTerm] = useState("")
-  // Mock dummy graph. Code adapted from d3indepth.com. only text, maybe go back to circle  with hover.
-  const width = 1000;
-  const height = 500;
-    const nodes = [
-      {name: 'SOAN111'},
-      {name: 'SOAN110'},
-      {name: 'STAT120'},
-      {name: 'CS201'},
-      {name: 'CAMS254'},
-      {name: 'CHEM123'},
-      {name: 'CGSC130'},
-      {name: 'ECON265'}
-    ]
+  // useState hooks to define component state variables
+  const [searchTerm, setSearchTerm] = useState(""); // keeps track of the search input (empty by default)
+  const [courseList, setCourseList] = useState([]); // stores the list of courses fetched from the server
+  const [isLoading, setIsLoading] = useState(true); // loading state (true while data is being fetched)
+  const [expandedCourse, setExpandedCourse] = useState(null); // stores the course number of the currently expanded course (null by default)
 
-    const links = [
-      {source: 0, target: 1},
-      {source: 0, target: 2},
-      {source: 0, target: 3},
-      {source: 6, target: 4},
-      {source: 3, target: 5},
-      {source: 3, target: 6},
-      {source: 6, target: 7}
-    ]
+  // useEffect hook to fetch course data from the backend when the component loads
+  useEffect(() => {
+    // fetch data from the backend API endpoint
+    fetch("http://localhost:3000/api/courses") // sends a GET request to the URL
+      .then((response) => response.json()) // converts the response into a JavaScript object (JSON)
+      .then((data) => {
+        setCourseList(data); // stores the fetched data in the `courseList` state
+        setIsLoading(false); // sets `isLoading` to false after data is fetched
+      })
+      .catch((error) => {
+        console.error("Error fetching courses:", error); // logs the error if the request fails
+        setIsLoading(false); // also stops the loading state on error
+      });
+  }, []); // the empty dependency array ensures this effect only runs once when the component mounts
 
-    useEffect(() => {
-      const svg = d3
-        .select("#simulation-svg")
-        .attr("width", width)
-        .attr("height", height);
-
-      svg.append("g").attr("class", "links");
-      svg.append("g").attr("class", "nodes");
-    
-      const simulation = d3
-        .forceSimulation(nodes)
-        .force("charge", d3.forceManyBody().strength(-100))
-        .force("center", d3.forceCenter(width / 2, height / 2))
-        .force("link", d3.forceLink().links(links).distance(100)) 
-
-        .on("tick", () => {
-          d3.select(".links")
-            .selectAll("line")
-            .data(links)
-            .join("line")
-            .attr("x1", (d) => d.source.x)
-            .attr("y1", (d) => d.source.y)
-            .attr("x2", (d) => d.target.x)
-            .attr("y2", (d) => d.target.y)
-            .attr("stroke", "black")
-            .attr("stroke-width", 2);
-
-          // d3.select(".nodes")
-          //   .selectAll("text")
-          //   .data(nodes)
-          //   .join("text")
-          //   .text((d) => d.name)
-          //   .attr("x", (d) => d.x)
-          //   .attr("y", (d) => d.y)
-          //   .attr("dy", 5)
-          //   .attr("text-anchor", "middle")
-          //   .attr("font-size", 12)
-          //   .attr("fill", "blue");
-
-          // d3.selectAll("circle")
-          //   .data("circle")
-          //   .join("text")
-          //   .attr("r", 20)
-
-        const nodeGroup = d3.select(".nodes")
-        .selectAll("g")
-        .data(nodes)
-        .join("g")
-        .attr("transform", (d) => `translate(${d.x},${d.y})`);
-      
-        // creating the circles
-        nodeGroup
-          .selectAll("circle")
-          .data((d) => [d]) 
-          .join("circle")
-          .attr("r", 40)
-        
-        // adding the text to the circles
-        nodeGroup
-          .selectAll("text")
-          .data((d) => [d]) 
-          .join("text")
-          .text((d) => d.name)
-          .attr("dy", 5)
-        });
-    
-      return () => {
-        simulation.stop();
-        svg.selectAll(".links").remove();
-        svg.selectAll(".nodes").remove();
-      };
-    }, [nodes, links]);
-  
-
-  // dummy
-  const courseList = [
-    { id: "SOAN111", name: "Intro to Sociology" },
-    { id: "SOAN110", name: "Intro to Anthropology" },
-    { id: "STAT120", name: "Intro to Statistics" },
-    { id: "CS201", name: "Data Structures" },
-  ];
-
-  const filteredCourses = searchTerm
-    ? courseList.filter((course) =>
-        course.name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : [];
+  // filtering the course list based on the search term
+  const filteredCourses = courseList.filter((course) =>
+    `${course.course_number} ${course.course_title} ${course.description}`.toLowerCase().includes(searchTerm.toLowerCase()) 
+    // converts everything to lowercase for case-insensitive matching
+  );
 
   return (
     <div className="Explore">
-      <div className="calendar-button">
-        <Link to="/calendar">
-            <img src={shopping_cart_logo} alt="Go to Calendar" />
-        </Link>
-      </div>
-
-      <div className="sidebar">
-        <div className="search-section">
-
+      <div className="sidebar"> 
+        <div className="search-section"> 
           <input
             type="text"
-            placeholder="input courses, topics,..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input"
+            placeholder="Search by course name, description, or number" 
+            value={searchTerm} // binds the input's value to the `searchTerm` state
+            onChange={(e) => setSearchTerm(e.target.value)} // updates the `searchTerm` state whenever the user types in the search bar
+            className="search-input" // applies styling from the CSS file
           />
 
-          {searchTerm && (
-            <ul className="course-list">
-              {filteredCourses.map((course) => (
-                <li key={course.id} className="course-item">
-                  {course.id} - {course.name}
-                  <Link to={`/calendar/${course.id}/${encodeURIComponent(course.name)}`} className="add-to-calendar-button">
-                    <img src={shopping_cart_logo} alt="Add to Calendar" />
-                  </Link>
+          {/* this is apparently something called conditional rendering where it shows different content depending on the state */}
+          {isLoading ? (
+            <p>Loading courses...</p> // displayed when `isLoading` is true (data is still being fetched)
+          ) : searchTerm && filteredCourses.length === 0 ? (
+            <p>No courses found matching your search.</p> // displayed if there are no matching courses for the search term
+          ) : (
+            <ul className="course-list"> {/* this is an unordered list of courses */}
+              {filteredCourses.map((course) => ( // `map` iterates over the `filteredCourses` array and renders a list item for each course
+                <li key={course.course_number} className="course-item"> 
+                  <div
+                    className="course-summary"
+                    onClick={() =>
+                      setExpandedCourse(
+                        expandedCourse === course.course_number ? null : course.course_number // toggles between expanding and collapsing course details
+                      )
+                    }
+                  >
+                    {/* display the course number and title */}
+                    <strong>{course.course_number}:</strong> {course.course_title}
+                  </div>
+                  {expandedCourse === course.course_number && ( // show course details only if `expandedCourse` matches the current course number
+                    <div className="course-details">
+                      <em>{course.credits}</em> - {course.offered_term} <br />
+                      Faculty: {course.faculty} <br /> 
+                      Time: {course.time}, Location: {course.location} <br /> 
+                      <p className="course-description">{course.description}</p>
+                      <p><strong>Liberal Arts Requirements:</strong> {course.liberal_arts_requirements || "None"}</p> {/* displays Liberal arts requirements if available */}
+                      <p><strong>Tags:</strong> {course.tags || "None"}</p> {/* displays tags if available */}
+                      <p><strong>Prerequisites:</strong> {course.prerequisites || "None"}</p> {/* displays prereqs if available */}
+                    </div>
+                  )}
                 </li>
               ))}
             </ul>
           )}
         </div>
-        <div className="divider"></div>
+        <div className="divider"></div> {/* divider for separation in the sidebar */}
       </div>
-
-      <div className="simulation-container">
-        <svg id="simulation-svg"></svg>
-      </div>
-
-
     </div>
-    
   );
-
-  
 }
 
-export default Explore;
+export default Explore; 
