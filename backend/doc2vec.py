@@ -47,6 +47,6 @@ similarity_df = pd.DataFrame(similarity_scores)
 sorted_similarity_df = similarity_df.sort_values(by=["Course_1", "Similarity"], ascending=[True, False])
 
 # Save to CSV.
-sorted_similarity_df.to_csv('data/doc2vec_similarity_scores_sorted.csv', index=False)
+sorted_similarity_df.to_csv('data/doc2vec_output/doc2vec_similarity_scores_sorted.csv', index=False)
 
 print("Similarity scores have been written to 'doc2vec_similarity_scores.csv'.")
