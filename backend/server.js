@@ -1,9 +1,11 @@
 // importing frameworks and libraries: express, Node.js's path module, the pool class from the pg library, and cors
+import {my_user, my_database, my_password} from './psqlConfig.js';
 
-const express = require('express');
-const path = require('path');
-const { Pool } = require('pg'); 
-const cors = require('cors');  
+import express from 'express';
+import path from 'path';
+import pkg from 'pg';
+const {Pool} = pkg;
+import cors from 'cors';
 
 const app = express(); // express framework
 const PORT = 3000;
@@ -13,10 +15,10 @@ app.use(express.json());
 
 // setting up postgreSQL connection
 const pool = new Pool({ 
-    user: "postgres",           
+    user: my_user,           
     host: "localhost",          
-    database: "courses",      
-    password: "skibidi", // my postgres password
+    database: my_database,      
+    password: my_password, // my postgres password
     port: 5432, // default port num         
 });
 
