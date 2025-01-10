@@ -16,5 +16,6 @@
     "path": "^0.12.7",
     "pg": "^8.13.1"
   },
-  "description": ""
+  "description": "",
+  "type": "module"
 }

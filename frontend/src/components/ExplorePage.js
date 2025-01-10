@@ -13,7 +13,7 @@ function Explore() {
   // useEffect hook to fetch course data from the backend when the component loads
   useEffect(() => {
     // fetch data from the backend API endpoint
-    fetch("http://localhost:3000/api/courses") // sends a GET request to the URL
+    fetch("http://localhost:3001/api/courses") // sends a GET request to the URL
       .then((response) => response.json()) // converts the response into a JavaScript object (JSON)
       .then((data) => {
         setCourseList(data); // stores the fetched data in the `courseList` state

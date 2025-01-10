@@ -8,7 +8,7 @@ const {Pool} = pkg;
 import cors from 'cors';
 
 const app = express(); // express framework
-const PORT = 3000;
+const PORT = 3001;
 
 app.use(cors()); // enable CORS which allows React frontend to access this backend API 
 app.use(express.json());       
@@ -30,6 +30,29 @@ app.get('/', function(req, res) {
 app.get('/api/courses', async (req, res) => { 
     try {
         const result = await pool.query("SELECT * FROM courses");
+        res.json(result.rows); 
+    } catch (err) {
+        console.error("Error fetching courses:", err.message);
+        res.status(500).send("Server Error");
+    }
+});
+
+
+// defining the /api/courses api route
+app.get('/api/nodes', async (req, res) => { 
+    try {
+        const result = await pool.query("SELECT * FROM Nodes");
+        res.json(result.rows); 
+    } catch (err) {
+        console.error("Error fetching courses:", err.message);
+        res.status(500).send("Server Error");
+    }
+});
+
+// defining the /api/courses api route
+app.get('/api/connections', async (req, res) => { 
+    try {
+        const result = await pool.query("SELECT * FROM Connections");
         res.json(result.rows); 
     } catch (err) {
         console.error("Error fetching courses:", err.message);
