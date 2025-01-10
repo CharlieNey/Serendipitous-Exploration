@@ -2,7 +2,6 @@ import pandas as pd
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 from nltk.tokenize import word_tokenize
 from sklearn.metrics.pairwise import cosine_similarity
-import numpy as np
 
 # Load the CSV file.
 file_path = 'backend/data/filtered_courses.csv'  # Update the path if necessary.
@@ -11,6 +10,7 @@ data_frame = pd.read_csv(file_path)
 # Extract the "Description" column.
 data = data_frame["Description"].dropna().tolist()  # Drop NaN values and convert to a list.
 course_titles = data_frame['Course Number'].dropna().tolist()
+
 # Preprocess the documents and create TaggedDocuments.
 tagged_data = [TaggedDocument(words=word_tokenize(doc.lower()),
                               tags=[str(i)]) for i, doc in enumerate(data)]
@@ -26,7 +26,7 @@ document_vectors = [model.infer_vector(word_tokenize(doc.lower())) for doc in da
 # Compute cosine similarity for each pair of documents.
 similarity_matrix = cosine_similarity(document_vectors)
 
-# Write the similarity scores to a CSV file.
+# Write the similarity scores to a list.
 similarity_scores = []
 for i, doc in enumerate(data):
     for j, score in enumerate(similarity_matrix[i]):
@@ -38,15 +38,16 @@ for i, doc in enumerate(data):
             "Similarity": score
         })
 
-# Convert to DataFrame and save to CSV.
+# Convert to DataFrame.
 similarity_df = pd.DataFrame(similarity_scores)
 
-# Sort by Course_1, then by Similarity in descending order.
+# Sort by Course_1 and Similarity in descending order.
 sorted_similarity_df = similarity_df.sort_values(by=["Course_1", "Similarity"], ascending=[True, False])
 
+# Keep only the top 10 most similar courses for each Course_1.
+top_10_similarity_df = sorted_similarity_df.groupby("Course_1").head(10)
+
 # Save to CSV.
-sorted_similarity_df.to_csv('backend/data/doc2vec_output_sorted.csv', index=False)
+top_10_similarity_df.to_csv('backend/data/doc2vec_top10_output.csv', index=False)
 
-similarity_df.to_csv('backend/data/doc2vec_output.csv', index=False)
-
-print("Similarity scores have been written doc2vec_output'.")
+print("Top 10 similarity scores for each course have been written to 'doc2vec_top10_output.csv'.")
