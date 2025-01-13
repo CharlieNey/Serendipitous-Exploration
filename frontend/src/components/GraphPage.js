@@ -1,76 +1,111 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import * as d3 from "d3";
 import { Link } from 'react-router-dom';
 import "./ExplorePage.css";
 import shopping_cart_logo from '../images/shopping_cart_logo.png';
+import { GraphContext } from './GraphContext.js';
 
-function Explore() {
+async function Explore() {
+  // const {nodes, nodes1, links, links1, isLoading, fetchNodes, searchTerm, setSearchTerm} = useContext(GraphContext);
   const [searchTerm, setSearchTerm] = useState("")
-  const [nodes, setNodeList] = useState([]); // stores the list of courses fetched from the server
-  const [links, setConnectionList] = useState([]); // stores the list of courses fetched from the server
-  const [isLoading, setIsLoading] = useState(true); // loading state (true while data is being fetched)
+
+  const nodes = [
+    {name: 'SOAN111'},
+    {name: 'SOAN110'},
+    {name: 'STAT120'},
+    {name: 'CS201'},
+    {name: 'CAMS254'},
+    {name: 'CHEM123'},
+    {name: 'CGSC130'},
+    {name: 'ECON265'}
+    ]
+
+    const links = [
+    {source: 0, target: 1},
+    // {source: 0, target: 2},
+    // {source: 0, target: 3},
+    // {source: 6, target: 4},
+    // {source: 3, target: 5},
+    // {source: 3, target: 6},
+    // {source: 6, target: 7}
+    ]
+
+  console.log("TEST")
 
   // Mock dummy graph. Code adapted from d3indepth.com. only text, maybe go back to circle  with hover.
   const width = 1000;
   const height = 500;
 
-  // useEffect hook to fetch course data from the backend when the component loads
-  useEffect(() => {
-    // fetch data from the backend API endpoint
-    fetch("http://localhost:3001/api/nodes") // sends a GET request to the URL
-      .then((response) => response.json()) // converts the response into a JavaScript object (JSON)
-      .then((data) => {
-        setNodeList(data); // stores the fetched data in the `courseList` state
-        setIsLoading(false); // sets `isLoading` to false after data is fetched
-      })
-      .catch((error) => {
-        console.error("Error fetching courses:", error); // logs the error if the request fails
-        setIsLoading(false); // also stops the loading state on error
-      });
-  }, []); // the empty dependency array ensures this effect only runs once when the component mounts
+  // fetchNodes()
+  // console.log(nodes1)
 
-    // useEffect hook to fetch course data from the backend when the component loads
-    useEffect(() => {
-      // fetch data from the backend API endpoint
-      fetch("http://localhost:3001/api/connections") // sends a GET request to the URL
-        .then((response) => response.json()) // converts the response into a JavaScript object (JSON)
-        .then((data) => {
-          setConnectionList(data); // stores the fetched data in the `courseList` state
-          // setIsLoading(false); // sets `isLoading` to false after data is fetched
-        })
-        .catch((error) => {
-          console.error("Error fetching courses:", error); // logs the error if the request fails
-          // setIsLoading(false); // also stops the loading state on error
-        });
-    }, []); // the empty dependency array ensures this effect only runs once when the component mounts
+  // useEffect(() => {
+  //   try {
+  //     // console.log("1")
+  //     // const response = await fetch("http://localhost:3001/api/nodes");
+  //     // const response_nodes = await response.json()
+  //     const response = fetch("http://localhost:3001/api/nodes");
+  //     const response_nodes = response.json()
+  //     // console.log("3")
+  //     // console.log(response_nodes)
+  //     setNodeList(response_nodes);
+  //     console.log(nodes1)
+      
+  //   } catch (error) {
+  //     console.error('Error fetching nodes:', error);
+  //   }
+  // }, [nodes1]);
+
+  // try {
+  //   console.log("HERE2")
+  //   const response = await fetch("http://localhost:3001/api/connections");
+  //   const response_links = await response.json()
+  //   setConnectionList(response_links)
+  // } catch (error) {
+  //   console.error('Error fetching connections:', error);
+  // }
+
+  // // useEffect hook to fetch course data from the backend when the component loads
+  // useEffect(() => {
+  //   setIsLoading(true);
+  //   // fetch data from the backend API endpoint
+  //   fetch("http://localhost:3001/api/nodes") // sends a GET request to the URL
+  //     .then((response) => response.json()) // converts the response into a JavaScript object (JSON)
+  //     .then((data) => {
+  //       setNodeList(data); // stores the fetched data in the `courseList` state
+  //       setIsLoading(false); // sets `isLoading` to false after data is fetched
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching courses:", error); // logs the error if the request fails
+  //       setIsLoading(false); // also stops the loading state on error
+  //     });
+  // }, []); // the empty dependency array ensures this effect only runs once when the component mounts
+
+    // // useEffect hook to fetch course data from the backend when the component loads
+    // useEffect(() => {
+    //   setIsLoading(true);
+    //   // fetch data from the backend API endpoint
+    //   fetch("http://localhost:3001/api/connections") // sends a GET request to the URL
+    //     .then((response) => response.json()) // converts the response into a JavaScript object (JSON)
+    //     .then((data) => {
+    //       setConnectionList(data); // stores the fetched data in the `courseList` state
+    //       // setIsLoading(false); // sets `isLoading` to false after data is fetched
+    //     })
+    //     .catch((error) => {
+    //       console.error("Error fetching courses:", error); // logs the error if the request fails
+    //       // setIsLoading(false); // also stops the loading state on error
+    //     });
+    // }, []); // the empty dependency array ensures this effect only runs once when the component mounts
     
-    console.log("HEY")
-    console.log(nodes);
-    console.log(links)
-  
-    const nodes1 = [
-      {name: 'SOAN111'},
-      {name: 'SOAN110'},
-      {name: 'STAT120'},
-      {name: 'CS201'},
-      {name: 'CAMS254'},
-      {name: 'CHEM123'},
-      {name: 'CGSC130'},
-      {name: 'ECON265'}
-    ]
+    // console.log("HEY")
+    // console.log(nodes1);
+    // console.log(links1)
 
-    const links1 = [
-      {source: 0, target: 1},
-      // {source: 0, target: 2},
-      // {source: 0, target: 3},
-      // {source: 6, target: 4},
-      // {source: 3, target: 5},
-      // {source: 3, target: 6},
-      // {source: 6, target: 7}
-    ]
+    // nodes = formatNodes(nodes1);
+    // links = formatLinks(links1);
 
     useEffect(() => {
-      if (!isLoading) {
+      // if (!isLoading) {
         const svg = d3
           .select("#simulation-svg")
           .attr("width", width)
@@ -78,8 +113,6 @@ function Explore() {
 
         svg.append("g").attr("class", "links");
         svg.append("g").attr("class", "nodes");
-
-        console.log("TEST One")
       
         const simulation = d3
           .forceSimulation(nodes)
@@ -98,8 +131,6 @@ function Explore() {
               .attr("y2", (d) => d.target.y)
               .attr("stroke", "black")
               .attr("stroke-width", 2);
-
-              console.log('mini 3')
 
             // d3.select(".nodes")
             //   .selectAll("text")
@@ -145,9 +176,9 @@ function Explore() {
           svg.selectAll(".links").remove();
           svg.selectAll(".nodes").remove();
         };
-        } else {
-          const svg = "Not yet loaded"
-        }
+        // } else {
+        //   const svg = "Not yet loaded"
+        // }
     }, [nodes, links]);
   
 
