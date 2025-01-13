@@ -4,26 +4,35 @@ export const GraphContext = createContext();
 
 export const GraphProvider = ({ children }) => {
     const [searchTerm, setSearchTerm] = useState("")
-    const [nodes1, setNodeList] = useState([]); // stores the list of courses fetched from the server
-    const [links1, setConnectionList] = useState([]); // stores the list of courses fetched from the server
+    const [nodes, setNodeList] = useState([]); // stores the list of courses fetched from the server
+    const [links, setConnectionList] = useState([]); // stores the list of courses fetched from the server
     const [isLoading, setIsLoading] = useState(true); // loading state (true while data is being fetched)
 
     const fetchNodes = async () => {
         try {
-            // console.log("1")
             const response = await fetch("http://localhost:3001/api/nodes");
             const response_nodes = await response.json()
-            // console.log("3")
-            // console.log(response_nodes)
             setNodeList(response_nodes);
-            console.log(nodes1)
+            console.log(nodes)
             
         } catch (error) {
             console.error('Error fetching nodes:', error);
         }
     };
 
-    const nodes = [
+    const fetchLinks = async () => {
+        try {
+            const response = await fetch("http://localhost:3001/api/connections");
+            const response_links = await response.json()
+            setConnectionList(response_links);
+            console.log(links)
+            
+        } catch (error) {
+            console.error('Error fetching nodes:', error);
+        }
+    };
+
+    const nodes1 = [
     {name: 'SOAN111'},
     {name: 'SOAN110'},
     {name: 'STAT120'},
@@ -34,7 +43,7 @@ export const GraphProvider = ({ children }) => {
     {name: 'ECON265'}
     ]
 
-    const links = [
+    const links1 = [
     {source: 0, target: 1},
     // {source: 0, target: 2},
     // {source: 0, target: 3},
@@ -48,7 +57,11 @@ export const GraphProvider = ({ children }) => {
     //  * Fetches all nodes when the App.js component mounts.
     //  */
     // useEffect(() => {
+    //     console.log("Fetching")
     //     fetchNodes();
+    //     fetchLinks();
+
+    //     console.log("Fetched")
     // }, []);
 
     return (
@@ -60,6 +73,7 @@ export const GraphProvider = ({ children }) => {
                 links1,
                 isLoading,
                 fetchNodes,
+                fetchLinks,
                 nodes,
                 links
             }}
