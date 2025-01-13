@@ -5,28 +5,61 @@ import "./ExplorePage.css";
 import shopping_cart_logo from '../images/shopping_cart_logo.png';
 import { GraphContext } from './GraphContext.js';
 
+
+// for (let i in response_nodes) {
+//   new_response.push({name : response_nodes[i]["name"]});
+//   // console.log("nmae")
+//   // console.log(response_nodes[i]["name"])
+// }
+
+function getNodeIndex(nodes, name) {
+  for(let i in nodes){
+    if(nodes[i]["name"] == name) {
+      return i;
+    }
+  }
+  return -1;
+}
+
 const GraphPage = () => {
   // Mock dummy graph. Code adapted from d3indepth.com. only text, maybe go back to circle  with hover.
   const width = 1000;
   const height = 500;
 
-  const {nodes, links, fetchNodes, fetchLinks} = useContext(GraphContext);
+  // Import state variables and fetching methods
+  const {nodes2, links2, fetchNodes, fetchLinks} = useContext(GraphContext);
   const [searchTerm, setSearchTerm] = useState("")
 
+  // Fetch values for state variables
   useEffect(() => {
     fetchNodes()
     fetchLinks()
     // console.log("Start")
-    // console.log(nodes)
-    // console.log(links)
+    // console.log(nodes2)
+    // console.log(links2)
     // console.log("End")
   }, []);
 
+  const nodes = [];
+  for (let i in nodes2) {
+    nodes.push({name : nodes2[i]["name"]})
+  }
+
+  const links = [];
+  for (let i in links2) {
+    links.push({source : getNodeIndex(nodes, links2[i]["source"]), target :  getNodeIndex(nodes, links2[i]["target"])})
+  }
+
+  console.log("FIX")
+  console.log(nodes)
+  console.log(links)
+
+  // Create graph
     useEffect(() => {
-      console.log("Got")
-      console.log(nodes)
-      console.log(links)
-      console.log("Fin")
+      // console.log("Got")
+      // console.log(nodes)
+      // console.log(links)
+      // console.log("Fin")
       
       const svg = d3
         .select("#simulation-svg")
