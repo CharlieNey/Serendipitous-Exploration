@@ -57,22 +57,6 @@ function Explore() {
             .attr("stroke", "black")
             .attr("stroke-width", 2);
 
-          // d3.select(".nodes")
-          //   .selectAll("text")
-          //   .data(nodes)
-          //   .join("text")
-          //   .text((d) => d.name)
-          //   .attr("x", (d) => d.x)
-          //   .attr("y", (d) => d.y)
-          //   .attr("dy", 5)
-          //   .attr("text-anchor", "middle")
-          //   .attr("font-size", 12)
-          //   .attr("fill", "blue");
-
-          // d3.selectAll("circle")
-          //   .data("circle")
-          //   .join("text")
-          //   .attr("r", 20)
 
         const nodeGroup = d3.select(".nodes")
         .selectAll("g")
