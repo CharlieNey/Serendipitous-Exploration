@@ -50,8 +50,8 @@ sorted_similarity_df = similarity_df.sort_values(by=["Course_1", "Similarity"], 
 top_10_similarity_df = sorted_similarity_df.groupby("Course_1").head(10)
 
 # Save to CSV.
-sorted_similarity_df.to_csv('backend/data/doc2vec_output_sorted.csv', index=False)
+sorted_similarity_df.to_csv('data/doc2vec_output_sorted.csv', index=False)
 
-similarity_df.to_csv('backend/data/doc2vec_output.csv', index=False)
+similarity_df.to_csv('data/doc2vec_output.csv', index=False)
 
 print("Similarity scores have been written doc2vec_output'.")
