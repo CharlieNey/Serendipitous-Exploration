@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS Nodes;
 DROP TABLE IF EXISTS Connections;
 CREATE TABLE Nodes (
-    name text
+    id text
 );
 CREATE TABLE Connections (
   source text,
