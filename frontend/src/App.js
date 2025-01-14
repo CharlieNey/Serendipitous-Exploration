@@ -5,6 +5,7 @@ import ExplorePage from './components/ExplorePage';
 import AboutPage from './components/AboutPage';
 import CalendarPage from './components/CalendarPage';
 import GraphPage from './components/GraphPage';
+import TestPage from './components/TestPage';
 import { GraphProvider } from "./components/GraphContext";
 
 const App = () => {
@@ -18,6 +19,7 @@ const App = () => {
           <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/calendar/:id/:name" element={<CalendarPage />} />
           <Route path="/graph" element={<GraphPage />} />
+          <Route path="/test-page" element={<TestPage />} />
         </Routes>
       </Router>
     </GraphProvider>

@@ -11,7 +11,7 @@ const app = express(); // express framework
 const PORT = 3001;
 
 app.use(cors()); // enable CORS which allows React frontend to access this backend API 
-app.use(express.json());       
+app.use(express.json());  
 
 // setting up postgreSQL connection
 const pool = new Pool({ 
@@ -22,9 +22,13 @@ const pool = new Pool({
     port: 5432, // default port num         
 });
 
-app.get('/', function(req, res) { 
-    res.sendFile(path.join(__dirname, '/')); 
+const router = express.Router();
+
+// Routes
+app.get('/', (req, res) => {
+    res.send('Test server is running');
 });
+
 
 // defining the /api/courses api route
 app.get('/api/courses', async (req, res) => { 
@@ -59,6 +63,23 @@ app.get('/api/connections', async (req, res) => {
         res.status(500).send("Server Error");
     }
 });
+
+// defining the /api/courses api route
+router.get('/:search', async (req, res) => { 
+    try {
+        const search = req.params.search;
+        console.log(search)
+        const query = "SELECT * FROM courses WHERE course_title LIKE '%" + search + "%'";
+        console.log(query)
+        const result = await pool.query(query);
+        res.json(result.rows);
+    } catch (err) {
+        console.error("Error querying courses:", err.message);
+        res.status(500).send("Server Error");
+    }
+});
+
+app.use('/mycourses', router);
 
 // starting the server
 app.listen(PORT, () => {

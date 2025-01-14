@@ -19,6 +19,10 @@ const HomePage = () => {
           <button className="graphpage-button">Graph!</button>
         </Link>
         <br />
+        <Link to="/test-page">
+          <button className="graphpage-button">Test!</button>
+        </Link>
+        <br />
         <Link to="/about" className="learn-more-link">Learn more about this website</Link>
       </header>
     </div>
