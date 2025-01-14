@@ -9,7 +9,7 @@ CREATE TABLE Connections (
 );
 
 INSERT INTO
-    Nodes (name)
+    Nodes (id)
 VALUES
     ('Bat'),
     ('Rat'),

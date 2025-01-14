@@ -6,21 +6,6 @@ import shopping_cart_logo from '../images/shopping_cart_logo.png';
 import { GraphContext } from './GraphContext.js';
 
 
-// for (let i in response_nodes) {
-//   new_response.push({name : response_nodes[i]["name"]});
-//   // console.log("nmae")
-//   // console.log(response_nodes[i]["name"])
-// }
-
-function getNodeIndex(nodes, name) { // this confirmed works, but maybe we add ids
-  for(let i in nodes){ 
-    if(nodes[i]["name"] === name) {
-      return i;
-    }
-  }
-  return -1;
-}
-
 const GraphPage = () => {
   // Mock dummy graph. Code adapted from d3indepth.com. only text, maybe go back to circle  with hover.
   const width = 1000;
@@ -28,82 +13,48 @@ const GraphPage = () => {
 
   // Import state variables and fetching methods
   const {nodes2, links2, fetchNodes, fetchLinks} = useContext(GraphContext);
-  // const {nodes2, fetchNodes, fetchLinks} = useContext(GraphContext);
   const [searchTerm, setSearchTerm] = useState("")
 
 
   // Fetch values for state variables
-  useEffect(() => { // for some reason this takes several iterations to work, but it will eventually work
+  useEffect(() => {
     fetchNodes()
     fetchLinks()
-    console.log("Start")
-    // console.log(nodes2)
-    // console.log(links2)
-    // console.log("End")
   }, []);
 
   const nodes = [];
   for (let i in nodes2) {
-    nodes.push({name : nodes2[i]["name"]})
+    nodes.push({id : nodes2[i]["id"]}) // grabs what will be course names
   }
 
-  const links = [];
-  for (let i in links2) { // this needs to happen more immediately, takes too many iterations 
-    links.push({source : getNodeIndex(nodes, links2[i]["source"]), target :  getNodeIndex(nodes, links2[i]["target"])})
+  const links = []; 
+  for (let i in links2) { 
+    links.push({source : links2[i]["source"], target : links2[i]["target"]}) // grabs source and target
   }
 
-  console.log("links")
-  console.log(links)
-
-  const links3 = [
-    {source: 0, target: 1}
-  ]
-
-  console.log("links3")
-  console.log(links3)
-
-
-
-  
-  // const links = [
-  //   {source: 0, target: 1},
-  //   {source: 0, target: 2},
-  //   {source: 0, target: 3}
-  // ]
-
-  // console.log("FIX")
-  // console.log(nodes)
-  // console.log(links) // the links are the issue 
 
   // Create graph
     useEffect(() => {
-
       if (nodes.length === 0 || links.length === 0) return;
 
-      console.log("in graph")
-      // console.log("Got")
-      console.log(nodes)
-      console.log(links3)
-      // console.log("Fin")
-      
       const svg = d3
         .select("#simulation-svg")
         .attr("width", width)
         .attr("height", height);
 
-      svg.append("g").attr("class", "links3");
+      svg.append("g").attr("class", "links");
       svg.append("g").attr("class", "nodes");
     
       const simulation = d3
         .forceSimulation(nodes)
         .force("charge", d3.forceManyBody().strength(-100))
-        .force("center", d3.forceCenter(width / 2, height / 2))
-        .force("link", d3.forceLink().links(links3).distance(100)) 
+        .force("center", d3.forceCenter(width / 2, height / 2)) 
+        .force("link", d3.forceLink(links).id(d => d.id).distance(100)) // so we can use the direct course "id" to connect courses
 
         .on("tick", () => {
-          d3.select(".links3")
+          d3.select(".links")
             .selectAll("line")
-            .data(links3)
+            .data(links)
             .join("line")
             .attr("x1", (d) => d.source.x)
             .attr("y1", (d) => d.source.y)
@@ -130,16 +81,16 @@ const GraphPage = () => {
           .selectAll("text")
           .data((d) => [d]) 
           .join("text")
-          .text((d) => d.name)
+          .text((d) => d.id)
           .attr("dy", 5)
         });
 
       return () => {
         simulation.stop();
-        svg.selectAll(".links3").remove();
+        svg.selectAll(".links").remove();
         svg.selectAll(".nodes").remove();
       };
-  }, [nodes, links3]);
+  }, [nodes, links]);
 
   return (
     <div className="Explore">
