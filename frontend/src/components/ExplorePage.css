@@ -67,13 +67,14 @@
 }
 
 circle {
-  fill: rgb(123, 165, 199); 
+  fill: rgb(138, 175, 206); 
   stroke: #fff; 
   stroke-width: 2px;
   transition: transform 0.2s ease; 
 }
 line {
   stroke: #ccc;
+  stroke-width: 2px;
 }
 text {
   text-anchor: middle;

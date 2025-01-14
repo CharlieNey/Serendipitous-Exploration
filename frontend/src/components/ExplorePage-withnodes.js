@@ -6,7 +6,7 @@ import shopping_cart_logo from '../images/shopping_cart_logo.png';
 
 function Explore() {
   const [searchTerm, setSearchTerm] = useState("")
-  // Mock dummy graph. Code adapted from d3indepth.com. only text, maybe go back to circle  with hover.
+  // mock dummy graph. code adapted from d3indepth.com.
   const width = 1000;
   const height = 500;
     const nodes = [
@@ -30,6 +30,9 @@ function Explore() {
       {source: 6, target: 7}
     ]
 
+    // let zoom = d3.zoom()
+    //   .on('zoom', handleZoom);
+    
     useEffect(() => {
       const svg = d3
         .select("#simulation-svg")
@@ -58,27 +61,34 @@ function Explore() {
             .attr("stroke-width", 2);
 
 
-        const nodeGroup = d3.select(".nodes")
-        .selectAll("g")
-        .data(nodes)
-        .join("g")
-        .attr("transform", (d) => `translate(${d.x},${d.y})`);
+      const nodeGroup = d3.select(".nodes")
+      .selectAll("g")
+      .data(nodes)
+      .join("g")
+      .attr("transform", (d) => `translate(${d.x},${d.y})`);
+    
+      // creating the circles
+      nodeGroup
+        .selectAll("circle")
+        .data((d) => [d]) 
+        .join("circle")
+        .attr("r", 40)
       
-        // creating the circles
-        nodeGroup
-          .selectAll("circle")
-          .data((d) => [d]) 
-          .join("circle")
-          .attr("r", 40)
+      // adding the text to the circles
+      nodeGroup
+        .selectAll("text")
+        .data((d) => [d]) 
+        .join("text")
+        .text((d) => d.name)
+        .attr("dy", 5)
+      });
+
+      // const handleZoom = d3
+      //   .select('nodeGroup')
+      //   .attr('transform', e.transform)
+
         
-        // adding the text to the circles
-        nodeGroup
-          .selectAll("text")
-          .data((d) => [d]) 
-          .join("text")
-          .text((d) => d.name)
-          .attr("dy", 5)
-        });
+
     
       return () => {
         simulation.stop();
