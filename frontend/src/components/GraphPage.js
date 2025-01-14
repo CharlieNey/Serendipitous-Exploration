@@ -12,7 +12,7 @@ import { GraphContext } from './GraphContext.js';
 //   // console.log(response_nodes[i]["name"])
 // }
 
-function getNodeIndex(nodes, name) { // this confirmed works 
+function getNodeIndex(nodes, name) { // this confirmed works, but maybe we add ids
   for(let i in nodes){ 
     if(nodes[i]["name"] === name) {
       return i;
@@ -28,6 +28,7 @@ const GraphPage = () => {
 
   // Import state variables and fetching methods
   const {nodes2, links2, fetchNodes, fetchLinks} = useContext(GraphContext);
+  // const {nodes2, fetchNodes, fetchLinks} = useContext(GraphContext);
   const [searchTerm, setSearchTerm] = useState("")
 
 
@@ -47,22 +48,42 @@ const GraphPage = () => {
   }
 
   const links = [];
-  for (let i in links2) {
+  for (let i in links2) { // this needs to happen more immediately, takes too many iterations 
     links.push({source : getNodeIndex(nodes, links2[i]["source"]), target :  getNodeIndex(nodes, links2[i]["target"])})
   }
 
-  
-
-  console.log("FIX")
-  console.log(nodes)
+  console.log("links")
   console.log(links)
+
+  const links3 = [
+    {source: 0, target: 1}
+  ]
+
+  console.log("links3")
+  console.log(links3)
+
+
+
+  
+  // const links = [
+  //   {source: 0, target: 1},
+  //   {source: 0, target: 2},
+  //   {source: 0, target: 3}
+  // ]
+
+  // console.log("FIX")
+  // console.log(nodes)
+  // console.log(links) // the links are the issue 
 
   // Create graph
     useEffect(() => {
+
+      if (nodes.length === 0 || links.length === 0) return;
+
       console.log("in graph")
       // console.log("Got")
-      // console.log(nodes)
-      // console.log(links)
+      console.log(nodes)
+      console.log(links3)
       // console.log("Fin")
       
       const svg = d3
@@ -70,19 +91,19 @@ const GraphPage = () => {
         .attr("width", width)
         .attr("height", height);
 
-      svg.append("g").attr("class", "links");
+      svg.append("g").attr("class", "links3");
       svg.append("g").attr("class", "nodes");
     
       const simulation = d3
         .forceSimulation(nodes)
         .force("charge", d3.forceManyBody().strength(-100))
         .force("center", d3.forceCenter(width / 2, height / 2))
-        .force("link", d3.forceLink().links(links).distance(100)) 
+        .force("link", d3.forceLink().links(links3).distance(100)) 
 
         .on("tick", () => {
-          d3.select(".links")
+          d3.select(".links3")
             .selectAll("line")
-            .data(links)
+            .data(links3)
             .join("line")
             .attr("x1", (d) => d.source.x)
             .attr("y1", (d) => d.source.y)
@@ -115,10 +136,10 @@ const GraphPage = () => {
 
       return () => {
         simulation.stop();
-        svg.selectAll(".links").remove();
+        svg.selectAll(".links3").remove();
         svg.selectAll(".nodes").remove();
       };
-  }, []);
+  }, [nodes, links3]);
 
   return (
     <div className="Explore">

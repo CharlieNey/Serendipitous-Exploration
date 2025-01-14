@@ -26,7 +26,7 @@ const router = express.Router();
 
 // Routes
 app.get('/', (req, res) => {
-    res.send('Test server is running'); // this is sending 
+    res.send('Test server is running'); 
 });
 
 
