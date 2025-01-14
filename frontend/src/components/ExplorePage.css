@@ -66,21 +66,6 @@
   margin: 20px 0;
 }
 
-circle {
-  fill: rgb(123, 165, 199); 
-  stroke: #fff; 
-  stroke-width: 2px;
-  transition: transform 0.2s ease; 
-}
-line {
-  stroke: #ccc;
-}
-text {
-  text-anchor: middle;
-  font-family: "Helvetica Neue", Helvetica, sans-serif;
-  fill: #666;
-  font-size: 16px;
-}
 
 
 
