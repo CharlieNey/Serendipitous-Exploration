@@ -10,6 +10,8 @@ function Explore() {
   const [isLoading, setIsLoading] = useState(true); // loading state (true while data is being fetched)
   const [expandedCourse, setExpandedCourse] = useState(null); // stores the course number of the currently expanded course (null by default)
 
+  const [savedCourses, setSavedCourses] = useState([]);  // tracks saved courses
+
   // useEffect hook to fetch course data from the backend when the component loads
   useEffect(() => {
     // fetch data from the backend API endpoint
@@ -34,9 +36,18 @@ function Explore() {
   return (
     <div className="Explore">
       <div className="calendar-button">
-        <Link to="/calendar">
+        {/* <Link to="/calendar">
             <img src={shopping_cart_logo} alt="Go to Calendar" />
-        </Link>
+        </Link> */}
+        {console.log("Saved Courses (before Link):", savedCourses)}
+        <Link
+          to={{
+            pathname: "/calendar", 
+            state: { savedCourses }  // Pass savedCourses as state to CalendarPage
+          }}
+          >
+          <img src={shopping_cart_logo} alt="Go to Calendar" />
+          </Link>
       </div>
 
       <div className="sidebar"> 
@@ -59,9 +70,26 @@ function Explore() {
               {filteredCourses.map((course) => ( // `map` iterates over the `filteredCourses` array and renders a list item for each course
                 <li key={course.course_number} className="course-item"> 
                   {/* add to calendar icon */}
-                  <Link to={`/calendar/${course.id}/${encodeURIComponent(course.name)}`} className="add-to-calendar-button">
+                  {/* <Link to={`/calendar/${course.id}/${encodeURIComponent(course.name)}`} className="add-to-calendar-button">
                     <img src={shopping_cart_logo} alt="Add to Calendar" />
-                  </Link>
+                  </Link> */}
+                  {/* add to calendar button */}
+                  <button
+                    // onClick={() => {
+                    //   setSavedCourses((prevCourses) => [...prevCourses, course]); // add course to the savedCourses state
+                    // }}
+                    onClick={() => {
+                      setSavedCourses((prevCourses) => {
+                        const updatedCourses = [...prevCourses, course];
+                        console.log(updatedCourses); // check if the courses are being added correctly
+                        return updatedCourses;
+                      });
+                    }}
+                    
+                    className="add-to-calendar-button"
+                  >
+                    <img src={shopping_cart_logo} alt="Add to Calendar" />
+                  </button>
                   <div
                     className="course-summary"
                     onClick={() =>

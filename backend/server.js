@@ -13,7 +13,7 @@ app.use(express.json());
 
 // setting up postgreSQL connection
 const pool = new Pool({ 
-    user: "postgres",           
+    user: "guzaoqianshu",           
     host: "localhost",          
     database: "courses",      
     password: "skibidi", // my postgres password
