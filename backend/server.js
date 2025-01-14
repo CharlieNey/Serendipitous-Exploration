@@ -22,11 +22,11 @@ const pool = new Pool({
     port: 5432, // default port num         
 });
 
-const router = express.Router();
+const router = express.Router(); 
 
 // Routes
 app.get('/', (req, res) => {
-    res.send('Test server is running');
+    res.send('Test server is running'); // this is sending 
 });
 
 
@@ -42,7 +42,7 @@ app.get('/api/courses', async (req, res) => {
 });
 
 
-// defining the /api/courses api route
+// defining the /api/nodes api route
 app.get('/api/nodes', async (req, res) => { 
     try {
         const result = await pool.query("SELECT * FROM Nodes");
