@@ -69,7 +69,7 @@ router.get('/:search', async (req, res) => {
     try {
         const search = req.params.search;
         console.log(search)
-        const query = "SELECT * FROM courses WHERE course_title LIKE '%" + search + "%'";
+        const query = "SELECT * FROM courses WHERE LOWER(course_title) LIKE '%" + search + "%' OR LOWER(course_title) LIKE '" + search + "%' OR LOWER(course_title) LIKE '%" + search +"'";
         console.log(query)
         const result = await pool.query(query);
         res.json(result.rows);
