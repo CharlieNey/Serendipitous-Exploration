@@ -40,14 +40,17 @@ const GraphPage = () => {
       const svg = d3
         .select("#simulation-svg")
         .attr("width", width)
-        .attr("height", height);
+        .attr("height", height)
+        // .call(d3.zoom().on("zoom", (event) => {
+        //   svg.attr("transform", event.transform);
+        // }))
 
       svg.append("g").attr("class", "links");
       svg.append("g").attr("class", "nodes");
     
       const simulation = d3
         .forceSimulation(nodes)
-        .force("charge", d3.forceManyBody().strength(-100))
+        .force("charge", d3.forceManyBody().strength(-100)) // PLAY AROUND WITH STRENGTH IF THEY GET TOO FAR
         .force("center", d3.forceCenter(width / 2, height / 2)) 
         .force("link", d3.forceLink(links).id(d => d.id).distance(100)) // so we can use the direct course "id" to connect courses
 
