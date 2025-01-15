@@ -13,7 +13,7 @@ function Explore() {
   // useEffect hook to fetch course data from the backend when the component loads
   useEffect(() => {
     // fetch data from the backend API endpoint
-    fetch("http://localhost:3000/api/courses") // sends a GET request to the URL
+    fetch("http://localhost:3001/api/courses") // sends a GET request to the URL
       .then((response) => response.json()) // converts the response into a JavaScript object (JSON)
       .then((data) => {
         setCourseList(data); // stores the fetched data in the `courseList` state
@@ -33,12 +33,6 @@ function Explore() {
 
   return (
     <div className="Explore">
-      <div className="calendar-button">
-        <Link to="/calendar">
-            <img src={shopping_cart_logo} alt="Go to Calendar" />
-        </Link>
-      </div>
-
       <div className="sidebar"> 
         <div className="search-section"> 
           <input
@@ -58,10 +52,6 @@ function Explore() {
             <ul className="course-list"> {/* this is an unordered list of courses */}
               {filteredCourses.map((course) => ( // `map` iterates over the `filteredCourses` array and renders a list item for each course
                 <li key={course.course_number} className="course-item"> 
-                  {/* add to calendar icon */}
-                  <Link to={`/calendar/${course.id}/${encodeURIComponent(course.name)}`} className="add-to-calendar-button">
-                    <img src={shopping_cart_logo} alt="Add to Calendar" />
-                  </Link>
                   <div
                     className="course-summary"
                     onClick={() =>
