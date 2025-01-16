@@ -55,6 +55,19 @@ function Explore() {
             <ul className="course-list"> {/* this is an unordered list of courses */}
               {courseList.map((course) => ( // `map` iterates over the `courseList` array and renders a list item for each course
                 <li key={course.course_number} className="course-item"> 
+                  <button
+                    // onClick={() => {
+                    //   setSavedCourses((prevCourses) => {
+                    //     const updatedCourses = [...prevCourses, course];
+                    //     console.log(updatedCourses); // check if the courses are being added correctly
+                    //     return updatedCourses;
+                    //   });
+                    // }}
+                    
+                    className="add-to-calendar-button"
+                  >
+                    <img src={shopping_cart_logo} alt="Add to Calendar" />
+                  </button>
                   <div
                     className="course-summary"
                     onClick={() =>
