@@ -28,9 +28,6 @@ function Display() {
         fetchCourses();
     }, [searchTerm]);
 
-    console.log("TEST1")
-    console.log(courseList)
-
     return (
         <div className="Explore">
           <div className="sidebar"> 

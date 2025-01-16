@@ -10,26 +10,29 @@ function Explore() {
   const [isLoading, setIsLoading] = useState(true); // loading state (true while data is being fetched)
   const [expandedCourse, setExpandedCourse] = useState(null); // stores the course number of the currently expanded course (null by default)
 
-  // useEffect hook to fetch course data from the backend when the component loads
-  useEffect(() => {
-    // fetch data from the backend API endpoint
-    fetch("http://localhost:3001/api/courses") // sends a GET request to the URL
-      .then((response) => response.json()) // converts the response into a JavaScript object (JSON)
-      .then((data) => {
-        setCourseList(data); // stores the fetched data in the `courseList` state
-        setIsLoading(false); // sets `isLoading` to false after data is fetched
-      })
-      .catch((error) => {
-        console.error("Error fetching courses:", error); // logs the error if the request fails
-        setIsLoading(false); // also stops the loading state on error
-      });
-  }, []); // the empty dependency array ensures this effect only runs once when the component mounts
+  const fetchCourses = async () => {
+    try {
+      setIsLoading(true);
+        if (searchTerm == "") {
+            const response = await fetch("http://localhost:3001/api/courses");
+            const response_json = await response.json();
+            setCourseList(response_json);
+            setIsLoading(false);
+        } else {
+            const response = await fetch("http://localhost:3001/mycourses/" + searchTerm);
+            const response_json = await response.json();
+            setCourseList(response_json);
+            setIsLoading(false);
+        }
+    } catch (error) {
+        console.error('Error fetching nodes:', error);
+    }
+  };
 
-  // filtering the course list based on the search term
-  const filteredCourses = courseList.filter((course) =>
-    `${course.course_number} ${course.course_title} ${course.description}`.toLowerCase().includes(searchTerm.toLowerCase()) 
-    // converts everything to lowercase for case-insensitive matching
-  );
+    // useEffect hook to fetch course data from the backend when the component loads
+    useEffect(() => {
+        fetchCourses();
+    }, [searchTerm]);
 
   return (
     <div className="Explore">
@@ -46,11 +49,11 @@ function Explore() {
           {/* this is apparently something called conditional rendering where it shows different content depending on the state */}
           {isLoading ? (
             <p>Loading courses...</p> // displayed when `isLoading` is true (data is still being fetched)
-          ) : searchTerm && filteredCourses.length === 0 ? (
+          ) : searchTerm && courseList.length === 0 ? (
             <p>No courses found matching your search.</p> // displayed if there are no matching courses for the search term
           ) : (
             <ul className="course-list"> {/* this is an unordered list of courses */}
-              {filteredCourses.map((course) => ( // `map` iterates over the `filteredCourses` array and renders a list item for each course
+              {courseList.map((course) => ( // `map` iterates over the `courseList` array and renders a list item for each course
                 <li key={course.course_number} className="course-item"> 
                   <div
                     className="course-summary"

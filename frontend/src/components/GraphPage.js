@@ -41,9 +41,9 @@ const GraphPage = () => {
         .select("#simulation-svg")
         .attr("width", width)
         .attr("height", height)
-        // .call(d3.zoom().on("zoom", (event) => {
-        //   svg.attr("transform", event.transform);
-        // }))
+        .call(d3.zoom().on("zoom", (event) => {
+          svg.attr("transform", event.transform);
+        }))
 
       svg.append("g").attr("class", "links");
       svg.append("g").attr("class", "nodes");
