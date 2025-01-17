@@ -15,7 +15,6 @@ const GraphPage = () => {
   const {nodes2, links2, fetchNodes, fetchLinks} = useContext(GraphContext);
   const [searchTerm, setSearchTerm] = useState("")
 
-
   // Fetch values for state variables
   useEffect(() => {
     fetchNodes()
@@ -29,8 +28,10 @@ const GraphPage = () => {
 
   const links = []; 
   for (let i in links2) { 
-    links.push({source : links2[i]["source"], target : links2[i]["target"]}) // grabs source and target
+    links.push({source : links2[i]["source"], target : links2[i]["target"], score : links2[i]["similarity"]}) // grabs source and target
   }
+
+  const color = d3.scaleSequential(d3.interpolateTurbo);
 
   // Create graph
     useEffect(() => {
@@ -63,7 +64,7 @@ const GraphPage = () => {
             .attr("y1", (d) => d.source.y)
             .attr("x2", (d) => d.target.x)
             .attr("y2", (d) => d.target.y)
-            .attr("stroke", "black")
+            .style("stroke", (d) => color((d.score - 0.5) * 2))
             .attr("stroke-width", 2);
 
         const nodeGroup = d3.select(".nodes")

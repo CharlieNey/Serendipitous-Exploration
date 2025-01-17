@@ -10,13 +10,14 @@ CREATE TABLE Similarities (
 );
 
 -- TO FILL IN SIMILARITIES TABLE DATA: 
--- \COPY similarities (id, target, similarity)FROM '//Users/cathy/Desktop/carleton/senior_year/comps/Serendipitous-Exploration/backend/data/graph_data/charlie_graph.csv'DELIMITER  ',' CSV HEADER;
+\COPY similarities (id, target, similarity)FROM 'data/graph_data/charlie_graph.csv'DELIMITER  ',' CSV HEADER;
 CREATE TABLE Nodes (
     id text
 );
 CREATE TABLE Connections (
   source text,
-  target text
+  target text,
+  similarity float
 );
 
 
@@ -26,5 +27,5 @@ SELECT DISTINCT id FROM similarities
 ORDER BY id;
 
 INSERT INTO 
-    Connections (source, target)
-SELECT id, target FROM similarities;
+    Connections (source, target, similarity)
+SELECT id, target, similarity FROM similarities;
