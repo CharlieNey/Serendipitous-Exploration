@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from "react"; // useState manages component state; useEffect handles side effects (like data fetching)
+import React, { useState, useEffect, useContext } from "react"; // useState manages component state; useEffect handles side effects (like data fetching)
 import { Link } from 'react-router-dom'; // Link is used for navigation between pages
 import "./ExplorePage.css"; 
 import shopping_cart_logo from '../images/shopping_cart_logo.png'; 
+import { SavedCoursesContext } from './SavedCoursesContext.js';
 
 function Explore() {
+  const {savedCourses, setSavedCourses} = useContext(SavedCoursesContext);
+
   // useState hooks to define component state variables
   const [searchTerm, setSearchTerm] = useState(""); // keeps track of the search input (empty by default)
   const [courseList, setCourseList] = useState([]); // stores the list of courses fetched from the server
@@ -36,6 +39,11 @@ function Explore() {
 
   return (
     <div className="Explore">
+      <div className="calendar-button">
+        <Link to="/calendar">
+            <img src={shopping_cart_logo} alt="Go to Calendar" />
+        </Link>
+      </div>
       <div className="sidebar"> 
         <div className="search-section"> 
           <input
@@ -56,18 +64,18 @@ function Explore() {
               {courseList.map((course) => ( // `map` iterates over the `courseList` array and renders a list item for each course
                 <li key={course.course_number} className="course-item"> 
                   <button
-                    // onClick={() => {
-                    //   setSavedCourses((prevCourses) => {
-                    //     const updatedCourses = [...prevCourses, course];
-                    //     console.log(updatedCourses); // check if the courses are being added correctly
-                    //     return updatedCourses;
-                    //   });
-                    // }}
-                    
+                    onClick={() => {
+                      setSavedCourses((prevCourses) => {
+                        const updatedCourses = [...prevCourses, course];
+                        console.log(updatedCourses); // check if the courses are being added correctly
+                        return updatedCourses;
+                      });
+                    }}
                     className="add-to-calendar-button"
                   >
                     <img src={shopping_cart_logo} alt="Add to Calendar" />
                   </button>
+                  
                   <div
                     className="course-summary"
                     onClick={() =>
@@ -80,7 +88,14 @@ function Explore() {
                     <strong>{course.course_number}:</strong> {course.course_title}
                   </div>
                   {expandedCourse === course.course_number && ( // show course details only if `expandedCourse` matches the current course number
-                    <div className="course-details">
+                    <div 
+                    className="course-details"
+                    onClick={() =>
+                      setExpandedCourse(
+                        expandedCourse === course.course_number ? null : course.course_number // toggles between expanding and collapsing course details
+                      )
+                    }
+                    >
                       <em>{course.credits}</em> - {course.offered_term} <br />
                       Faculty: {course.faculty} <br /> 
                       Time: {course.time}, Location: {course.location} <br /> 

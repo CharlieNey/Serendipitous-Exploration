@@ -7,22 +7,24 @@ import CalendarPage from './components/CalendarPage';
 import GraphPage from './components/GraphPage';
 import TestPage from './components/TestPage';
 import { GraphProvider } from "./components/GraphContext";
+import { SavedCoursesProvider } from './components/SavedCoursesContext.js';
 
 const App = () => {
   return (
-    <GraphProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/explore" element={<ExplorePage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/calendar" element={<CalendarPage />} />
-          <Route path="/calendar/:id/:name" element={<CalendarPage />} />
-          <Route path="/graph" element={<GraphPage />} />
-          <Route path="/test-page" element={<TestPage />} />
-        </Routes>
-      </Router>
-    </GraphProvider>
+    <SavedCoursesProvider>
+      <GraphProvider>
+        <Router>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/explore" element={<ExplorePage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/calendar" element={<CalendarPage />} />
+            <Route path="/graph" element={<GraphPage />} />
+            <Route path="/test-page" element={<TestPage />} />
+          </Routes>
+        </Router>
+      </GraphProvider>
+    </SavedCoursesProvider>
   );
 };
 
