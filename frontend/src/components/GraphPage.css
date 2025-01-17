@@ -1,4 +1,6 @@
-circle {
+
+  
+  circle {
     fill: rgb(123, 165, 199); 
     stroke: #fff; 
     stroke-width: 2px;
@@ -11,5 +13,5 @@ circle {
     text-anchor: middle;
     font-family: "Helvetica Neue", Helvetica, sans-serif;
     fill: #666;
-    font-size: 16px;
+    font-size: 4px;
   }
