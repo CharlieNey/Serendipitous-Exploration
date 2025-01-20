@@ -5,6 +5,12 @@ import "./GraphPage.css";
 import shopping_cart_logo from '../images/shopping_cart_logo.png';
 import { GraphContext } from './GraphContext.js';
 
+function getNodeColor(node, selectedNode) {
+  if(node == selectedNode) {
+    return "red"
+  }
+  return "pink"
+}
 
 const GraphPage = () => {
   // Mock dummy graph. Code adapted from d3indepth.com. only text, maybe go back to circle  with hover.
@@ -14,6 +20,7 @@ const GraphPage = () => {
   // Import state variables and fetching methods
   const {nodes2, links2, fetchNodes, fetchLinks} = useContext(GraphContext);
   const [searchTerm, setSearchTerm] = useState("")
+  const [selectedNode, setSelectedNode] = useState("MUSC 204")
 
   // Fetch values for state variables
   useEffect(() => {
@@ -31,7 +38,7 @@ const GraphPage = () => {
     links.push({source : links2[i]["source"], target : links2[i]["target"], score : links2[i]["similarity"]}) // grabs source and target
   }
 
-  const color = d3.scaleSequential(d3.interpolateTurbo);
+  const color = d3.scaleSequential(d3.interpolatePuBuGn);
 
   // Create graph
     useEffect(() => {
@@ -64,8 +71,8 @@ const GraphPage = () => {
             .attr("y1", (d) => d.source.y)
             .attr("x2", (d) => d.target.x)
             .attr("y2", (d) => d.target.y)
-            .style("stroke", (d) => color((d.score - 0.5) * 2))
-            .attr("stroke-width", 2);
+            .style("stroke", (d) => color((d.score - 0.5) * 2)) // Change to min similarity score
+            .style("stroke-width", 2);
 
         const nodeGroup = d3.select(".nodes")
           .selectAll("g")
@@ -78,7 +85,14 @@ const GraphPage = () => {
           .selectAll("circle")
           .data((d) => [d]) 
           .join("circle")
-          .attr("r", 5)
+          .style("r", 5)
+          .style("fill", (d) => getNodeColor(d.id, selectedNode))
+          .style("stroke-width", 0.5)
+          .style("stroke", "black")
+          // .on("click", function (d) {
+          //   setSelectedNode(d.id)
+          //   console.log(d.id)
+          // })
         
         // adding the text to the circles
         nodeGroup
