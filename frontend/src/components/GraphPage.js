@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import * as d3 from "d3";
+import { select, selectAll } from 'd3-selection';
 import { Link } from 'react-router-dom';
 import "./GraphPage.css";
 import shopping_cart_logo from '../images/shopping_cart_logo.png';
@@ -93,6 +94,11 @@ const GraphPage = () => {
           //   setSelectedNode(d.id)
           //   console.log(d.id)
           // })
+
+          selectAll('circle')
+          .on('click', function(e, d) {
+            setSelectedNode(d.id)
+          });
         
         // adding the text to the circles
         nodeGroup
