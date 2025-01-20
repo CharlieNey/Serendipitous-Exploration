@@ -8,13 +8,12 @@ import { GraphContext } from './GraphContext.js';
 
 const GraphPage = () => {
   // Mock dummy graph. Code adapted from d3indepth.com. only text, maybe go back to circle  with hover.
-  const width = 1000;
-  const height = 500;
+  const width = 1500;
+  const height = 1500;
 
   // Import state variables and fetching methods
   const {nodes2, links2, fetchNodes, fetchLinks} = useContext(GraphContext);
   const [searchTerm, setSearchTerm] = useState("")
-
 
   // Fetch values for state variables
   useEffect(() => {
@@ -29,9 +28,10 @@ const GraphPage = () => {
 
   const links = []; 
   for (let i in links2) { 
-    links.push({source : links2[i]["source"], target : links2[i]["target"]}) // grabs source and target
+    links.push({source : links2[i]["source"], target : links2[i]["target"], score : links2[i]["similarity"]}) // grabs source and target
   }
 
+  const color = d3.scaleSequential(d3.interpolateTurbo);
 
   // Create graph
     useEffect(() => {
@@ -40,16 +40,20 @@ const GraphPage = () => {
       const svg = d3
         .select("#simulation-svg")
         .attr("width", width)
-        .attr("height", height);
+        .attr("height", height)
+        .call(d3.zoom().on("zoom", (event) => {
+          svg.attr("transform", event.transform);
+        }))
 
       svg.append("g").attr("class", "links");
       svg.append("g").attr("class", "nodes");
-    
+
+
       const simulation = d3
         .forceSimulation(nodes)
-        .force("charge", d3.forceManyBody().strength(-100))
-        .force("center", d3.forceCenter(width / 2, height / 2)) 
-        .force("link", d3.forceLink(links).id(d => d.id).distance(100)) // so we can use the direct course "id" to connect courses
+        .force("charge", d3.forceManyBody().strength(-10)) // PLAY AROUND WITH STRENGTH IF THEY GET TOO FAR; spreads nodes apart
+        .force("center", d3.forceCenter(width / 2, height / 2)) // location on page
+        .force("link", d3.forceLink(links).id(d => d.id).distance(10)) // so we can use the direct course "id" to connect courses; links nodes together
 
         .on("tick", () => {
           d3.select(".links")
@@ -60,7 +64,7 @@ const GraphPage = () => {
             .attr("y1", (d) => d.source.y)
             .attr("x2", (d) => d.target.x)
             .attr("y2", (d) => d.target.y)
-            .attr("stroke", "black")
+            .style("stroke", (d) => color((d.score - 0.5) * 2))
             .attr("stroke-width", 2);
 
         const nodeGroup = d3.select(".nodes")
@@ -74,7 +78,7 @@ const GraphPage = () => {
           .selectAll("circle")
           .data((d) => [d]) 
           .join("circle")
-          .attr("r", 40)
+          .attr("r", 5)
         
         // adding the text to the circles
         nodeGroup
@@ -82,9 +86,9 @@ const GraphPage = () => {
           .data((d) => [d]) 
           .join("text")
           .text((d) => d.id)
-          .attr("dy", 5)
+          .attr("dy", 1)
         });
-
+    
       return () => {
         simulation.stop();
         svg.selectAll(".links").remove();
