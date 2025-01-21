@@ -1,4 +1,4 @@
-**To run dummy graph**
+**To run graph**
 1. After installing postgresql, run: **brew services start postgresql**
 2. Start postgres command line by typing **psql postgres**
 3. If you don't have the "courses" database, create it by typing **CREATE DATABASE courses;**  (to see your list of dbs, type **\l**)
