@@ -4,9 +4,9 @@ import { select, selectAll } from 'd3-selection';
 import { Link } from 'react-router-dom';
 import "./GraphPage.css";
 import shopping_cart_logo from '../images/shopping_cart_logo.png';
-import { GraphContext } from './GraphContext.js';
 import { SavedCoursesContext } from './SavedCoursesContext.js';
-// import "./ExplorePage.css"; 
+import { SearchContext } from './SearchContext.js';
+import { GraphContext } from './GraphContext.js';
 
 function getNodeColor(node, selectedNode) {
   if (node === selectedNode) {
@@ -22,50 +22,18 @@ const GraphPage = () => {
 
   // Import state variables and fetching methods
   const {savedCourses, setSavedCourses} = useContext(SavedCoursesContext);
-  const { nodes2, links2, fetchNodes, fetchLinks } = useContext(GraphContext);
-  const [courseList, setCourseList] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedNode, setSelectedNode] = useState([]);
-
+  const {courseList, searchTerm, isLoading, setSearchTerm, fetchCourses} = useContext(SearchContext);
+  const { selectedNode, nodes, links, setSelectedNode, fetchNodes, fetchLinks } = useContext(GraphContext);
+  
   // Fetch values for state variables
   useEffect(() => {
     fetchNodes();
     fetchLinks();
   }, []);
 
-  const fetchCourses = async () => {
-    try {
-      setIsLoading(true);
-      if (searchTerm === "") {
-        const response = await fetch("http://localhost:3001/api/courses");
-        const response_json = await response.json();
-        setCourseList(response_json);
-        setIsLoading(false);
-      } else {
-        const response = await fetch("http://localhost:3001/mycourses/" + searchTerm);
-        const response_json = await response.json();
-        setCourseList(response_json);
-        setIsLoading(false);
-      }
-    } catch (error) {
-      console.error('Error fetching nodes:', error);
-    }
-  };
-
   useEffect(() => {
     fetchCourses();
   }, [searchTerm]);
-
-  const nodes = [];
-  for (let i in nodes2) {
-    nodes.push({ id: nodes2[i]["id"] }); // grabs what will be course names
-  }
-
-  const links = [];
-  for (let i in links2) {
-    links.push({ source: links2[i]["source"], target: links2[i]["target"], score: links2[i]["similarity"] }); // grabs source and target
-  }
 
   const color = d3.scaleSequential(d3.interpolatePuBuGn);
 
@@ -137,7 +105,7 @@ const GraphPage = () => {
       svg.selectAll(".links").remove();
       svg.selectAll(".nodes").remove();
     };
-  }, [nodes, links]);
+  }, [nodes, links, selectedNode]);
 
   return (
     <div className="Explore">
