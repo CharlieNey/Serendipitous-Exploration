@@ -37,6 +37,12 @@ def filter_courses(df):
         lambda x: f"{int(x)} credits" if pd.notnull(x) else ""
     )
     
+    print(df.shape)  # Before filtering
+    print(filtered_df.shape)  # After filtering
+
+    print(df.columns)  # Before filtering
+    print(filtered_df.columns)  # After filtering
+
     return filtered_df
 
 def process_course_data(file_path):
@@ -57,5 +63,5 @@ def process_course_data(file_path):
     
     return filtered_df
 
-filtered_courses = process_course_data('courses2.csv')
-filtered_courses.to_csv('filtered_courses.csv', index=False)
+filtered_courses = process_course_data('backend/data/courses2.csv')
+filtered_courses.to_csv('backend/data/filtered_courses.csv', index=False)

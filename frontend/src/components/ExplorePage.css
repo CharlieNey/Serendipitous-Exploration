@@ -19,7 +19,8 @@
 
 .sidebar {
   width: 25%;
-  padding: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
   background-color: #f4f4f4;
   border-right: 1px solid #ddd;
   height: 100vh;
@@ -29,12 +30,13 @@
 }
 
 .search-section {
-  margin-bottom: 20px;
+  padding: 10px;
 }
 
 .search-input {
-  width: 95%;
+  width: 91.5%;
   padding: 10px;
+  margin-top: 20px;
   margin-bottom: 10px;
   border-radius: 5px;
 }
@@ -52,10 +54,21 @@
   cursor: pointer;
 }
 
+.add-to-calendar-button {
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;   
+  float: right;
+  margin-left: 10px;
+}
+
 .add-to-calendar-button img {
   width: 20px;
   height: 20px;
-  float: right;
 }
 
 /* Divider */
@@ -66,22 +79,6 @@
   margin: 20px 0;
 }
 
-circle {
-  fill: rgb(138, 175, 206); 
-  stroke: #fff; 
-  stroke-width: 2px;
-  transition: transform 0.2s ease; 
-}
-line {
-  stroke: #ccc;
-  stroke-width: 2px;
-}
-text {
-  text-anchor: middle;
-  font-family: "Helvetica Neue", Helvetica, sans-serif;
-  fill: #666;
-  font-size: 16px;
-}
 
 
 
