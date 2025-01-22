@@ -16,7 +16,7 @@ function Explore() {
   const fetchCourses = async () => {
     try {
       setIsLoading(true);
-        if (searchTerm == "") {
+        if (searchTerm === "") {
             const response = await fetch("http://localhost:3001/api/courses");
             const response_json = await response.json();
             setCourseList(response_json);
