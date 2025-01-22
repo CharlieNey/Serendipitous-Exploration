@@ -137,7 +137,7 @@ const GraphPage = () => {
       svg.selectAll(".links").remove();
       svg.selectAll(".nodes").remove();
     };
-  }, [nodes, links]);
+  }, [nodes, links, selectedNode]);
 
   return (
     <div className="Explore">
