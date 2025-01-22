@@ -5,7 +5,6 @@ export const GraphContext = createContext();
 export const GraphProvider = ({ children }) => {
     const [nodes, setNodeList] = useState([]); // stores the list of courses fetched from the server, which act as the graph nodes
     const [links, setConnectionList] = useState([]); // stores the list of connections fetched from the server, which connect the graph nodes
-    const [searchTerm, setSearchTerm] = useState("")
     const [selectedNode, setSelectedNode] = useState("MUSC 204")
 
     const fetchNodes = async () => {
@@ -44,11 +43,9 @@ export const GraphProvider = ({ children }) => {
     return (
         <GraphContext.Provider
             value={{
-                searchTerm,
                 selectedNode,
                 nodes,
                 links,
-                setSearchTerm,
                 setSelectedNode,
                 fetchNodes,
                 fetchLinks

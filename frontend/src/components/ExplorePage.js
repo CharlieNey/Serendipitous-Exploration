@@ -3,34 +3,12 @@ import { Link } from 'react-router-dom'; // Link is used for navigation between 
 import "./ExplorePage.css"; 
 import shopping_cart_logo from '../images/shopping_cart_logo.png'; 
 import { SavedCoursesContext } from './SavedCoursesContext.js';
+import { SearchContext } from './SearchContext.js';
 
 function Explore() {
   const {savedCourses, setSavedCourses} = useContext(SavedCoursesContext);
-
-  // useState hooks to define component state variables
-  const [searchTerm, setSearchTerm] = useState(""); // keeps track of the search input (empty by default)
-  const [courseList, setCourseList] = useState([]); // stores the list of courses fetched from the server
-  const [isLoading, setIsLoading] = useState(true); // loading state (true while data is being fetched)
+  const {courseList, searchTerm, isLoading, setSearchTerm, fetchCourses} = useContext(SearchContext);
   const [expandedCourse, setExpandedCourse] = useState(null); // stores the course number of the currently expanded course (null by default)
-
-  const fetchCourses = async () => {
-    try {
-      setIsLoading(true);
-        if (searchTerm === "") {
-            const response = await fetch("http://localhost:3001/api/courses");
-            const response_json = await response.json();
-            setCourseList(response_json);
-            setIsLoading(false);
-        } else {
-            const response = await fetch("http://localhost:3001/mycourses/" + searchTerm);
-            const response_json = await response.json();
-            setCourseList(response_json);
-            setIsLoading(false);
-        }
-    } catch (error) {
-        console.error('Error fetching nodes:', error);
-    }
-  };
 
     // useEffect hook to fetch course data from the backend when the component loads
     useEffect(() => {
