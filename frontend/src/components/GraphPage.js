@@ -15,8 +15,8 @@ function getNodeColor(node, selectedNode) {
 
 const GraphPage = () => {
   // Mock dummy graph. Code adapted from d3indepth.com. only text, maybe go back to circle  with hover.
-  const width = 1500;
-  const height = 1500;
+  const width = 1000;
+  const height = 1000;
 
   // Import state variables and fetching methods
   const {nodes, links, fetchNodes, fetchLinks, searchTerm, setSearchTerm, selectedNode, setSelectedNode} = useContext(GraphContext);
@@ -103,11 +103,6 @@ const GraphPage = () => {
 
   return (
     <div className="Explore">
-      <div className="calendar-button">
-        <Link to="/calendar">
-            <img src={shopping_cart_logo} alt="Go to Calendar" />
-        </Link>
-      </div>
 
       <div className="sidebar">
         <div className="search-section">
@@ -134,6 +129,12 @@ const GraphPage = () => {
           )} */}
         </div>
         <div className="divider"></div>
+      </div>
+
+      <div className="calendar-button">
+        <Link to="/calendar">
+            <img src={shopping_cart_logo} alt="Go to Calendar" />
+        </Link>
       </div>
 
       <div className="simulation-container">
