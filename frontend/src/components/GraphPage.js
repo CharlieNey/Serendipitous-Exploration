@@ -19,25 +19,14 @@ const GraphPage = () => {
   const height = 1500;
 
   // Import state variables and fetching methods
-  const {nodes2, links2, fetchNodes, fetchLinks} = useContext(GraphContext);
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedNode, setSelectedNode] = useState("MUSC 204")
+  const {nodes, links, fetchNodes, fetchLinks, searchTerm, setSearchTerm, selectedNode, setSelectedNode} = useContext(GraphContext);
+
 
   // Fetch values for state variables
   useEffect(() => {
     fetchNodes()
     fetchLinks()
   }, []);
-
-  const nodes = [];
-  for (let i in nodes2) {
-    nodes.push({id : nodes2[i]["id"]}) // grabs what will be course names
-  }
-
-  const links = []; 
-  for (let i in links2) { 
-    links.push({source : links2[i]["source"], target : links2[i]["target"], score : links2[i]["similarity"]}) // grabs source and target
-  }
 
   const color = d3.scaleSequential(d3.interpolatePuBuGn);
 
@@ -90,10 +79,6 @@ const GraphPage = () => {
           .style("fill", (d) => getNodeColor(d.id, selectedNode))
           .style("stroke-width", 0.5)
           .style("stroke", "black")
-          // .on("click", function (d) {
-          //   setSelectedNode(d.id)
-          //   console.log(d.id)
-          // })
 
           selectAll('circle')
           .on('click', function(e, d) {
@@ -114,7 +99,7 @@ const GraphPage = () => {
         svg.selectAll(".links").remove();
         svg.selectAll(".nodes").remove();
       };
-  }, [nodes, links]);
+  }, [nodes, links, selectedNode]);
 
   return (
     <div className="Explore">
