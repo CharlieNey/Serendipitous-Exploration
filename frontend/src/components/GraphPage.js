@@ -116,7 +116,7 @@ const GraphPage = () => {
           .style("r", 5)
           .style("fill", (d) => getNodeColor(d.id, selectedNode))
           .style("stroke-width", 0.5)
-          .style("stroke", "black");
+          .style("stroke", "black")
 
         selectAll('circle')
           .on('click', function (e, d) {
@@ -129,15 +129,15 @@ const GraphPage = () => {
           .data((d) => [d])
           .join("text")
           .text((d) => d.id)
-          .attr("dy", 1);
-      });
-
-    return () => {
-      simulation.stop();
-      svg.selectAll(".links").remove();
-      svg.selectAll(".nodes").remove();
-    };
-  }, [nodes, links]);
+          .attr("dy", 1)
+        });
+    
+      return () => {
+        simulation.stop();
+        svg.selectAll(".links").remove();
+        svg.selectAll(".nodes").remove();
+      };
+  }, [nodes, links, selectedNode]);
 
   return (
     <div className="Explore">
