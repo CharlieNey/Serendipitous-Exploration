@@ -8,9 +8,30 @@ import { SavedCoursesContext } from './SavedCoursesContext.js';
 import { SearchContext } from './SearchContext.js';
 import { GraphContext } from './GraphContext.js';
 
-function getNodeColor(node, selectedNode) {
+function getConnectedNodes(links, node) {
+  var connectedNodes = []
+  for (var i in links) {
+    if (links[i].source.id === node) {
+      connectedNodes.push(links[i].target.id)
+    } else if (links[i].target.id === node){
+      connectedNodes.push(links[i].source.id)
+    }
+  }
+  return connectedNodes
+}
+
+function getOpacity(node, selectedNode, connectedNodes) {
+  if (selectedNode === "" || node === selectedNode || connectedNodes.includes(node)) {
+    return 1;
+  }
+  return 0.5;
+}
+
+function getNodeColor(node, selectedNode, connectedNodes) {
   if (node === selectedNode) {
     return "red";
+  } else if (connectedNodes.includes(node)){
+    return "green";
   }
   return "pink";
 }
@@ -24,6 +45,7 @@ const GraphPage = () => {
   const {savedCourses, setSavedCourses} = useContext(SavedCoursesContext);
   const {courseList, searchTerm, isLoading, setSearchTerm, fetchCourses} = useContext(SearchContext);
   const { selectedNode, nodes, links, setSelectedNode, fetchNodes, fetchLinks } = useContext(GraphContext);
+  const [clicked, setClicked] = useState(false)
   
   // Fetch values for state variables
   useEffect(() => {
@@ -93,25 +115,37 @@ useEffect(() => {
       .data(nodes)
       .join("g")
 
+    var connectedNodes = getConnectedNodes(links, selectedNode)
     nodeGroup
         .selectAll("circle")
         .data((d) => [d])
         .join("circle")
         .style("r", 5)
-        .style("fill", (d) => getNodeColor(d.id, selectedNode))
+        .style("fill", (d) => getNodeColor(d.id, selectedNode, connectedNodes))
+        .style("opacity", (d) => getOpacity(d.id, selectedNode, connectedNodes))
         .style("stroke-width", 0.5)
         .style("stroke", "black");
 
       selectAll('circle')
-        // .on('click', function (e, d) {
-        //   setSelectedNode(d.id);
-        // });
+        .on('click', function (e, d) {
+          if (clicked === true && selectedNode === d.id) {
+            setSelectedNode("");
+            setClicked(false);
+          } else {
+            setSelectedNode(d.id);
+            setClicked(true);
+          }
+
+        })
         .on('mouseover', function (e, d) {
-          // d.style("fill", "green")
-          setSelectedNode(d.id);
+          if(!clicked){
+            setSelectedNode(d.id);
+          }
         })
         .on('mouseout', function (e, d) {
-          setSelectedNode("");
+          if(!clicked){
+            setSelectedNode("");
+          }
         })
 
       // Adding the text to the circles
@@ -122,53 +156,6 @@ useEffect(() => {
         .text((d) => d.id)
         .attr("dy", 1);
   });
-
-  // useEffect(() => {
-  //   const svg = d3
-  //   .select("#simulation-svg")
-  //   .attr("width", width)
-  //   .attr("height", height)
-  //   .call(d3.zoom().on("zoom", (event) => {
-  //     svg.attr("transform", event.transform);
-  //   }));
-
-  //   svg.append("g").attr("class", "links");
-  //   svg.append("g").attr("class", "nodes");
-
-  //   const nodeGroup = d3.select(".nodes")
-  //       .selectAll("circle")
-  //       .data((d) => [d])
-  //       .join("circle")
-  //       .style("r", 5)
-  //       .style("fill", (d) => getNodeColor(d.id, selectedNode))
-  //       .style("stroke-width", 0.5)
-  //       .style("stroke", "black");
-
-  //     selectAll('circle')
-  //       .on('click', function (e, d) {
-  //         setSelectedNode(d.id);
-  //       });
-  //       // .on('mouseover', function (e, d) {
-  //       //   // d.style("fill", "green")
-  //       //   setSelectedNode(d.id);
-  //       // })
-  //       // .on('mouseout', function (e, d) {
-  //       //   setSelectedNode("");
-  //       // })
-
-  //     // Adding the text to the circles
-  //     nodeGroup
-  //       .selectAll("text")
-  //       .data((d) => [d])
-  //       .join("text")
-  //       .text((d) => d.id)
-  //       .attr("dy", 1);
-
-  //       return () => {
-  //         svg.selectAll(".links").remove();
-  //         svg.selectAll(".nodes").remove();
-  //       };
-  // }, [selectedNode]);
 
   return (
     <div className="Explore">
@@ -206,7 +193,6 @@ useEffect(() => {
                     onClick={(e) => {
                       setSavedCourses((prevCourses) => {
                         const updatedCourses = [...prevCourses, course];
-                        console.log(updatedCourses);
                         return updatedCourses;
                       });
                     }}
