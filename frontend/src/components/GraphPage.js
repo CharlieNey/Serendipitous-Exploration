@@ -45,10 +45,7 @@ useEffect(() => {
     .select("#simulation-svg")
     .attr("width", width)
     .attr("height", height)
-    // .call(d3.zoom().on("zoom", (event) => {
-    //   svg.attr("transform", event.transform);
-    // }));
-
+  
   svg.append("g").attr("class", "links");
   svg.append("g").attr("class", "nodes");
 
@@ -75,25 +72,6 @@ useEffect(() => {
         .data(nodes)
         .join("g")
         .attr("transform", (d) => `translate(${d.x},${d.y})`);
-        // .attr("transform", (d) => `translate(5, 5)`);
-
-      // Creating the circles
-      nodeGroup
-        .selectAll("circle")
-        .data((d) => [d])
-        .join("circle")
-        .style("r", 5)
-        .style("fill", (d) => getNodeColor(d.id, selectedNode))
-        .style("stroke-width", 0.5)
-        .style("stroke", "black");
-
-      // Adding the text to the circles
-      nodeGroup
-        .selectAll("text")
-        .data((d) => [d])
-        .join("text")
-        .text((d) => d.id)
-        .attr("dy", 1);
     });
 
     return () => {
@@ -125,16 +103,16 @@ useEffect(() => {
         .style("stroke", "black");
 
       selectAll('circle')
-        .on('click', function (e, d) {
-          setSelectedNode(d.id);
-        });
-        // .on('mouseover', function (e, d) {
-        //   // d.style("fill", "green")
+        // .on('click', function (e, d) {
         //   setSelectedNode(d.id);
-        // })
-        // .on('mouseout', function (e, d) {
-        //   setSelectedNode("");
-        // })
+        // });
+        .on('mouseover', function (e, d) {
+          // d.style("fill", "green")
+          setSelectedNode(d.id);
+        })
+        .on('mouseout', function (e, d) {
+          setSelectedNode("");
+        })
 
       // Adding the text to the circles
       nodeGroup
