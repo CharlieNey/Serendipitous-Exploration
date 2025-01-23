@@ -37,75 +37,160 @@ const GraphPage = () => {
 
   const color = d3.scaleSequential(d3.interpolatePuBuGn);
 
-  // Create graph
-  useEffect(() => {
-    if (nodes.length === 0 || links.length === 0) return;
+// Create graph
+useEffect(() => {
+  if (nodes.length === 0 || links.length === 0) return;
 
-    const svg = d3
-      .select("#simulation-svg")
-      .attr("width", width)
-      .attr("height", height)
-      .call(d3.zoom().on("zoom", (event) => {
-        svg.attr("transform", event.transform);
-      }));
+  const svg = d3
+    .select("#simulation-svg")
+    .attr("width", width)
+    .attr("height", height)
+    // .call(d3.zoom().on("zoom", (event) => {
+    //   svg.attr("transform", event.transform);
+    // }));
 
-    svg.append("g").attr("class", "links");
-    svg.append("g").attr("class", "nodes");
+  svg.append("g").attr("class", "links");
+  svg.append("g").attr("class", "nodes");
 
-    const simulation = d3
-      .forceSimulation(nodes)
-      .force("charge", d3.forceManyBody().strength(-10)) // spreads nodes apart
-      .force("center", d3.forceCenter(width / 2, height / 2)) // location on page
-      .force("link", d3.forceLink(links).id(d => d.id).distance(10)) // links nodes together
+  const simulation = d3
+    .forceSimulation(nodes)
+    .force("charge", d3.forceManyBody().strength(-10)) // spreads nodes apart
+    .force("center", d3.forceCenter(width / 2, height / 2)) // location on page
+    .force("link", d3.forceLink(links).id(d => d.id).distance(10)) // links nodes together
 
-      .on("tick", () => {
-        d3.select(".links")
-          .selectAll("line")
-          .data(links)
-          .join("line")
-          .attr("x1", (d) => d.source.x)
-          .attr("y1", (d) => d.source.y)
-          .attr("x2", (d) => d.target.x)
-          .attr("y2", (d) => d.target.y)
-          .style("stroke", (d) => color((d.score - 0.5) * 2)) // Change to min similarity score
-          .style("stroke-width", 2);
+    .on("tick", () => {
+      d3.select(".links")
+        .selectAll("line")
+        .data(links)
+        .join("line")
+        .attr("x1", (d) => d.source.x)
+        .attr("y1", (d) => d.source.y)
+        .attr("x2", (d) => d.target.x)
+        .attr("y2", (d) => d.target.y)
+        .style("stroke", (d) => color((d.score - 0.5) * 2)) // Change to min similarity score
+        .style("stroke-width", 2);
 
-        const nodeGroup = d3.select(".nodes")
-          .selectAll("g")
-          .data(nodes)
-          .join("g")
-          .attr("transform", (d) => `translate(${d.x},${d.y})`);
+      const nodeGroup = d3.select(".nodes")
+        .selectAll("g")
+        .data(nodes)
+        .join("g")
+        .attr("transform", (d) => `translate(${d.x},${d.y})`);
+        // .attr("transform", (d) => `translate(5, 5)`);
 
-        // Creating the circles
-        nodeGroup
-          .selectAll("circle")
-          .data((d) => [d])
-          .join("circle")
-          .style("r", 5)
-          .style("fill", (d) => getNodeColor(d.id, selectedNode))
-          .style("stroke-width", 0.5)
-          .style("stroke", "black");
+      // Creating the circles
+      nodeGroup
+        .selectAll("circle")
+        .data((d) => [d])
+        .join("circle")
+        .style("r", 5)
+        .style("fill", (d) => getNodeColor(d.id, selectedNode))
+        .style("stroke-width", 0.5)
+        .style("stroke", "black");
 
-        selectAll('circle')
-          .on('click', function (e, d) {
-            setSelectedNode(d.id);
-          });
-
-        // Adding the text to the circles
-        nodeGroup
-          .selectAll("text")
-          .data((d) => [d])
-          .join("text")
-          .text((d) => d.id)
-          .attr("dy", 1);
-      });
+      // Adding the text to the circles
+      nodeGroup
+        .selectAll("text")
+        .data((d) => [d])
+        .join("text")
+        .text((d) => d.id)
+        .attr("dy", 1);
+    });
 
     return () => {
       simulation.stop();
       svg.selectAll(".links").remove();
       svg.selectAll(".nodes").remove();
     };
-  }, [nodes, links, selectedNode]);
+  }, [nodes, links]);
+
+  useEffect(() => {
+    const svg = d3
+    .select("#simulation-svg")
+    .call(d3.zoom().on("zoom", (event) => {
+      svg.attr("transform", event.transform);
+    }));
+
+    const nodeGroup = d3.select(".nodes")
+      .selectAll("g")
+      .data(nodes)
+      .join("g")
+
+    nodeGroup
+        .selectAll("circle")
+        .data((d) => [d])
+        .join("circle")
+        .style("r", 5)
+        .style("fill", (d) => getNodeColor(d.id, selectedNode))
+        .style("stroke-width", 0.5)
+        .style("stroke", "black");
+
+      selectAll('circle')
+        .on('click', function (e, d) {
+          setSelectedNode(d.id);
+        });
+        // .on('mouseover', function (e, d) {
+        //   // d.style("fill", "green")
+        //   setSelectedNode(d.id);
+        // })
+        // .on('mouseout', function (e, d) {
+        //   setSelectedNode("");
+        // })
+
+      // Adding the text to the circles
+      nodeGroup
+        .selectAll("text")
+        .data((d) => [d])
+        .join("text")
+        .text((d) => d.id)
+        .attr("dy", 1);
+  });
+
+  // useEffect(() => {
+  //   const svg = d3
+  //   .select("#simulation-svg")
+  //   .attr("width", width)
+  //   .attr("height", height)
+  //   .call(d3.zoom().on("zoom", (event) => {
+  //     svg.attr("transform", event.transform);
+  //   }));
+
+  //   svg.append("g").attr("class", "links");
+  //   svg.append("g").attr("class", "nodes");
+
+  //   const nodeGroup = d3.select(".nodes")
+  //       .selectAll("circle")
+  //       .data((d) => [d])
+  //       .join("circle")
+  //       .style("r", 5)
+  //       .style("fill", (d) => getNodeColor(d.id, selectedNode))
+  //       .style("stroke-width", 0.5)
+  //       .style("stroke", "black");
+
+  //     selectAll('circle')
+  //       .on('click', function (e, d) {
+  //         setSelectedNode(d.id);
+  //       });
+  //       // .on('mouseover', function (e, d) {
+  //       //   // d.style("fill", "green")
+  //       //   setSelectedNode(d.id);
+  //       // })
+  //       // .on('mouseout', function (e, d) {
+  //       //   setSelectedNode("");
+  //       // })
+
+  //     // Adding the text to the circles
+  //     nodeGroup
+  //       .selectAll("text")
+  //       .data((d) => [d])
+  //       .join("text")
+  //       .text((d) => d.id)
+  //       .attr("dy", 1);
+
+  //       return () => {
+  //         svg.selectAll(".links").remove();
+  //         svg.selectAll(".nodes").remove();
+  //       };
+  // }, [selectedNode]);
 
   return (
     <div className="Explore">
