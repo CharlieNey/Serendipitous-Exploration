@@ -1,33 +1,122 @@
+.GraphPage {
+  display: flex;
+  flex-direction: column;
+  font-family: Arial, sans-serif;
+  height: 100vh;
+  overflow: hidden;
+}
 
-  
-  circle {
-    fill: rgb(123, 165, 199); 
-    stroke: #fff; 
-    stroke-width: 2px;
-    transition: transform 0.2s ease; 
-  }
-  line {
-    stroke: #ccc;
-  }
-  text {
-    text-anchor: middle;
-    font-family: "Helvetica Neue", Helvetica, sans-serif;
-    fill: #666;
-    font-size: 4px;
-  }
+.content-container {
+  display: flex; 
+  flex: 1;
+  width: 100%;
+  height: 100vh;
+}
 
-  .sidebar {
-    width: 25%;
-    padding-left: 20px;
-    padding-right: 20px;
-    background-color: #f4f4f4;
-    border-right: 1px solid #ddd;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-  }
+.simulation-container{
+  width: 75%; 
+  height: 100vh; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: lightgray;
+ }
 
-  .search-section {
-    padding: 10px;
-  }
+ .simulation-svg{
+  width: 100%;
+  height: 100%;
+ }
+
+circle {
+  fill: rgb(123, 165, 199); 
+  stroke: #fff; 
+  stroke-width: 2px;
+  transition: transform 0.2s ease; 
+}
+
+line {
+  stroke: #ccc;
+}
+
+text {
+  text-anchor: middle;
+  font-family: "Helvetica Neue", Helvetica, sans-serif;
+  fill: #666;
+  font-size: 4px;
+}
+
+.calendar-button {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+}
+
+.calendar-button img {
+  width: 6vh;
+  height: 6vh;
+  object-fit: contain;
+}
+
+.scroll-sidebar {
+  width: 25%;
+  padding-left: 20px;
+  padding-right: 20px;
+  background-color: #f4f4f4;
+  border-right: 1px solid #ddd;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow-x:hidden;
+  overflow-y: scroll;
+}
+
+.search-section {
+  padding: 10px;
+}
+
+.search-input {
+  width: 91.5%;
+  padding: 10px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
+.course-list {
+  list-style: none;
+  padding: 0;
+}
+
+.course-item {
+  padding: 6px;
+  margin-bottom: 5px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.add-to-calendar-button {
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;   
+  float: right;
+  margin-left: 10px;
+}
+
+.add-to-calendar-button img {
+  width: 20px;
+  height: 20px;
+}
+
+/* Divider */
+.divider {
+  width: 100%;
+  height: 1px;
+  background-color: #ccc;
+  margin: 20px 0;
+}
