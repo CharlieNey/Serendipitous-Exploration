@@ -1,38 +1,27 @@
-import React, { useState, useEffect } from "react"; // useState manages component state; useEffect handles side effects (like data fetching)
+import React, { useState, useEffect, useContext } from "react"; // useState manages component state; useEffect handles side effects (like data fetching)
 import { Link } from 'react-router-dom'; // Link is used for navigation between pages
 import "./ExplorePage.css"; 
 import shopping_cart_logo from '../images/shopping_cart_logo.png'; 
+import { SavedCoursesContext } from './SavedCoursesContext.js';
+import { SearchContext } from './SearchContext.js';
 
 function Explore() {
-  // useState hooks to define component state variables
-  const [searchTerm, setSearchTerm] = useState(""); // keeps track of the search input (empty by default)
-  const [courseList, setCourseList] = useState([]); // stores the list of courses fetched from the server
-  const [isLoading, setIsLoading] = useState(true); // loading state (true while data is being fetched)
+  const {savedCourses, setSavedCourses} = useContext(SavedCoursesContext);
+  const {courseList, searchTerm, isLoading, setSearchTerm, fetchCourses} = useContext(SearchContext);
   const [expandedCourse, setExpandedCourse] = useState(null); // stores the course number of the currently expanded course (null by default)
 
-  // useEffect hook to fetch course data from the backend when the component loads
-  useEffect(() => {
-    // fetch data from the backend API endpoint
-    fetch("http://localhost:3001/api/courses") // sends a GET request to the URL
-      .then((response) => response.json()) // converts the response into a JavaScript object (JSON)
-      .then((data) => {
-        setCourseList(data); // stores the fetched data in the `courseList` state
-        setIsLoading(false); // sets `isLoading` to false after data is fetched
-      })
-      .catch((error) => {
-        console.error("Error fetching courses:", error); // logs the error if the request fails
-        setIsLoading(false); // also stops the loading state on error
-      });
-  }, []); // the empty dependency array ensures this effect only runs once when the component mounts
-
-  // filtering the course list based on the search term
-  const filteredCourses = courseList.filter((course) =>
-    `${course.course_number} ${course.course_title} ${course.description}`.toLowerCase().includes(searchTerm.toLowerCase()) 
-    // converts everything to lowercase for case-insensitive matching
-  );
+    // useEffect hook to fetch course data from the backend when the component loads
+    useEffect(() => {
+        fetchCourses();
+    }, [searchTerm]);
 
   return (
     <div className="Explore">
+      <div className="calendar-button">
+        <Link to="/calendar">
+            <img src={shopping_cart_logo} alt="Go to Calendar" />
+        </Link>
+      </div>
       <div className="sidebar"> 
         <div className="search-section"> 
           <input
@@ -46,12 +35,25 @@ function Explore() {
           {/* this is apparently something called conditional rendering where it shows different content depending on the state */}
           {isLoading ? (
             <p>Loading courses...</p> // displayed when `isLoading` is true (data is still being fetched)
-          ) : searchTerm && filteredCourses.length === 0 ? (
+          ) : searchTerm && courseList.length === 0 ? (
             <p>No courses found matching your search.</p> // displayed if there are no matching courses for the search term
           ) : (
             <ul className="course-list"> {/* this is an unordered list of courses */}
-              {filteredCourses.map((course) => ( // `map` iterates over the `filteredCourses` array and renders a list item for each course
+              {courseList.map((course) => ( // `map` iterates over the `courseList` array and renders a list item for each course
                 <li key={course.course_number} className="course-item"> 
+                  <button
+                    onClick={() => {
+                      setSavedCourses((prevCourses) => {
+                        const updatedCourses = [...prevCourses, course];
+                        console.log(updatedCourses); // check if the courses are being added correctly
+                        return updatedCourses;
+                      });
+                    }}
+                    className="add-to-calendar-button"
+                  >
+                    <img src={shopping_cart_logo} alt="Add to Calendar" />
+                  </button>
+                  
                   <div
                     className="course-summary"
                     onClick={() =>
@@ -64,7 +66,14 @@ function Explore() {
                     <strong>{course.course_number}:</strong> {course.course_title}
                   </div>
                   {expandedCourse === course.course_number && ( // show course details only if `expandedCourse` matches the current course number
-                    <div className="course-details">
+                    <div 
+                    className="course-details"
+                    onClick={() =>
+                      setExpandedCourse(
+                        expandedCourse === course.course_number ? null : course.course_number // toggles between expanding and collapsing course details
+                      )
+                    }
+                    >
                       <em>{course.credits}</em> - {course.offered_term} <br />
                       Faculty: {course.faculty} <br /> 
                       Time: {course.time}, Location: {course.location} <br /> 
