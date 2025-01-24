@@ -11,6 +11,8 @@
 # production
 /build
 
+/backend/psqlConfig.js
+
 # misc
 .DS_Store
 .env.local

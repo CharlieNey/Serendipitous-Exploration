@@ -41,6 +41,17 @@
     cursor: pointer;
     text-decoration: none;
   }
+
+  .graphpage-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #1ead38;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+  }
   
   .homepage-button:hover {
     background-color: #FFD24F;

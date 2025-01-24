@@ -99,7 +99,7 @@ def find_most_similar_courses(sim_matrix, titles, descriptions, top_n=3):
                 writer.writerow([titles[idx], descriptions[idx], titles[i], descriptions[i], f"{score:.2f}"])
 
 #Save the output to 'similar_courses.csv'
-output_file = 'similar_courses4.csv'
+output_file = 'data/vectorizer_outputs/vectorizer_output5.csv'
 
 # Find the top 3 most similar courses for each course
 find_most_similar_courses(cosine_sim, course_titles, course_descriptions)

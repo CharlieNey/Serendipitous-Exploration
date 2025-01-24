@@ -1,0 +1,33 @@
+
+  
+  circle {
+    fill: rgb(123, 165, 199); 
+    stroke: #fff; 
+    stroke-width: 2px;
+    transition: transform 0.2s ease; 
+  }
+  line {
+    stroke: #ccc;
+  }
+  text {
+    text-anchor: middle;
+    font-family: "Helvetica Neue", Helvetica, sans-serif;
+    fill: #666;
+    font-size: 4px;
+  }
+
+  .sidebar {
+    width: 25%;
+    padding-left: 20px;
+    padding-right: 20px;
+    background-color: #f4f4f4;
+    border-right: 1px solid #ddd;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  .search-section {
+    padding: 10px;
+  }
