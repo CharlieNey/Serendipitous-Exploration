@@ -16,7 +16,7 @@ function getNodeColor(node, selectedNode) {
 }
 
 const GraphPage = () => {
-  // Mock dummy graph. Code adapted from d3indepth.com. Only text, maybe go back to circle with hover.
+  // Mock dummy graph. Code adapted from d3indepth.com. 
   // const graphWidth = 750;
   // const graphHeight = 750;
 
@@ -102,14 +102,14 @@ const GraphPage = () => {
       svg.selectAll(".links").remove();
       svg.selectAll(".nodes").remove();
     };
-  }, [nodes, links]);
+  }, [nodes, links, graphWidth, graphHeight]);
 
   useEffect(() => {
     const svg = d3
     .select("#simulation-svg")
-    .call(d3.zoom().on("zoom", (event) => {
-      svg.attr("transform", event.transform);
-    }));
+    // .call(d3.zoom().on("zoom", (event) => {
+    //   svg.attr("transform", event.transform);
+    // }));
 
     const nodeGroup = d3.select(".nodes")
       .selectAll("g")
@@ -146,12 +146,7 @@ const GraphPage = () => {
         .attr("dy", 1);
   });
 
-    return () => {
-      simulation.stop();
-      svg.selectAll(".links").remove();
-      svg.selectAll(".nodes").remove();
-    };
-  }, [nodes, links, selectedNode, graphWidth, graphHeight]);
+  
 
   return (
     <div className="GraphPage">
