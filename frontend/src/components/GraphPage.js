@@ -26,6 +26,8 @@ const GraphPage = () => {
   const {savedCourses, setSavedCourses} = useContext(SavedCoursesContext);
   const {courseList, searchTerm, isLoading, setSearchTerm, fetchCourses} = useContext(SearchContext);
   const { selectedNode, nodes, links, setSelectedNode, fetchNodes, fetchLinks } = useContext(GraphContext);
+    const [showPopup, setShowPopup] = useState(false);
+  const [selectedNodeData, setSelectedNodeData] = useState(null);
   
   // Fetch values for state variables
   useEffect(() => {
@@ -109,7 +111,7 @@ const GraphPage = () => {
 
         selectAll('circle')
           .on('click', function (e, d) {
-            setSelectedNode(d.id);
+            // setSelectedNode(d.id);
           });
 
         // Adding the text to the circles
