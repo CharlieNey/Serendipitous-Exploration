@@ -20,7 +20,14 @@ function getConnectedNodes(links, node) {
   return connectedNodes
 }
 
-function getOpacity(node, selectedNode, connectedNodes) {
+function getLinkOpacity(link, selectedNode) {
+  if(selectedNode === "" || link.source.id === selectedNode || link.target.id === selectedNode ) {
+    return 1;
+  }
+  return 0.05;
+}
+
+function getNodeOpacity(node, selectedNode, connectedNodes) {
   if (selectedNode === "" || node === selectedNode || connectedNodes.includes(node)) {
     return 1;
   }
@@ -78,37 +85,47 @@ useEffect(() => {
     .force("link", d3.forceLink(links).id(d => d.id).distance(10)) // links nodes together
 
     .on("tick", () => {
-      d3.select(".links")
+      const linksGroup = d3.select(".links")
         .selectAll("line")
         .data(links)
         .join("line")
-        .attr("x1", (d) => d.source.x)
-        .attr("y1", (d) => d.source.y)
-        .attr("x2", (d) => d.target.x)
-        .attr("y2", (d) => d.target.y)
-        .style("stroke", (d) => color((d.score - 0.5) * 2)) // Change to min similarity score
-        .style("stroke-width", 2);
 
       const nodeGroup = d3.select(".nodes")
         .selectAll("g")
         .data(nodes)
         .join("g")
         .attr("transform", (d) => `translate(${d.x},${d.y})`);
+
+      linksGroup
+        .attr("x1", (d) => d.source.x)
+        .attr("y1", (d) => d.source.y)
+        .attr("x2", (d) => d.target.x)
+        .attr("y2", (d) => d.target.y)
     });
 
     return () => {
       simulation.stop();
-      svg.selectAll(".links").remove();
-      svg.selectAll(".nodes").remove();
     };
-  }, [nodes, links]);
+  }, [links, nodes]);
+
+
 
   useEffect(() => {
     const svg = d3
-    .select("#simulation-svg")
-    .call(d3.zoom().on("zoom", (event) => {
-      svg.attr("transform", event.transform);
-    }));
+      .select("#simulation-svg")
+      .call(d3.zoom().on("zoom", (event) => {
+        svg.attr("transform", event.transform);
+      }));
+
+    const linksGroup = d3.select(".links")
+    .selectAll("line")
+    .data(links)
+    .join("line")
+
+  linksGroup
+    .style("opacity", (d) => getLinkOpacity(d, selectedNode))
+    .style("stroke", (d) => color((d.score - 0.5) * 2)) // Change to min similarity score
+    .style("stroke-width", 2)
 
     const nodeGroup = d3.select(".nodes")
       .selectAll("g")
@@ -117,14 +134,14 @@ useEffect(() => {
 
     var connectedNodes = getConnectedNodes(links, selectedNode)
     nodeGroup
-        .selectAll("circle")
-        .data((d) => [d])
-        .join("circle")
-        .style("r", 5)
-        .style("fill", (d) => getNodeColor(d.id, selectedNode, connectedNodes))
-        .style("opacity", (d) => getOpacity(d.id, selectedNode, connectedNodes))
-        .style("stroke-width", 0.5)
-        .style("stroke", "black");
+      .selectAll("circle")
+      .data((d) => [d])
+      .join("circle")
+      .style("r", 5)
+      .style("fill", (d) => getNodeColor(d.id, selectedNode, connectedNodes))
+      .style("opacity", (d) => getNodeOpacity(d.id, selectedNode, connectedNodes))
+      .style("stroke-width", 0.5)
+      .style("stroke", "black");
 
       selectAll('circle')
         .on('click', function (e, d) {
@@ -155,7 +172,8 @@ useEffect(() => {
         .join("text")
         .text((d) => d.id)
         .attr("dy", 1);
-  });
+
+      }, [selectedNode]);
 
   return (
     <div className="Explore">
