@@ -26,8 +26,9 @@ const GraphPage = () => {
   const {savedCourses, setSavedCourses} = useContext(SavedCoursesContext);
   const {courseList, searchTerm, isLoading, setSearchTerm, fetchCourses} = useContext(SearchContext);
   const { selectedNode, nodes, links, setSelectedNode, fetchNodes, fetchLinks } = useContext(GraphContext);
-    const [showPopup, setShowPopup] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
   const [selectedNodeData, setSelectedNodeData] = useState(null);
+  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
   
   // Fetch values for state variables
   useEffect(() => {
@@ -68,8 +69,6 @@ const GraphPage = () => {
         svg.attr("transform", event.transform);
       }));
 
-
-
     svg.append("g").attr("class", "links");
     svg.append("g").attr("class", "nodes");
 
@@ -103,16 +102,17 @@ const GraphPage = () => {
           .selectAll("circle")
           .data((d) => [d])
           .join("circle")
-          .style("r", 5)
+          .attr("r", 10)
           .style("fill", (d) => getNodeColor(d.id, selectedNode))
           .style("stroke-width", 0.5)
-          .style("stroke", "black");
-          
+          .style("stroke", "black")
+          .on('click', function (e, d) {
+            setSelectedNodeData(d);
+            setPopupPosition({ x: d.x, y: d.y });
+            setShowPopup(true);
+          });
 
         selectAll('circle')
-          .on('click', function (e, d) {
-            // setSelectedNode(d.id);
-          });
 
         // Adding the text to the circles
         nodeGroup
@@ -189,6 +189,23 @@ const GraphPage = () => {
           
           <svg id="simulation-svg"></svg>
         </div>
+
+
+        {showPopup && selectedNodeData && (
+          <div
+            className="popup"
+            style={{
+              background: "white",
+              border: "1px solid black",
+              padding: "20px",
+              boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+            }}
+          >
+            <button onClick={() => setShowPopup(false)} style={{ float: "right" }}>X</button>
+            <h3>Info</h3>
+            <p>{selectedNodeData.id}</p>
+          </div>
+        )}
       </div>
     </div>
   );
