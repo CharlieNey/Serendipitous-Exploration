@@ -62,9 +62,9 @@ const GraphPage = () => {
       .attr("width", "100%")
       .attr("height", "100%")
       .attr("viewBox", `0 0 ${graphWidth} ${graphHeight}`)
-      .call(d3.zoom().on("zoom", (event) => {
-        svg.attr("transform", event.transform);
-      }));
+      // .call(d3.zoom().on("zoom", (event) => {
+      //   svg.attr("transform", event.transform);
+      // }));
 
 
 
