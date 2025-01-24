@@ -194,14 +194,8 @@ const GraphPage = () => {
         {showPopup && selectedNodeData && (
           <div
             className="popup"
-            style={{
-              background: "white",
-              border: "1px solid black",
-              padding: "20px",
-              boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
-            }}
           >
-            <button onClick={() => setShowPopup(false)} style={{ float: "right" }}>X</button>
+            <button onClick={() => setShowPopup(false)}>X</button>
             <h3>Info</h3>
             <p>{selectedNodeData.id}</p>
           </div>
