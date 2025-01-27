@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import * as d3 from "d3";
+import { zoom } from 'd3-zoom';
 import { select, selectAll } from 'd3-selection';
 import { Link } from 'react-router-dom';
 import "./GraphPage.css";
@@ -61,9 +62,9 @@ function getNodeColor(node, selectedNode, connectedNodes) {
 }
 
 const GraphPage = () => {
-  // Mock dummy graph. Code adapted from d3indepth.com. Only text, maybe go back to circle with hover.
-  const width = 1500;
-  const height = 1500;
+  // Mock dummy graph. Code adapted from d3indepth.com. 
+  const graphWidth = 750;
+  const graphHeight = 750;
 
   // Import state variables and fetching methods
   const {savedCourses, setSavedCourses} = useContext(SavedCoursesContext);
@@ -108,28 +109,26 @@ const GraphPage = () => {
 
   const color = d3.scaleSequential(d3.interpolatePuBuGn);
 
+  
   // Create graph
   useEffect(() => {
     if (nodes.length === 0 || links.length === 0) return;
 
     setConnectedNodes(getAllNodeConnections(links))
 
-    const svg = d3
-      .select("#simulation-svg")
-      .attr("width", width)
-      .attr("height", height)
-      .call(d3.zoom().on("zoom", (event) => {
-        svg.attr("transform", event.transform);
-      }));
-    
-    svg.append("g").attr("class", "links");
-    svg.append("g").attr("class", "nodes");
+  const svg = d3
+    .select("#simulation-svg")
+    .attr("width", graphWidth)
+    .attr("height", graphHeight)
+  
+  svg.append("g").attr("class", "links");
+  svg.append("g").attr("class", "nodes");
 
-    const simulation = d3
-      .forceSimulation(nodes)
-      .force("charge", d3.forceManyBody().strength(-10)) // spreads nodes apart
-      .force("center", d3.forceCenter(width / 2, height / 2)) // location on page
-      .force("link", d3.forceLink(links).id(d => d.id).distance(10)) // links nodes together
+  const simulation = d3
+    .forceSimulation(nodes)
+    .force("charge", d3.forceManyBody().strength(-10)) // spreads nodes apart
+    .force("center", d3.forceCenter(graphWidth / 2, graphHeight / 2)) // location on page
+    .force("link", d3.forceLink(links).id(d => d.id).distance(10)) // links nodes together
 
     const linksGroup = d3.select(".links")
     .selectAll("line")
@@ -204,7 +203,7 @@ const GraphPage = () => {
   }, [selectedNode]);
 
   return (
-    <div className="Explore">
+    <div className="GraphPage">
       <div className="calendar-button">
         <Link to="/calendar">
           <img src={shopping_cart_logo} alt="Go to Calendar" />
@@ -212,7 +211,7 @@ const GraphPage = () => {
       </div>
   
       <div className="content-container">
-        <div className="sidebar">
+        <div className="scroll-sidebar">
           <div className="search-section">
             <input
               type="text"
@@ -257,7 +256,7 @@ const GraphPage = () => {
           </div>
         </div>
   
-        <div className="simulation-container">
+        <div className="simulation-container" >
           <svg id="simulation-svg"></svg>
         </div>
       </div>
