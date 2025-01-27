@@ -57,10 +57,17 @@ const GraphPage = () => {
   useEffect(() => {
     if (nodes.length === 0 || links.length === 0) return;
 
+    // const zoom = d3.zoom()
+    //   .scaleExtent([0.5, 3])
+    //   .on("zoom", () => {
+        
+    //   });
+
     const svg = d3
       .select("#simulation-svg")
       .attr("width", "100%")
       .attr("height", "100%")
+<<<<<<< Updated upstream
       .attr("viewBox", `0 0 ${graphWidth} ${graphHeight}`)
       // .call(d3.zoom().on("zoom", (event) => {
       //   svg.attr("transform", event.transform);
@@ -68,6 +75,12 @@ const GraphPage = () => {
 
 
 
+=======
+      .call(d3.zoom().scaleExtent([0.5,3]).on("zoom", (event) => {
+        svg.attr("transform", event.transform);
+      }));
+   
+>>>>>>> Stashed changes
     svg.append("g").attr("class", "links");
     svg.append("g").attr("class", "nodes");
 
@@ -126,7 +139,80 @@ const GraphPage = () => {
       svg.selectAll(".links").remove();
       svg.selectAll(".nodes").remove();
     };
+<<<<<<< Updated upstream
   }, [nodes, links, selectedNode, graphWidth, graphHeight]);
+=======
+  }, [nodes, links, graphWidth, graphHeight]);
+
+  useEffect(() => {
+    const svg = d3
+    .select("#simulation-svg")
+    // .call(d3.zoom().on("zoom", (event) => {
+    //   svg.attr("transform", event.transform);
+    // }));
+
+    const g = d3.select(".nodes");
+    const zoom = d3.zoom().scaleExtent([0.5, 3]).on("zoom", (event) => {
+      g.attr("transform", event.transform);
+    });
+
+
+
+    const nodeGroup = d3.select(".nodes")
+      .selectAll("g")
+      .data(nodes)
+      .join("g")
+
+    nodeGroup
+        .selectAll("circle")
+        .data((d) => [d])
+        .join("circle")
+        .style("r", 5)
+        .style("fill", (d) => getNodeColor(d.id, selectedNode))
+        .style("stroke-width", 0.5)
+        .style("stroke", "black");
+
+      selectAll('circle')
+        // .on('click', function (e, d) {
+        //   setSelectedNode(d.id);
+        // });
+        .on('mouseover', function (e, d) {
+          // d.style("fill", "green")
+          setSelectedNode(d.id);
+        })
+        .on('mouseout', function (e, d) {
+          setSelectedNode("");
+        })
+
+        .on("click", function (e, d) {
+         setSelectedNode(d.id);
+
+         const svgElement = svg.node();
+         const { width, height } = svgElement.getBoundingClientRect();
+       
+         const newX = width / 2 - d.x * 2; 
+         const newY = height / 2 - d.y * 2;
+         const newScale = 2;
+       
+         const t = d3.zoomIdentity.translate(newX, newY).scale(newScale);
+       
+         svg.selectAll(".nodes").transition().duration(750).call(zoom.transform, t);
+         svg.selectAll(".links").transition().duration(750).call(zoom.transform, t);
+        });
+
+      
+
+      // Adding the text to the circles
+      nodeGroup
+        .selectAll("text")
+        .data((d) => [d])
+        .join("text")
+        .text((d) => d.id)
+        .attr("dy", 1);
+      });
+
+  
+>>>>>>> Stashed changes
 
   return (
     <div className="GraphPage">
