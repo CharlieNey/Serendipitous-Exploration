@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import * as d3 from "d3";
+import { zoom } from 'd3-zoom';
 import { select, selectAll } from 'd3-selection';
 import { Link } from 'react-router-dom';
 import "./GraphPage.css";
@@ -17,12 +18,10 @@ function getNodeColor(node, selectedNode) {
 
 const GraphPage = () => {
   // Mock dummy graph. Code adapted from d3indepth.com. 
-  // const graphWidth = 750;
-  // const graphHeight = 750;
+  const graphWidth = 750;
+  const graphHeight = 750;
 
   // Import state variables and fetching methods
-  const [graphWidth, setGraphWidth] = useState(0);
-  const [graphHeight, setGraphHeight] = useState(0);
   const {savedCourses, setSavedCourses} = useContext(SavedCoursesContext);
   const {courseList, searchTerm, isLoading, setSearchTerm, fetchCourses} = useContext(SearchContext);
   const { selectedNode, nodes, links, setSelectedNode, fetchNodes, fetchLinks } = useContext(GraphContext);
@@ -39,19 +38,6 @@ const GraphPage = () => {
 
   const color = d3.scaleSequential(d3.interpolatePuBuGn);
 
-  const updateGraphSize = () => {
-    const container = document.querySelector(".simulation-container");
-    if (container) {
-      setGraphWidth(container.clientWidth);
-      setGraphHeight(container.clientHeight);
-    }
-  };
-
-  useEffect(() => {
-    updateGraphSize();
-    window.addEventListener("resize", updateGraphSize);
-    return () => window.removeEventListener("resize", updateGraphSize);
-  }, []);
 
   // Create graph
   useEffect(() => {
@@ -61,8 +47,7 @@ const GraphPage = () => {
       .select("#simulation-svg")
       .attr("width", "100%")
       .attr("height", "100%")
-      .attr("viewBox", `0 0 ${graphWidth} ${graphHeight}`)
-      // .call(d3.zoom().on("zoom", (event) => {
+      // .call(d3.zoom().scaleExtent([0.5,3]).on("zoom", (event) => {
       //   svg.attr("transform", event.transform);
       // }));
 
@@ -144,7 +129,7 @@ const GraphPage = () => {
         .join("text")
         .text((d) => d.id)
         .attr("dy", 1);
-  });
+      });
 
   
 
@@ -204,7 +189,6 @@ const GraphPage = () => {
         </div>
   
         <div className="simulation-container" >
-          
           <svg id="simulation-svg"></svg>
         </div>
       </div>
