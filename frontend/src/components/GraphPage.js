@@ -125,23 +125,24 @@ useEffect(() => {
     .force("center", d3.forceCenter(width / 2, height / 2)) // location on page
     .force("link", d3.forceLink(links).id(d => d.id).distance(10)) // links nodes together
 
-    .on("tick", () => {
-      const linksGroup = d3.select(".links")
-        .selectAll("line")
-        .data(links)
-        .join("line")
+    const linksGroup = d3.select(".links")
+    .selectAll("line")
+    .data(links)
+    .join("line")
+    .style("stroke-width", 2)
 
-      linksGroup
-        .attr("x1", (d) => d.source.x)
-        .attr("y1", (d) => d.source.y)
-        .attr("x2", (d) => d.target.x)
-        .attr("y2", (d) => d.target.y)
-        .style("stroke-width", 2)
+    const nodeGroup = d3.select(".nodes")
+    .selectAll("g")
+    .data(nodes)
+    .join("g")
 
-      const nodeGroup = d3.select(".nodes")
-        .selectAll("g")
-        .data(nodes)
-        .join("g")
+    nodeGroup
+    .selectAll("circle")
+    .data((d) => [d])
+    .join("circle")
+    .style("r", 5)
+    .style("stroke-width", 0.5)
+    .style("stroke", "black");
 
       // Adding the text to the circles
       nodeGroup
@@ -151,17 +152,7 @@ useEffect(() => {
         .text((d) => d.id)
         .attr("dy", 1)
 
-      nodeGroup
-        .selectAll("circle")
-        .data((d) => [d])
-        .join("circle")
-        .attr("transform", (d) => `translate(${d.x},${d.y})`)
-        .style("r", 5)
-        .style("stroke-width", 0.5)
-        .style("stroke", "black");
-
-      // ONLY NEED TO SET THIS IN ORIGNAL GRAPH USEFFECT- FUNCTION ISN'T CHANGING
-      selectAll('circle')
+        selectAll('circle')
         .on('mouseover', function (e, d) {
           if(!clicked){
             setSelectedNode(d.id);
@@ -176,19 +167,22 @@ useEffect(() => {
           if (clicked === true && selectedNode === d.id) {
             setClicked(false);
             setSelectedNode("");
-            // console.log("help")
           } else {
             setClicked(true);
             setSelectedNode(d.id);
-            // console.log("new")
           }
         });
 
-        // .attr("font-size", "1000px")
-        // .style("stroke", "black")
-        // .style("opacity", 1)
-        // .style("stroke-width", 2);
+    simulation
+    .on("tick", () => {
+      linksGroup
+        .attr("x1", (d) => d.source.x)
+        .attr("y1", (d) => d.source.y)
+        .attr("x2", (d) => d.target.x)
+        .attr("y2", (d) => d.target.y)
 
+      nodeGroup
+        .attr("transform", (d) => `translate(${d.x},${d.y})`)
     });
 
     return () => {
