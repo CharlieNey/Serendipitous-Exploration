@@ -8,23 +8,6 @@ import { SavedCoursesContext } from './SavedCoursesContext.js';
 import { SearchContext } from './SearchContext.js';
 import { GraphContext } from './GraphContext.js';
 
-// // calculate this once per course catalog
-// // MAKE THIS RUN ONCE- NESTED OBJECT
-// // WANT O(1) BEHAVIOR FOR "IS THIS OBJECT CONNECTED"- MAKE AN OBJECT
-// // CONNECTIONS['CS 111'] RETURNS [CS 202, ART 111]
-// // go through links each one time
-// function getConnectedNodes(links, node) {
-//   var connectedNodes = []
-//   for (var i in links) {
-//     if (links[i].source.id === node) {
-//       connectedNodes.push(links[i].target.id)
-//     } else if (links[i].target.id === node){
-//       connectedNodes.push(links[i].source.id)
-//     }
-//   }
-//   return connectedNodes
-// }
-
 function getAllNodeConnections(links) {
   var connections = {}
   for (var i in links) {
@@ -65,7 +48,7 @@ function getNodeOpacity(node, selectedNode, connectedNodes) {
 }
 
 function getNodeColor(node, selectedNode, connectedNodes) {
-  if (selectedNode === "") {
+  if (selectedNode === "" || connectedNodes[selectedNode] === undefined) {
     return "pink";
   }
 
@@ -89,6 +72,29 @@ const GraphPage = () => {
   const [clicked, setClicked] = useState(false)
 
   const[connectedNodes, setConnectedNodes] = useState([]);
+
+  function clickNode(node) {
+    if (clicked === true && selectedNode === node) {
+      setClicked(false);
+      setSelectedNode("");
+    } else {
+      setClicked(true);
+      setSelectedNode(node);
+    }
+  }
+
+  function refreshGraph() {
+    d3.select(".links")
+      .selectAll("line")
+      .style("opacity", (d) => getLinkOpacity(d, selectedNode))
+      .style("stroke", (d) => color((d.score - 0.5) * 2)) // Change to min similarity score
+  
+    d3.select(".nodes")
+      .selectAll("g")
+      .selectAll("circle")
+      .style("fill", (d) => getNodeColor(d.id, selectedNode, connectedNodes))
+      .style("opacity", (d) => getNodeOpacity(d.id, selectedNode, connectedNodes));
+  }
   
   // Fetch values for state variables
   useEffect(() => {
@@ -102,28 +108,28 @@ const GraphPage = () => {
 
   const color = d3.scaleSequential(d3.interpolatePuBuGn);
 
-// Create graph
-useEffect(() => {
-  if (nodes.length === 0 || links.length === 0) return;
+  // Create graph
+  useEffect(() => {
+    if (nodes.length === 0 || links.length === 0) return;
 
-  setConnectedNodes(getAllNodeConnections(links))
+    setConnectedNodes(getAllNodeConnections(links))
 
-  const svg = d3
-    .select("#simulation-svg")
-    .attr("width", width)
-    .attr("height", height)
-    .call(d3.zoom().on("zoom", (event) => { // MOVE THIS INTO THE FIRST USEFFECT
-      svg.attr("transform", event.transform);
-    }));
-  
-  svg.append("g").attr("class", "links");
-  svg.append("g").attr("class", "nodes");
+    const svg = d3
+      .select("#simulation-svg")
+      .attr("width", width)
+      .attr("height", height)
+      .call(d3.zoom().on("zoom", (event) => {
+        svg.attr("transform", event.transform);
+      }));
+    
+    svg.append("g").attr("class", "links");
+    svg.append("g").attr("class", "nodes");
 
-  const simulation = d3
-    .forceSimulation(nodes)
-    .force("charge", d3.forceManyBody().strength(-10)) // spreads nodes apart
-    .force("center", d3.forceCenter(width / 2, height / 2)) // location on page
-    .force("link", d3.forceLink(links).id(d => d.id).distance(10)) // links nodes together
+    const simulation = d3
+      .forceSimulation(nodes)
+      .force("charge", d3.forceManyBody().strength(-10)) // spreads nodes apart
+      .force("center", d3.forceCenter(width / 2, height / 2)) // location on page
+      .force("link", d3.forceLink(links).id(d => d.id).distance(10)) // links nodes together
 
     const linksGroup = d3.select(".links")
     .selectAll("line")
@@ -144,71 +150,58 @@ useEffect(() => {
     .style("stroke-width", 0.5)
     .style("stroke", "black");
 
-      // Adding the text to the circles
-      nodeGroup
-        .selectAll("text")
-        .data((d) => [d])
-        .join("text")
-        .text((d) => d.id)
-        .attr("dy", 1)
+    // Adding the text to the circles
+    nodeGroup
+      .selectAll("text")
+      .data((d) => [d])
+      .join("text")
+      .text((d) => d.id)
+      .attr("dy", 1)
 
-        selectAll('circle')
-        .on('mouseover', function (e, d) {
-          if(!clicked){
-            setSelectedNode(d.id);
-          }
-        })
-        .on('mouseout', function (e, d) {
-          if(!clicked){
-            setSelectedNode("");
-          }
-        })
-        .on('click', function (e, d) {
-          if (clicked === true && selectedNode === d.id) {
-            setClicked(false);
-            setSelectedNode("");
-          } else {
-            setClicked(true);
-            setSelectedNode(d.id);
-          }
-        });
+  nodeGroup
+    .selectAll('circle')
+    .on('click', function (e, d) {
+      clickNode(d.id)
+    })
+    // .on('mouseover', function (e, d) {
+    //   if(!clicked){
+    //     setSelectedNode(d.id);
+    //   }
+    // })
+    // .on('mouseout', function (e, d) {
+    //   if(!clicked){
+    //     setSelectedNode("");
+    //   }
+    // });
+
+    refreshGraph()
 
     simulation
-    .on("tick", () => {
-      linksGroup
-        .attr("x1", (d) => d.source.x)
-        .attr("y1", (d) => d.source.y)
-        .attr("x2", (d) => d.target.x)
-        .attr("y2", (d) => d.target.y)
+      .on("tick", () => {
+        linksGroup
+          .attr("x1", (d) => d.source.x)
+          .attr("y1", (d) => d.source.y)
+          .attr("x2", (d) => d.target.x)
+          .attr("y2", (d) => d.target.y)
 
-      nodeGroup
-        .attr("transform", (d) => `translate(${d.x},${d.y})`)
-    });
+        nodeGroup
+          .attr("transform", (d) => `translate(${d.x},${d.y})`)
+      });
 
-    return () => {
-      simulation.stop();
-      svg.selectAll(".links").remove();
-      svg.selectAll(".nodes").remove();
-    };
-  }, [links, nodes]);
-
-
+      return () => {
+        simulation.stop();
+        svg.selectAll(".links").remove();
+        svg.selectAll(".nodes").remove();
+      };
+    }, [links, nodes]);
 
   useEffect(() => {
-    // DON'T NEED TO CREATE NEW LINES, JUST WANT TO CHANGE STYLE
-    d3.select(".links")
-      .selectAll("line") // MIGHT BE CREATING NEW LINES EACH TIME THIS IS RUN
-      .style("opacity", (d) => getLinkOpacity(d, selectedNode))
-      .style("stroke", (d) => color((d.score - 0.5) * 2)) // Change to min similarity score
+    // console.log("Rerun")
+    // console.log(clicked)
+    // console.log(selectedNode)
 
-    // REDUNDANT IN SAME WAY AS LINKS CODE
-    d3.select(".nodes")
-      .selectAll("g")
-      .selectAll("circle") //GRAB ELEMENTS FROM SVG, FOR EVERYTHING IN THAT SELECTION: DO THIS
-      .style("fill", (d) => getNodeColor(d.id, selectedNode, connectedNodes)) //ANONYMOUS FUNCTION
-      .style("opacity", (d) => getNodeOpacity(d.id, selectedNode, connectedNodes));
-
-      }, [selectedNode]);
+    refreshGraph()
+  }, [selectedNode]);
 
   return (
     <div className="Explore">
@@ -239,7 +232,7 @@ useEffect(() => {
                 <li 
                   key={course.course_number} 
                   className="course-item"
-                  onClick={() => setSelectedNode(course.course_number)}  // update selected node when clicked
+                  onClick={() => clickNode(course.course_number)}  // update selected node when clicked
                   style={{ cursor: 'pointer' }}  
                 >
                   <button
