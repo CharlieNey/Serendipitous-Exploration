@@ -10,7 +10,7 @@ function Calendar(props) {
   const [expandedCourse, setExpandedCourse] = useState(null); // stores the course number of the currently expanded course (null by default)
   
 
-  console.log("These are the saved courses:")
+  console.log("These are the saved courses (calendar page):")
   console.log(savedCourses)
 
   return (
@@ -43,12 +43,20 @@ function Calendar(props) {
                 <li key={course.course_number} className="course-item"> 
                   <button
                     onClick={() => {
-                      setSavedCourses((prevCourses) => {
-                        const updatedCourses = [...prevCourses, course];
-                        console.log(updatedCourses); // check if the courses are being added correctly
-                        return updatedCourses;
+                      setSavedCourses((savedCourse) => {
+                        console.log('Clicked course:', course);
+                        // check if the course is already in the savedCourses
+                        if (savedCourse.some(saved => saved.course_number === course.course_number)) {
+                          // if course is already saved, remove it
+                          const updatedCourses = savedCourse.filter(savedCourse => savedCourse.course_number !== course.course_number);
+                          console.log('Updated courses after removal:', updatedCourses);
+                          return updatedCourses;
+                        } else { // if not saved, add it
+                          const updatedCourses = [...savedCourse, course];
+                          console.log('Updated courses after addition:', updatedCourses);
+                          return updatedCourses;
+                        }
                       });
-
                     }}
                     
                     className="add-to-calendar-button"
