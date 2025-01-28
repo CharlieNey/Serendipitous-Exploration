@@ -14,8 +14,8 @@ const HomePage = () => {
         <Link to="/explore">
           <button className="homepage-button">Start!</button>
         </Link>
-        <Link to="/explore-nodes">
-          <button className="homepage-button">Graph</button>
+        <Link to="/slot-machine">
+          <button className="homepage-button">Slot Machine!</button>
         </Link>
         <br />
         <Link to="/graph">
