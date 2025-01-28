@@ -16,11 +16,6 @@ function Calendar(props) {
   return (
     <div className="calendar-page-container">
 
-      {/* <h1>Saved Courses:</h1>
-      <li className="saved-courses">
-        {id} - {decodeURIComponent(name)}
-      </li> */}
-
       <div className="sidebar"> 
         <div className="search-section"> 
         <h1>Your Saved Courses:</h1>
@@ -61,7 +56,12 @@ function Calendar(props) {
                     
                     className="add-to-calendar-button"
                   >
-                    <img src={shopping_cart_logo} alt="Add to Calendar" />
+                    <img 
+                      src={shopping_cart_logo}
+                      alt="Add to Calendar"
+                      // if course is already saved, make the cart logo grey
+                      className={savedCourses.some(saved => saved.course_number === course.course_number) ? "grey-cart-button" : ""}
+                    />
                   </button>
 
                   <div

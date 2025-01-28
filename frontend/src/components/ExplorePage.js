@@ -63,7 +63,12 @@ function Explore() {
                     }}
                     className="add-to-calendar-button"
                   >
-                    <img src={shopping_cart_logo} alt="Add to Calendar" />
+                    <img 
+                      src={shopping_cart_logo}
+                      alt="Add to Calendar"
+                      // if course is already saved, make the cart logo grey
+                      className={savedCourses.some(saved => saved.course_number === course.course_number) ? "grey-cart-button" : ""}
+                    />
                   </button>
                   
                   <div
