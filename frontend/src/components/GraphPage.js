@@ -1,7 +1,5 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import * as d3 from "d3";
-import { zoom } from 'd3-zoom';
-import { select, selectAll } from 'd3-selection';
 import { Link } from 'react-router-dom';
 import "./GraphPage.css";
 import shopping_cart_logo from '../images/shopping_cart_logo.png';
@@ -16,11 +14,11 @@ function getAllNodeConnections(links) {
     var node2 = links[i].target
 
     if(node1 in connections) {
-      if(!connections[node1].includes(node2)){
-        connections[node1].push(node2)
+      if(!connections[node1].includes(node2)){ // if node2 is not in node1 
+        connections[node1].push(node2) // push node2 to node1
       }
     } else {
-      connections[node1] = [node2]
+      connections[node1] = [node2] // if node1 is not in connections, make node2 the first in list
     }
 
     if(node2 in connections) {
@@ -35,7 +33,7 @@ function getAllNodeConnections(links) {
 }
 
 function getLinkOpacity(link, selectedNode) {
-  if(selectedNode === "" || link.source.id === selectedNode || link.target.id === selectedNode ) {
+  if(selectedNode === "" || link.source.id === selectedNode || link.target.id === selectedNode ) { // if nothing selected, everything is colored
     return 1;
   }
   return 0.05;
@@ -74,13 +72,37 @@ const GraphPage = () => {
 
   const[connectedNodes, setConnectedNodes] = useState([]);
 
+  // function clickNode(node) {
+  //   if (clicked === true && selectedNode === node) { // to unclick something already selected
+  //     setClicked(false);
+  //     setSelectedNode("");
+  //   } else {
+  //     setClicked(true);
+  //     setSelectedNode(node);
+  //   }
+  // }
+
   function clickNode(node) {
+    const svg = d3.select("#simulation-svg");
+
     if (clicked === true && selectedNode === node) {
       setClicked(false);
-      setSelectedNode("");
+      setSelectedNode(""); 
+      
     } else {
       setClicked(true);
       setSelectedNode(node);
+
+      const svg = d3.select("#simulation-svg");
+  
+      const transform = d3.zoomIdentity
+        .translate(graphWidth / 2 - node.x * 2, graphHeight / 2 - node.y * 2)
+        .scale(2);
+  
+     
+      svg.transition()
+        .duration(750)
+        .call(zoomRef.current.transform, transform);
     }
   }
 
@@ -96,7 +118,7 @@ const GraphPage = () => {
       .style("fill", (d) => getNodeColor(d.id, selectedNode, connectedNodes))
       .style("opacity", (d) => getNodeOpacity(d.id, selectedNode, connectedNodes));
   }
-  
+
   // Fetch values for state variables
   useEffect(() => {
     fetchNodes();
@@ -109,6 +131,7 @@ const GraphPage = () => {
 
   const color = d3.scaleSequential(d3.interpolatePuBuGn);
 
+  const zoomRef = useRef(null);
   
   // Create graph
   useEffect(() => {
@@ -116,38 +139,52 @@ const GraphPage = () => {
 
     setConnectedNodes(getAllNodeConnections(links))
 
-  const svg = d3
-    .select("#simulation-svg")
-    .attr("width", graphWidth)
-    .attr("height", graphHeight)
-  
-  svg.append("g").attr("class", "links");
-  svg.append("g").attr("class", "nodes");
+    const svg = d3
+      .select("#simulation-svg")
+      .attr("width", graphWidth)
+      .attr("height", graphHeight)
+      // .on("zoom", (event) => {
+      //   svg.select("g").attr("transform", event.transform);
+      // });
 
-  const simulation = d3
-    .forceSimulation(nodes)
-    .force("charge", d3.forceManyBody().strength(-10)) // spreads nodes apart
-    .force("center", d3.forceCenter(graphWidth / 2, graphHeight / 2)) // location on page
-    .force("link", d3.forceLink(links).id(d => d.id).distance(10)) // links nodes together
+    if (!zoomRef.current) {
+      zoomRef.current = d3.zoom()
+        .scaleExtent([0.5, 3])
+        .on("zoom", (event) => {
+          svg.select("g").attr("transform", event.transform);
+        });
+  
+      svg.call(zoomRef.current);
+    }
+    
+    svg.append("g").attr("class", "links");
+    svg.append("g").attr("class", "nodes");
+
+    const simulation = d3
+      .forceSimulation(nodes)
+      .force("charge", d3.forceManyBody().strength(-10)) // spreads nodes apart
+      .force("center", d3.forceCenter(graphWidth / 2, graphHeight / 2)) // location on page
+      .force("link", d3.forceLink(links).id(d => d.id).distance(10)) // links nodes together
 
     const linksGroup = d3.select(".links")
-    .selectAll("line")
-    .data(links)
-    .join("line")
-    .style("stroke-width", 2)
+      .selectAll("line")
+      .data(links)
+      .join("line")
+      .style("stroke-width", 2)
 
     const nodeGroup = d3.select(".nodes")
-    .selectAll("g")
-    .data(nodes)
-    .join("g")
+      .selectAll("g")
+      .data(nodes)
+      .join("g")
 
     nodeGroup
-    .selectAll("circle")
-    .data((d) => [d])
-    .join("circle")
-    .style("r", 5)
-    .style("stroke-width", 0.5)
-    .style("stroke", "black");
+      .selectAll("circle")
+      .data((d) => [d])
+      .join("circle")
+      .style("r", 5)
+      .style("stroke-width", 0.5)
+      .style("stroke", "black")
+      .attr("id", d => d)
 
     // Adding the text to the circles
     nodeGroup
@@ -157,11 +194,16 @@ const GraphPage = () => {
       .text((d) => d.id)
       .attr("dy", 1)
 
-  nodeGroup
-    .selectAll('circle')
-    .on('click', function (e, d) {
-      clickNode(d.id)
-    })
+    nodeGroup
+      .selectAll('circle')
+      .on('click', function (e, d) {
+        setSelectedNode(d.id);
+        clickNode(d.id);
+        
+      })
+
+    
+
     // .on('mouseover', function (e, d) {
     //   if(!clicked){
     //     setSelectedNode(d.id);
@@ -257,7 +299,12 @@ const GraphPage = () => {
         </div>
   
         <div className="simulation-container" >
-          <svg id="simulation-svg"></svg>
+          <svg id="simulation-svg">
+              <g id="zoom-group">
+                <g class="links"></g>
+                <g class="nodes"></g>
+              </g>
+          </svg>
         </div>
       </div>
     </div>
