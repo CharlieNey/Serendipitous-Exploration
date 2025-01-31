@@ -2,51 +2,51 @@ import pandas as pd
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 from nltk.tokenize import word_tokenize
 from sklearn.metrics.pairwise import cosine_similarity
-import numpy as np
+import os
 
-# Load the CSV file.
-file_path = 'backend/data/filtered_courses.csv'  # Update the path if necessary.
-data_frame = pd.read_csv(file_path)
+# Load course data
+file_path = 'data/filtered_courses.csv'
+data_frame = pd.read_csv(file_path).dropna(subset=["Description"])
 
-# Extract the "Description" column.
-data = data_frame["Description"].dropna().tolist()  # Drop NaN values and convert to a list.
-course_titles = data_frame['Course Number'].dropna().tolist()
-# Preprocess the documents and create TaggedDocuments.
-tagged_data = [TaggedDocument(words=word_tokenize(doc.lower()),
-                              tags=[str(i)]) for i, doc in enumerate(data)]
+# Extract data
+data = data_frame["Description"].tolist()
+course_titles = data_frame["Course Number"].tolist()
 
-# Train the Doc2Vec model.
-model = Doc2Vec(vector_size=20, min_count=2, epochs=50)
+# Preprocess and create TaggedDocuments
+tagged_data = [TaggedDocument(words=word_tokenize(doc.lower()), tags=[str(i)]) for i, doc in enumerate(data)]
+
+# Train the Doc2Vec model
+model = Doc2Vec(vector_size=50, min_count=2, epochs=40)
 model.build_vocab(tagged_data)
 model.train(tagged_data, total_examples=model.corpus_count, epochs=model.epochs)
 
-# Get the document vectors.
-document_vectors = [model.infer_vector(word_tokenize(doc.lower())) for doc in data]
+# Save the model
+os.makedirs("models", exist_ok=True)
+model.save("models/doc2vec.model")
 
-# Compute cosine similarity for each pair of documents.
+# Save similarity results
+document_vectors = [model.dv[i] for i in range(len(tagged_data))]
 similarity_matrix = cosine_similarity(document_vectors)
 
-# Write the similarity scores to a CSV file.
 similarity_scores = []
 for i, doc in enumerate(data):
     for j, score in enumerate(similarity_matrix[i]):
-        similarity_scores.append({
-            "Course_1": course_titles[i],
-            "Course_2": course_titles[j],
-            "Description_1": data[i],
-            "Description_2": data[j],
-            "Similarity": score
-        })
+        if i != j:
+            similarity_scores.append({
+                "Course_1": course_titles[i],
+                "Course_2": course_titles[j],
+                "Description_1": data[i],
+                "Description_2": data[j],
+                "Similarity": score
+            })
 
-# Convert to DataFrame and save to CSV.
+# Convert to DataFrame and save
 similarity_df = pd.DataFrame(similarity_scores)
-
-# Sort by Course_1, then by Similarity in descending order.
 sorted_similarity_df = similarity_df.sort_values(by=["Course_1", "Similarity"], ascending=[True, False])
+top_10_similarity_df = sorted_similarity_df.groupby("Course_1").head(10)
 
-# Save to CSV.
-sorted_similarity_df.to_csv('backend/data/doc2vec_output_sorted.csv', index=False)
+os.makedirs("outputs", exist_ok=True)
+sorted_similarity_df.to_csv('outputs/doc2vec_output_sorted.csv', index=False)
+top_10_similarity_df.to_csv('outputs/doc2vec_output_top_10.csv', index=False)
 
-similarity_df.to_csv('backend/data/doc2vec_output.csv', index=False)
-
-print("Similarity scores have been written doc2vec_output'.")
+print("Model trained and saved successfully!")

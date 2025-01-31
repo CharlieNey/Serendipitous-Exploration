@@ -71,6 +71,10 @@
   height: 20px;
 }
 
+.grey-cart-button {
+  filter: grayscale(100%);
+}
+
 /* Divider */
 .divider {
   width: 100%;
