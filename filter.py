@@ -16,8 +16,7 @@ def filter_courses(df):
     
     # Convert Credits column to numeric, handling NaN values
     # Extract numbers from the credits string and convert to float
-    df['Credits'] = df['Credits'].str.extract('(\d+)').astype(float)
-    
+    df['Credits'] = df['Credits'].str.extract('(\\d+)').astype(float)
     # Create mask for courses to keep
     keep_mask = ~(
         # Remove all PE courses
@@ -25,10 +24,12 @@ def filter_courses(df):
 
         df['Course Number'].str.startswith('OCP', na=False) |
 
+        df['Course Number'].str.startswith('IDSC', na=False) |
+
         # Remove MUSC courses that are 1 or 2 credits
         ((df['Course Number'].str.startswith('MUSC', na=False)) & 
-         (df['Credits'].isin([1, 2])))
-         |
+         (df['Credits'].isin([1, 2, 3]))) |
+        
         df['Course Number'].str.contains(r'\b400\b', na=False)
     )
     
@@ -36,9 +37,13 @@ def filter_courses(df):
     filtered_df = df[keep_mask]
     
     # Convert Credits back to original format, handling NaN values
+    '''
     filtered_df['Credits'] = filtered_df['Credits'].apply(
         lambda x: f"{int(x)} credits" if pd.notnull(x) else ""
     )
+    '''
+    
+    
     
     print(df.shape)  # Before filtering
     print(filtered_df.shape)  # After filtering
@@ -66,5 +71,5 @@ def process_course_data(file_path):
     
     return filtered_df
 
-filtered_courses = process_course_data('data/courses2.csv')
-filtered_courses.to_csv('data/filtered_courses.csv', index=False)
+filtered_courses = process_course_data('backend/data/courses2.csv')
+filtered_courses.to_csv('backend/data/filtered_courses.csv', index=False)
