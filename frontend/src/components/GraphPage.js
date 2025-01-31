@@ -21,14 +21,13 @@ function getAllNodeConnections(links) {
       connections[node1] = [node2] // if node1 is not in connections, make node2 the first in list
     }
 
-    // this doesn't seem too necessary 
-    // if(node2 in connections) {
-    //   if(!connections[node2].includes(node1)){
-    //     connections[node2].push(node1)
-    //   }
-    // } else {
-    //   connections[node2] = [node1]
-    // }
+    if(node2 in connections) {
+      if(!connections[node2].includes(node1)){
+        connections[node2].push(node1)
+      }
+    } else {
+      connections[node2] = [node1]
+    }
   }
   return connections;
 }
@@ -88,13 +87,8 @@ const GraphPage = () => {
 
     if (clicked === true && selectedNode === node) {
       setClicked(false);
-      setSelectedNode("");
-  
-      if (zoomRef.current) {
-        svg.transition()
-          .duration(750)
-          .call(zoomRef.current.transform, d3.zoomIdentity);
-      }
+      setSelectedNode(""); 
+      
     } else {
       setClicked(true);
       setSelectedNode(node);
@@ -149,6 +143,9 @@ const GraphPage = () => {
       .select("#simulation-svg")
       .attr("width", graphWidth)
       .attr("height", graphHeight)
+      // .on("zoom", (event) => {
+      //   svg.select("g").attr("transform", event.transform);
+      // });
 
     if (!zoomRef.current) {
       zoomRef.current = d3.zoom()
@@ -158,7 +155,7 @@ const GraphPage = () => {
         });
   
       svg.call(zoomRef.current);
-      }
+    }
     
     svg.append("g").attr("class", "links");
     svg.append("g").attr("class", "nodes");
@@ -187,6 +184,7 @@ const GraphPage = () => {
       .style("r", 5)
       .style("stroke-width", 0.5)
       .style("stroke", "black")
+      .attr("id", d => d)
 
     // Adding the text to the circles
     nodeGroup
