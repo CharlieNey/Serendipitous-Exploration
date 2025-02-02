@@ -1,0 +1,17 @@
+.calendar-page-container {
+    display: flex;
+    height: 100%;
+}
+
+.calendar-section {
+    flex-grow: 1;
+    height: 100%;
+}
+
+.fc-day-today {
+    background-color: inherit !important;
+}
+
+.fc {
+    height: 50%;
+}

@@ -3,12 +3,13 @@ import "./CalendarPage.css";
 import { useParams } from "react-router-dom";
 import { SavedCoursesContext } from './SavedCoursesContext.js';
 import shopping_cart_logo from '../images/shopping_cart_logo.png'; 
+import FullCalendar from '@fullcalendar/react'
+import dayGridPlugin from '@fullcalendar/daygrid'
 
 function Calendar(props) {
   const {savedCourses, setSavedCourses} = useContext(SavedCoursesContext);
-  const { id, name } = useParams()
   const [expandedCourse, setExpandedCourse] = useState(null); // stores the course number of the currently expanded course (null by default)
-  
+
 
   console.log("These are the saved courses (calendar page):")
   console.log(savedCourses)
@@ -99,6 +100,22 @@ function Calendar(props) {
           {/* )} */}
         </div>
         <div className="divider"></div> {/* divider for separation in the sidebar */}
+      </div>
+
+      <div className="calendar-section">
+        <FullCalendar
+          plugins={[ dayGridPlugin ]}
+          initialView="dayGridWeek"
+          dayHeaderFormat={{ weekday: 'long' }}
+          weekends={false}
+          headerToolbar={false}
+          // headerToolbar={{
+          //   start: 'title', 
+          //   center: '',
+          //   end: 'today prev,next' 
+          // }}
+          
+        />
       </div>
 
     </div>
