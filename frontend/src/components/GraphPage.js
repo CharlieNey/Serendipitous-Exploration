@@ -7,7 +7,7 @@ import { SavedCoursesContext } from './SavedCoursesContext.js';
 import { SearchContext } from './SearchContext.js';
 import { GraphContext } from './GraphContext.js';
 
-const GraphPage = () => {
+const GraphPage = ({ setShowNavbar }) => {
   // Code adapted from d3indepth.com. 
   const graphWidth = 1100; // when I make both of these 1100, removes the gray column bug
   const graphHeight = 1100;
@@ -61,6 +61,7 @@ const GraphPage = () => {
 
   // Fetch values for state variables
   useEffect(() => {
+    setShowNavbar(true);
     fetchNodes();
     fetchLinks();
     fetchNodesConnections();
