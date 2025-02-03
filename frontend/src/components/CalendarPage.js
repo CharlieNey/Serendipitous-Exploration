@@ -3,15 +3,77 @@ import "./CalendarPage.css";
 import { useParams } from "react-router-dom";
 import { SavedCoursesContext } from './SavedCoursesContext.js';
 import shopping_cart_logo from '../images/shopping_cart_logo.png'; 
+import FullCalendar from '@fullcalendar/react'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import timeGridPlugin from '@fullcalendar/timegrid'
 
 function Calendar(props) {
   const {savedCourses, setSavedCourses} = useContext(SavedCoursesContext);
-  const { id, name } = useParams()
   const [expandedCourse, setExpandedCourse] = useState(null); // stores the course number of the currently expanded course (null by default)
-  
+
 
   console.log("These are the saved courses (calendar page):")
   console.log(savedCourses)
+
+
+  function parseDaysOfWeek(days) {
+    const dayMapping = {
+      M: '1',
+      T: '2',
+      W: '3',
+      TH: '4',
+      F: '5',
+    };
+  
+    // split input string by comma + trim extra spaces
+    const daysArray = days.split(',').map(day => day.trim());
+  
+    // map day abbreviations to number code
+    const parsedDays = daysArray.map(day => dayMapping[day]);
+  
+    return parsedDays;
+  }
+
+  function parseTimeRange(timeRange) {
+    // helper function to convert from 12h to 24h format
+    function convertTo24HourFormat(time) {
+      const [hours, minutes] = time.match(/(\d+):(\d+)(am|pm)/).slice(1, 3);
+      let hours24 = parseInt(hours, 10);
+  
+      // convert a/pm to 24h
+      if (time.includes('pm') && hours24 < 12) {
+        hours24 += 12;
+      }
+  
+      // fill to ensure two digits
+      return `${String(hours24).padStart(2, '0')}:${minutes}:00`;
+    }
+  
+    // split into start and end times
+    const [startTime, endTime] = timeRange.split('-');
+  
+    // convert start and end times to 24h format
+    const startTimeIn24 = convertTo24HourFormat(startTime);
+    const endTimeIn24 = convertTo24HourFormat(endTime);
+  
+    return {
+      startTime: startTimeIn24,
+      endTime: endTimeIn24
+    };
+  }
+
+  // map saved courses to events for the calendar
+  const calendarEvents = savedCourses.map(course => ({
+    title: course.course_number,
+    // daysOfWeek: [1, 3, 5],
+    daysOfWeek: parseDaysOfWeek(course.meeting_day),
+    startTime: parseTimeRange(course.time).startTime,
+    endTime: parseTimeRange(course.time).endTime
+  }));
+
+  console.log("calendar events created:")
+  console.log(calendarEvents);
+  
 
   return (
     <div className="calendar-page-container">
@@ -100,6 +162,29 @@ function Calendar(props) {
         </div>
         <div className="divider"></div> {/* divider for separation in the sidebar */}
       </div>
+
+      <div className="calendar-section">
+      <FullCalendar
+        // plugins={[ dayGridPlugin ]}
+        // initialView="dayGridWeek"
+        plugins={[ timeGridPlugin ]}
+        initialView="timeGridWeek"
+        dayHeaderFormat={{ weekday: 'long' }}
+        weekends={false}
+        minTime="08:00:00"
+        maxTime="18:00:00"
+
+        headerToolbar={false}
+        // headerToolbar={{
+        //   start: 'title', 
+        //   center: '',
+        //   end: 'today prev,next' 
+        // }}
+        
+        events={calendarEvents}
+      />
+
+    </div>
 
     </div>
   );
