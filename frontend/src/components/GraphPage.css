@@ -21,7 +21,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: lightgray;
+  background-color: rgb(255, 255, 255);
   overflow:auto;
  }
 /* set in javascript */
