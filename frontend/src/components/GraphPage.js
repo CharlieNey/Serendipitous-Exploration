@@ -16,37 +16,36 @@ const GraphPage = () => {
   const {savedCourses, setSavedCourses} = useContext(SavedCoursesContext);
   const {courseList, searchTerm, isLoading, setSearchTerm, fetchCourses} = useContext(SearchContext);
   const { selectedNode, nodes, links, connectedNodes, setSelectedNode, fetchNodes, fetchLinks, fetchNodesConnections } = useContext(GraphContext);
-  const [clicked, setClicked] = useState(false)
+  const [nodeSelections, setNodeSelections] = useState(["", ""])
   
   function getLinkOpacity(link) {
-    if(selectedNode === "" || link.source.id === selectedNode || link.target.id === selectedNode ) { // if nothing selected, everything is colored
+    if(nodeSelections[1] === "" || link.source.id === nodeSelections[1] || link.target.id === nodeSelections[1] ) { // if nothing selected, everything is colored
       return 1;
     }
     return 0.05;
   }
   
   function getNodeOpacity(node) {
-    if (selectedNode === "" || node === selectedNode || connectedNodes[selectedNode].includes(node)) {
+    if (nodeSelections[1] === "" || node === nodeSelections[1] || connectedNodes[nodeSelections[1]].includes(node)) {
       return 1;
     }
     return 0.5;
   }
   
   function getNodeColor(node) {
-    if (selectedNode === "" || connectedNodes[selectedNode] === undefined) {
+    if (nodeSelections[1] === "" || connectedNodes[nodeSelections[1]] === undefined) {
       return "pink";
     }
   
-    if (node === selectedNode) {
+    if (node === nodeSelections[1]) {
       return "red";
-    } else if (connectedNodes[selectedNode].includes(node)){
+    } else if (connectedNodes[nodeSelections[1]].includes(node)){
       return "green";
     }
     return "pink";
   }
 
   async function refreshGraph() {
-    // await setSelectedNode(selectedNode)
     d3.select(".links")
       .selectAll("line")
       .style("opacity", (d) => getLinkOpacity(d))
@@ -58,45 +57,6 @@ const GraphPage = () => {
       .style("fill", (d) => getNodeColor(d.id))
       .style("opacity", (d) => getNodeOpacity(d.id));
   }
-
-  function clickNode(node) {
-    if (clicked === true && selectedNode === node) { // to unclick something already selected
-      setClicked(false);
-      setSelectedNode("");
-    } else {
-      setClicked(true);
-      setSelectedNode(node);
-    }
-  }
-
-  // function clickNode(node) {
-  //   const svg = d3.select("#simulation-svg");
-
-  //   if (clicked === true && selectedNode === node) {
-  //     setClicked(false);
-  //     setSelectedNode("");
-  
-  //     if (zoomRef.current) {
-  //       svg.transition()
-  //         .duration(750)
-  //         .call(zoomRef.current.transform, d3.zoomIdentity);
-  //     }
-  //   } else {
-  //     setClicked(true);
-  //     setSelectedNode(node);
-
-  //     const svg = d3.select("#simulation-svg");
-  
-  //     const transform = d3.zoomIdentity
-  //       .translate(graphWidth / 2 - node.x * 2, graphHeight / 2 - node.y * 2)
-  //       .scale(2);
-  
-     
-  //     svg.transition()
-  //       .duration(750)
-  //       .call(zoomRef.current.transform, transform);
-  //   }
-  // }
 
   // Fetch values for state variables
   useEffect(() => {
@@ -168,26 +128,16 @@ const GraphPage = () => {
       .text((d) => d.id)
       .attr("dy", 1)
     
-    refreshGraph("")
+    refreshGraph()
 
     nodeGroup
       .selectAll('circle')
-      .on('click', function (e, d) {
-        clickNode(d.id);
-      })
-      .on('mouseover', function (e, d) {
-        // console.log(clicked)
-        if(!clicked){
-          setSelectedNode(d.id);
-        }
-        // console.log(clicked)
+      .on('click', (e, d) => setSelectedNode([-1, d.id]))
+      .on('mouseenter', function (e, d) {
+        setSelectedNode(d.id)
       })
       .on('mouseout', function (e, d) {
-        // console.log(clicked)
-        if(!clicked){
-          setSelectedNode("");
-        }
-        // console.log(clicked)
+        setSelectedNode("")
       });
 
     simulation
@@ -210,8 +160,20 @@ const GraphPage = () => {
     }, [links, nodes, connectedNodes]);
 
     useEffect(() => {
+      if (selectedNode[0] === -1) {
+        if (nodeSelections[0] === selectedNode[1]) {
+          setNodeSelections(["", ""])
+        } else {
+          setNodeSelections([selectedNode[1], selectedNode[1]])
+        }
+      } else if(nodeSelections[0] === "") {
+        setNodeSelections(["", selectedNode])
+      }
+    }, [selectedNode]);
+
+    useEffect(() => {
       refreshGraph()
-    }, [clicked, selectedNode]);
+    }, [nodeSelections]);
 
   return (
     <div className="GraphPage">
@@ -242,7 +204,7 @@ const GraphPage = () => {
                 <li 
                   key={course.course_number} 
                   className="course-item"
-                  onClick={() => clickNode(course.course_number)}  // update selected node when clicked
+                  onClick={() => setSelectedNode([-1, course.course_number])}  // update selected node when clicked
                   style={{ cursor: 'pointer' }}  
                 >
                   <button
