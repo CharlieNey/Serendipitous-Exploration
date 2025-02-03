@@ -1,14 +1,11 @@
 import pandas as pd
 
-# Paths to files
 similarity_file = 'data/doc2vec_output/doc2vec_output_sorted.csv'
 
-# Step 1: Load similarity data
 similarity_df = pd.read_csv(similarity_file)
 
-# Step 2: Extract departments from course numbers
+# Extract departments from course numbers
 def extract_department(course_number):
-    """Extract department prefix from the course number."""
     if isinstance(course_number, str):
         return course_number.split(' ')[0]  # Take characters before the first space
     return None
@@ -19,8 +16,7 @@ similarity_df["Department_2"] = similarity_df["Course_2"].apply(extract_departme
 # Drop rows where department mapping fails (e.g., invalid course numbers)
 similarity_df = similarity_df.dropna(subset=["Department_1", "Department_2"])
 
-# Step 3: Ensure unique department pairs and remove self-comparisons
-# Sort department pairs alphabetically and filter duplicates
+# Sort department pairs
 similarity_df["Dept_Pair"] = similarity_df.apply(
     lambda row: tuple(sorted([row["Department_1"], row["Department_2"]])),
     axis=1

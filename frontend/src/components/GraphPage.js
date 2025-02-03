@@ -15,35 +15,8 @@ const GraphPage = () => {
   // Import state variables and fetching methods
   const {savedCourses, setSavedCourses} = useContext(SavedCoursesContext);
   const {courseList, searchTerm, isLoading, setSearchTerm, fetchCourses} = useContext(SearchContext);
-  const { selectedNode, nodes, links, setSelectedNode, fetchNodes, fetchLinks } = useContext(GraphContext);
+  const { selectedNode, nodes, links, connectedNodes, setSelectedNode, fetchNodes, fetchLinks, fetchNodesConnections } = useContext(GraphContext);
   const [clicked, setClicked] = useState(false)
-
-  const[connectedNodes, setConnectedNodes] = useState([]);
-
-  function getAllNodeConnections(links) {
-    var connections = {}
-    for (var i in links) {
-      var node1 = links[i].source
-      var node2 = links[i].target
-  
-      if(node1 in connections) {
-        if(!connections[node1].includes(node2)){ // if node2 is not in node1 
-          connections[node1].push(node2) // push node2 to node1
-        }
-      } else {
-        connections[node1] = [node2] // if node1 is not in connections, make node2 the first in list
-      }
-  
-      if(node2 in connections) {
-        if(!connections[node2].includes(node1)){
-          connections[node2].push(node1)
-        }
-      } else {
-        connections[node2] = [node1]
-      }
-    }
-    return connections;
-  }
   
   function getLinkOpacity(link) {
     if(selectedNode === "" || link.source.id === selectedNode || link.target.id === selectedNode ) { // if nothing selected, everything is colored
@@ -72,28 +45,28 @@ const GraphPage = () => {
     return "pink";
   }
 
+  async function refreshGraph() {
+    // await setSelectedNode(selectedNode)
+    d3.select(".links")
+      .selectAll("line")
+      .style("opacity", (d) => getLinkOpacity(d))
+      .style("stroke", (d) => color((d.score - 0.5) * 2)) // Change to min similarity score
+  
+    d3.select(".nodes")
+      .selectAll("g")
+      .selectAll("circle")
+      .style("fill", (d) => getNodeColor(d.id))
+      .style("opacity", (d) => getNodeOpacity(d.id));
+  }
+
   function clickNode(node) {
     if (clicked === true && selectedNode === node) { // to unclick something already selected
       setClicked(false);
+      setSelectedNode("");
     } else {
       setClicked(true);
       setSelectedNode(node);
     }
-    // refreshGraph()
-  }
-
-  function mouseOverNode(node) {
-    if(!clicked){
-      setSelectedNode(node.id);
-    }
-    // refreshGraph()
-  }
-
-  function mouseOffNode() {
-    if(!clicked){
-      setSelectedNode("");
-    }
-    // refreshGraph()
   }
 
   // function clickNode(node) {
@@ -125,23 +98,11 @@ const GraphPage = () => {
   //   }
   // }
 
-  function refreshGraph() {
-    d3.select(".links")
-      .selectAll("line")
-      .style("opacity", (d) => getLinkOpacity(d))
-      .style("stroke", (d) => color((d.score - 0.5) * 2)) // Change to min similarity score
-  
-    d3.select(".nodes")
-      .selectAll("g")
-      .selectAll("circle")
-      .style("fill", (d) => getNodeColor(d.id))
-      .style("opacity", (d) => getNodeOpacity(d.id));
-  }
-
   // Fetch values for state variables
   useEffect(() => {
     fetchNodes();
     fetchLinks();
+    fetchNodesConnections();
   }, []);
 
   useEffect(() => {
@@ -154,9 +115,7 @@ const GraphPage = () => {
   
   // Create graph
   useEffect(() => {
-    if (nodes.length === 0 || links.length === 0) return;
-
-    setConnectedNodes(getAllNodeConnections(links))
+    if (nodes.length === 0 || links.length === 0 || connectedNodes.length === 0) return;
 
     const svg = d3
       .select("#simulation-svg")
@@ -208,8 +167,8 @@ const GraphPage = () => {
       .join("text")
       .text((d) => d.id)
       .attr("dy", 1)
-
-    refreshGraph()
+    
+    refreshGraph("")
 
     nodeGroup
       .selectAll('circle')
@@ -217,10 +176,18 @@ const GraphPage = () => {
         clickNode(d.id);
       })
       .on('mouseover', function (e, d) {
-        mouseOverNode(d);
+        // console.log(clicked)
+        if(!clicked){
+          setSelectedNode(d.id);
+        }
+        // console.log(clicked)
       })
       .on('mouseout', function (e, d) {
-        mouseOffNode(d);
+        // console.log(clicked)
+        if(!clicked){
+          setSelectedNode("");
+        }
+        // console.log(clicked)
       });
 
     simulation
@@ -240,7 +207,11 @@ const GraphPage = () => {
         svg.selectAll(".links").remove();
         svg.selectAll(".nodes").remove();
       };
-    }, [links, nodes]);
+    }, [links, nodes, connectedNodes]);
+
+    useEffect(() => {
+      refreshGraph()
+    }, [clicked, selectedNode]);
 
   return (
     <div className="GraphPage">
