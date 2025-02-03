@@ -68,10 +68,10 @@ app.get('/api/connections', async (req, res) => {
 router.get('/:search', async (req, res) => { 
     try {
         const search = req.params.search;
-        console.log(search)
-        const query = "SELECT * FROM courses WHERE LOWER(course_title) LIKE '%" + search + "%' OR LOWER(course_title) LIKE '" + search + "%' OR LOWER(course_title) LIKE '%" + search +"'";
-        console.log(query)
-        const result = await pool.query(query);
+        const query1 = "SELECT * FROM courses WHERE LOWER(course_title) LIKE '%" + search + "%' OR LOWER(course_title) LIKE '" + search + "%' OR LOWER(course_title) LIKE '%" + search +"'";
+        const query2 = " OR LOWER(course_number) LIKE '%" + search + "%' OR LOWER(course_number) LIKE '" + search + "%' OR LOWER(course_number) LIKE '%" + search +"'";
+        const query3 = " OR LOWER(description) LIKE '%" + search + "%' OR LOWER(description) LIKE '" + search + "%' OR LOWER(description) LIKE '%" + search +"'";
+        const result = await pool.query(query1 + query2 + query3);
         res.json(result.rows);
     } catch (err) {
         console.error("Error querying courses:", err.message);

@@ -7,59 +7,6 @@ import { SavedCoursesContext } from './SavedCoursesContext.js';
 import { SearchContext } from './SearchContext.js';
 import { GraphContext } from './GraphContext.js';
 
-function getAllNodeConnections(links) {
-  var connections = {}
-  for (var i in links) {
-    var node1 = links[i].source
-    var node2 = links[i].target
-
-    if(node1 in connections) {
-      if(!connections[node1].includes(node2)){ // if node2 is not in node1 
-        connections[node1].push(node2) // push node2 to node1
-      }
-    } else {
-      connections[node1] = [node2] // if node1 is not in connections, make node2 the first in list
-    }
-
-    // this doesn't seem too necessary 
-    // if(node2 in connections) {
-    //   if(!connections[node2].includes(node1)){
-    //     connections[node2].push(node1)
-    //   }
-    // } else {
-    //   connections[node2] = [node1]
-    // }
-  }
-  return connections;
-}
-
-function getLinkOpacity(link, selectedNode) {
-  if(selectedNode === "" || link.source.id === selectedNode || link.target.id === selectedNode ) { // if nothing selected, everything is colored
-    return 1;
-  }
-  return 0.05;
-}
-
-function getNodeOpacity(node, selectedNode, connectedNodes) {
-  if (selectedNode === "" || node === selectedNode || connectedNodes[selectedNode].includes(node)) {
-    return 1;
-  }
-  return 0.5;
-}
-
-function getNodeColor(node, selectedNode, connectedNodes) {
-  if (selectedNode === "" || connectedNodes[selectedNode] === undefined) {
-    return "pink";
-  }
-
-  if (node === selectedNode) {
-    return "red";
-  } else if (connectedNodes[selectedNode].includes(node)){
-    return "green";
-  }
-  return "pink";
-}
-
 const GraphPage = () => {
   // Mock dummy graph. Code adapted from d3indepth.com. 
   const graphWidth = 750;
@@ -73,56 +20,122 @@ const GraphPage = () => {
 
   const[connectedNodes, setConnectedNodes] = useState([]);
 
-  // function clickNode(node) {
-  //   if (clicked === true && selectedNode === node) { // to unclick something already selected
-  //     setClicked(false);
-  //     setSelectedNode("");
-  //   } else {
-  //     setClicked(true);
-  //     setSelectedNode(node);
-  //   }
-  // }
+  function getAllNodeConnections(links) {
+    var connections = {}
+    for (var i in links) {
+      var node1 = links[i].source
+      var node2 = links[i].target
+  
+      if(node1 in connections) {
+        if(!connections[node1].includes(node2)){ // if node2 is not in node1 
+          connections[node1].push(node2) // push node2 to node1
+        }
+      } else {
+        connections[node1] = [node2] // if node1 is not in connections, make node2 the first in list
+      }
+  
+      if(node2 in connections) {
+        if(!connections[node2].includes(node1)){
+          connections[node2].push(node1)
+        }
+      } else {
+        connections[node2] = [node1]
+      }
+    }
+    return connections;
+  }
+  
+  function getLinkOpacity(link) {
+    if(selectedNode === "" || link.source.id === selectedNode || link.target.id === selectedNode ) { // if nothing selected, everything is colored
+      return 1;
+    }
+    return 0.05;
+  }
+  
+  function getNodeOpacity(node) {
+    if (selectedNode === "" || node === selectedNode || connectedNodes[selectedNode].includes(node)) {
+      return 1;
+    }
+    return 0.5;
+  }
+  
+  function getNodeColor(node) {
+    if (selectedNode === "" || connectedNodes[selectedNode] === undefined) {
+      return "pink";
+    }
+  
+    if (node === selectedNode) {
+      return "red";
+    } else if (connectedNodes[selectedNode].includes(node)){
+      return "green";
+    }
+    return "pink";
+  }
 
   function clickNode(node) {
-    const svg = d3.select("#simulation-svg");
-
-    if (clicked === true && selectedNode === node) {
+    if (clicked === true && selectedNode === node) { // to unclick something already selected
       setClicked(false);
-      setSelectedNode("");
-  
-      if (zoomRef.current) {
-        svg.transition()
-          .duration(750)
-          .call(zoomRef.current.transform, d3.zoomIdentity);
-      }
     } else {
       setClicked(true);
       setSelectedNode(node);
+    }
+    // refreshGraph()
+  }
 
-      const svg = d3.select("#simulation-svg");
+  function mouseOverNode(node) {
+    if(!clicked){
+      setSelectedNode(node.id);
+    }
+    // refreshGraph()
+  }
+
+  function mouseOffNode() {
+    if(!clicked){
+      setSelectedNode("");
+    }
+    // refreshGraph()
+  }
+
+  // function clickNode(node) {
+  //   const svg = d3.select("#simulation-svg");
+
+  //   if (clicked === true && selectedNode === node) {
+  //     setClicked(false);
+  //     setSelectedNode("");
   
-      const transform = d3.zoomIdentity
-        .translate(graphWidth / 2 - node.x * 2, graphHeight / 2 - node.y * 2)
-        .scale(2);
+  //     if (zoomRef.current) {
+  //       svg.transition()
+  //         .duration(750)
+  //         .call(zoomRef.current.transform, d3.zoomIdentity);
+  //     }
+  //   } else {
+  //     setClicked(true);
+  //     setSelectedNode(node);
+
+  //     const svg = d3.select("#simulation-svg");
+  
+  //     const transform = d3.zoomIdentity
+  //       .translate(graphWidth / 2 - node.x * 2, graphHeight / 2 - node.y * 2)
+  //       .scale(2);
   
      
-      svg.transition()
-        .duration(750)
-        .call(zoomRef.current.transform, transform);
-    }
-  }
+  //     svg.transition()
+  //       .duration(750)
+  //       .call(zoomRef.current.transform, transform);
+  //   }
+  // }
 
   function refreshGraph() {
     d3.select(".links")
       .selectAll("line")
-      .style("opacity", (d) => getLinkOpacity(d, selectedNode))
+      .style("opacity", (d) => getLinkOpacity(d))
       .style("stroke", (d) => color((d.score - 0.5) * 2)) // Change to min similarity score
   
     d3.select(".nodes")
       .selectAll("g")
       .selectAll("circle")
-      .style("fill", (d) => getNodeColor(d.id, selectedNode, connectedNodes))
-      .style("opacity", (d) => getNodeOpacity(d.id, selectedNode, connectedNodes));
+      .style("fill", (d) => getNodeColor(d.id))
+      .style("opacity", (d) => getNodeOpacity(d.id));
   }
 
   // Fetch values for state variables
@@ -196,28 +209,19 @@ const GraphPage = () => {
       .text((d) => d.id)
       .attr("dy", 1)
 
+    refreshGraph()
+
     nodeGroup
       .selectAll('circle')
       .on('click', function (e, d) {
-        setSelectedNode(d.id);
         clickNode(d.id);
-        
       })
-
-    
-
-    // .on('mouseover', function (e, d) {
-    //   if(!clicked){
-    //     setSelectedNode(d.id);
-    //   }
-    // })
-    // .on('mouseout', function (e, d) {
-    //   if(!clicked){
-    //     setSelectedNode("");
-    //   }
-    // });
-
-    refreshGraph()
+      .on('mouseover', function (e, d) {
+        mouseOverNode(d);
+      })
+      .on('mouseout', function (e, d) {
+        mouseOffNode(d);
+      });
 
     simulation
       .on("tick", () => {
@@ -237,14 +241,6 @@ const GraphPage = () => {
         svg.selectAll(".nodes").remove();
       };
     }, [links, nodes]);
-
-  useEffect(() => {
-    // console.log("Rerun")
-    // console.log(clicked)
-    // console.log(selectedNode)
-
-    refreshGraph()
-  }, [selectedNode]);
 
   return (
     <div className="GraphPage">
