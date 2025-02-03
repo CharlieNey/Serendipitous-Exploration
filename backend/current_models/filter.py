@@ -71,5 +71,5 @@ def process_course_data(file_path):
     
     return filtered_df
 
-filtered_courses = process_course_data('backend/data/courses2.csv')
-filtered_courses.to_csv('backend/data/filtered_courses.csv', index=False)
+filtered_courses = process_course_data('backend/data/course_data/courses2.csv')
+filtered_courses.to_csv('backend/data/filtered_courses/filtered.csv', index=False)

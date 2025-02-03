@@ -36,18 +36,18 @@ def preprocess_text(text):
 
     return ' '.join(text)
 
-# Preprocess the combined descriptions
+# preprocess the combined descriptions
 df['processed_description'] = df['combined_description'].apply(preprocess_text)
 
-# Convert text to a document-term matrix
+# convert text to a document-term matrix
 vectorizer = CountVectorizer(max_df=0.9, min_df=2, stop_words='english')
 dtm = vectorizer.fit_transform(df['processed_description'])
 
-# Fit LDA model
+# fit LDA model
 lda_model = LatentDirichletAllocation(n_components=3, random_state=42)  # n_components = number of topics
 lda_model.fit(dtm)
 
-# Extract topics
+# extract topics
 def display_topics(model, feature_names, no_top_words):
     topics = {}
     for topic_idx, topic in enumerate(model.components_):
@@ -58,7 +58,6 @@ no_top_words = 10
 feature_names = vectorizer.get_feature_names_out()
 topics = display_topics(lda_model, feature_names, no_top_words)
 
-# Print topics
 for topic, words in topics.items():
     print(f"{topic}: {', '.join(words)}")
 
