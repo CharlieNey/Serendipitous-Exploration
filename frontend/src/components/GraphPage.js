@@ -109,8 +109,6 @@ const GraphPage = () => {
   // Create graph
   useEffect(() => {
     if (nodes.length === 0 || links.length === 0 || connectedNodes.length === 0) return;
-
-    setConnectedNodes(getAllNodeConnections(links))
     console.log("Initializing zoom...");
     
     const svg = d3
