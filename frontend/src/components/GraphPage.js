@@ -16,72 +16,71 @@ const GraphPage = () => {
   const {savedCourses, setSavedCourses} = useContext(SavedCoursesContext);
   const {courseList, searchTerm, isLoading, setSearchTerm, fetchCourses} = useContext(SearchContext);
   const { selectedNode, nodes, links, connectedNodes, setSelectedNode, fetchNodes, fetchLinks, fetchNodesConnections } = useContext(GraphContext);
+  const [nodeSelections, setNodeSelections] = useState(["", ""]) // index 0 is clicked node, index 1 is selected node
   const [clicked, setClicked] = useState(false)
-
   const zoomRef = useRef(null);
 
-  function clickNode(nodeId) {
-    console.log("node clicked");
-    const node = nodes.find(n => n.id === nodeId);
-    if (!node) return;
+  // function clickNode(nodeId) {
+  //   console.log("node clicked");
+  //   const node = nodes.find(n => n.id === nodeId);
+  //   if (!node) return;
 
-    const svg = d3.select("#simulation-svg");
+  //   const svg = d3.select("#simulation-svg");
 
-    if (clicked === true && selectedNode === nodeId) {
-      console.log("zooming back out!!!");
-      setClicked(false);
-      setSelectedNode(""); 
+  //   if (clicked === true && selectedNode === nodeId) {
+  //     console.log("zooming back out!!!");
+  //     // setClicked(false);
+  //     // setSelectedNode("");
       
-      svg.transition()
-        .duration(750)
-        .call(zoomRef.current.transform, d3.zoomIdentity);
+  //     svg.transition()
+  //       .duration(750)
+  //       .call(zoomRef.current.transform, d3.zoomIdentity);
 
-    } else {
-      console.log("zooming in!!!");
-      setClicked(true);
-      setSelectedNode(nodeId);
+  //   } else {
+  //     console.log("zooming in!!!");
+  //     // setClicked(true);
+  //     // setSelectedNode(nodeId);
 
-      const transform = d3.zoomIdentity
-        .translate(graphWidth / 2 - node.x * 2, graphHeight / 2 - node.y * 2)
-        .scale(2);
+  //     const transform = d3.zoomIdentity
+  //       .translate(graphWidth / 2 - node.x * 2, graphHeight / 2 - node.y * 2)
+  //       .scale(2);
      
-      if (zoomRef.current){
-        svg.transition()
-          .duration(750)
-          .call(zoomRef.current.transform, transform);
-      }
-    }
-    return 0.5;
-  }
+  //     if (zoomRef.current){
+  //       svg.transition()
+  //         .duration(750)
+  //         .call(zoomRef.current.transform, transform);
+  //     }
+  //   }
+  //   return 0.5;
+  // }
   
   function getLinkOpacity(link) {
-    if(selectedNode === "" || link.source.id === selectedNode || link.target.id === selectedNode ) { // if nothing selected, everything is colored
+    if(nodeSelections[1] === "" || link.source.id === nodeSelections[1] || link.target.id === nodeSelections[1] ) { // if nothing selected, everything is colored
       return 1;
     }
     return 0.05;
   }
   
   function getNodeOpacity(node) {
-    if (selectedNode === "" || node === selectedNode || connectedNodes[selectedNode].includes(node)) {
+    if (nodeSelections[1] === "" || node === nodeSelections[1] || connectedNodes[nodeSelections[1]].includes(node)) {
       return 1;
     }
   }
   
   function getNodeColor(node) {
-    if (selectedNode === "" || connectedNodes[selectedNode] === undefined) {
+    if (nodeSelections[1] === "" || connectedNodes[nodeSelections[1]] === undefined) {
       return "pink";
     }
   
-    if (node === selectedNode) {
+    if (node === nodeSelections[1]) {
       return "red";
-    } else if (connectedNodes[selectedNode].includes(node)){
+    } else if (connectedNodes[nodeSelections[1]].includes(node)){
       return "green";
     }
     return "pink";
   }
 
   async function refreshGraph() {
-    // await setSelectedNode(selectedNode)
     d3.select(".links")
       .selectAll("line")
       .style("opacity", (d) => getLinkOpacity(d))
@@ -93,45 +92,6 @@ const GraphPage = () => {
       .style("fill", (d) => getNodeColor(d.id))
       .style("opacity", (d) => getNodeOpacity(d.id));
   }
-
-  function clickNode(node) {
-    if (clicked === true && selectedNode === node) { // to unclick something already selected
-      setClicked(false);
-      setSelectedNode("");
-    } else {
-      setClicked(true);
-      setSelectedNode(node);
-    }
-  }
-
-  // function clickNode(node) {
-  //   const svg = d3.select("#simulation-svg");
-
-  //   if (clicked === true && selectedNode === node) {
-  //     setClicked(false);
-  //     setSelectedNode("");
-  
-  //     if (zoomRef.current) {
-  //       svg.transition()
-  //         .duration(750)
-  //         .call(zoomRef.current.transform, d3.zoomIdentity);
-  //     }
-  //   } else {
-  //     setClicked(true);
-  //     setSelectedNode(node);
-
-  //     const svg = d3.select("#simulation-svg");
-  
-  //     const transform = d3.zoomIdentity
-  //       .translate(graphWidth / 2 - node.x * 2, graphHeight / 2 - node.y * 2)
-  //       .scale(2);
-  
-     
-  //     svg.transition()
-  //       .duration(750)
-  //       .call(zoomRef.current.transform, transform);
-  //   }
-  // }
 
   // Fetch values for state variables
   useEffect(() => {
@@ -220,26 +180,21 @@ const GraphPage = () => {
       .join("text")
       .text((d) => d.id)
       .attr("dy", 2)
+    refreshGraph()
 
     nodeGroup
       .selectAll('circle')
+      // .on('click', (e, d) => setSelectedNode([-1, d.id]))
       .on('click', function (e, d) {
         e.stopPropagation();
-        clickNode(d.id);
+        setSelectedNode([-1, d.id])
       })
-
-    // .on('mouseover', function (e, d) {
-    //   if(!clicked){
-    //     setSelectedNode(d.id);
-    //   }
-    // })
-    // .on('mouseout', function (e, d) {
-    //   if(!clicked){
-    //     setSelectedNode("");
-    //   }
-    // });
-
-    refreshGraph()
+      .on('mouseenter', function (e, d) {
+        setSelectedNode(d.id)
+      })
+      .on('mouseout', function (e, d) {
+        setSelectedNode("")
+      });
 
     simulation
       .on("tick", () => {
@@ -261,8 +216,42 @@ const GraphPage = () => {
     }, [links, nodes, connectedNodes]);
 
     useEffect(() => {
+      if (selectedNode[0] === -1) { // A node is clicked
+        console.log("node clicked");
+        const node = nodes.find(n => n.id === selectedNode[1]);
+        if (!node) return;
+    
+        const svg = d3.select("#simulation-svg");
+        
+        if (nodeSelections[0] === selectedNode[1]) {
+          console.log("zooming back out!!!");
+          setNodeSelections(["", ""]) // The currently clicked node is clicked again
+          
+          svg.transition()
+            .duration(750)
+            .call(zoomRef.current.transform, d3.zoomIdentity);
+        } else {
+          console.log("zooming in!!!");
+          setNodeSelections([selectedNode[1], selectedNode[1]]) // A new node is clicked
+          
+          const transform = d3.zoomIdentity
+            .translate(graphWidth / 2 - node.x * 2, graphHeight / 2 - node.y * 2)
+            .scale(2);
+         
+          if (zoomRef.current){
+            svg.transition()
+              .duration(750)
+              .call(zoomRef.current.transform, transform);
+          }
+        }
+      } else if(nodeSelections[0] === "") { // Hover behavior
+        setNodeSelections(["", selectedNode]) // Update selected node, not clicked node
+      }
+    }, [selectedNode]);
+
+    useEffect(() => {
       refreshGraph()
-    }, [clicked, selectedNode]);
+    }, [nodeSelections]);
 
   return (
     <div className="GraphPage">
@@ -293,7 +282,7 @@ const GraphPage = () => {
                 <li 
                   key={course.course_number} 
                   className="course-item"
-                  onClick={() => clickNode(course.course_number)}  // update selected node when clicked
+                  onClick={() => setSelectedNode([-1, course.course_number])}  // update selected node when clicked
                   style={{ cursor: 'pointer' }}  
                 >
                   <button
