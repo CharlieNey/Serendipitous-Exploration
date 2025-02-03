@@ -9,8 +9,8 @@ import { GraphContext } from './GraphContext.js';
 
 const GraphPage = () => {
   // Code adapted from d3indepth.com. 
-  const graphWidth = 750; // when I make both of these 1100, removes the gray column bug
-  const graphHeight = 750;
+  const graphWidth = 1100; // when I make both of these 1100, removes the gray column bug
+  const graphHeight = 1100;
 
   // Import state variables and fetching methods
   const {savedCourses, setSavedCourses} = useContext(SavedCoursesContext);
@@ -19,40 +19,6 @@ const GraphPage = () => {
   const [nodeSelections, setNodeSelections] = useState(["", ""]) // index 0 is clicked node, index 1 is selected node
   const [clicked, setClicked] = useState(false)
   const zoomRef = useRef(null);
-
-  // function clickNode(nodeId) {
-  //   console.log("node clicked");
-  //   const node = nodes.find(n => n.id === nodeId);
-  //   if (!node) return;
-
-  //   const svg = d3.select("#simulation-svg");
-
-  //   if (clicked === true && selectedNode === nodeId) {
-  //     console.log("zooming back out!!!");
-  //     // setClicked(false);
-  //     // setSelectedNode("");
-      
-  //     svg.transition()
-  //       .duration(750)
-  //       .call(zoomRef.current.transform, d3.zoomIdentity);
-
-  //   } else {
-  //     console.log("zooming in!!!");
-  //     // setClicked(true);
-  //     // setSelectedNode(nodeId);
-
-  //     const transform = d3.zoomIdentity
-  //       .translate(graphWidth / 2 - node.x * 2, graphHeight / 2 - node.y * 2)
-  //       .scale(2);
-     
-  //     if (zoomRef.current){
-  //       svg.transition()
-  //         .duration(750)
-  //         .call(zoomRef.current.transform, transform);
-  //     }
-  //   }
-  //   return 0.5;
-  // }
   
   function getLinkOpacity(link) {
     if(nodeSelections[1] === "" || link.source.id === nodeSelections[1] || link.target.id === nodeSelections[1] ) { // if nothing selected, everything is colored
