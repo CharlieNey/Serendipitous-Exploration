@@ -16,7 +16,7 @@ const GraphPage = () => {
   const {savedCourses, setSavedCourses} = useContext(SavedCoursesContext);
   const {courseList, searchTerm, isLoading, setSearchTerm, fetchCourses} = useContext(SearchContext);
   const { selectedNode, nodes, links, connectedNodes, setSelectedNode, fetchNodes, fetchLinks, fetchNodesConnections } = useContext(GraphContext);
-  const [nodeSelections, setNodeSelections] = useState(["", ""])
+  const [nodeSelections, setNodeSelections] = useState(["", ""]) // index 0 is clicked node, index 1 is selected node
   
   function getLinkOpacity(link) {
     if(nodeSelections[1] === "" || link.source.id === nodeSelections[1] || link.target.id === nodeSelections[1] ) { // if nothing selected, everything is colored
@@ -160,14 +160,14 @@ const GraphPage = () => {
     }, [links, nodes, connectedNodes]);
 
     useEffect(() => {
-      if (selectedNode[0] === -1) {
+      if (selectedNode[0] === -1) { // A node is clicked
         if (nodeSelections[0] === selectedNode[1]) {
-          setNodeSelections(["", ""])
+          setNodeSelections(["", ""]) // The currently clicked node is clicked again
         } else {
-          setNodeSelections([selectedNode[1], selectedNode[1]])
+          setNodeSelections([selectedNode[1], selectedNode[1]]) // A new node is clicked
         }
-      } else if(nodeSelections[0] === "") {
-        setNodeSelections(["", selectedNode])
+      } else if(nodeSelections[0] === "") { // Hover behavior
+        setNodeSelections(["", selectedNode]) // Update selected node, not clicked node
       }
     }, [selectedNode]);
 
