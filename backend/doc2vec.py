@@ -12,11 +12,11 @@ data_frame = pd.read_csv(file_path).dropna(subset=["Description"])
 data = data_frame["Description"].tolist()
 course_titles = data_frame["Course Number"].tolist()
 
-# Preprocess and create TaggedDocuments
+# Preprocess only teh descriptions and create TaggedDocuments
 tagged_data = [TaggedDocument(words=word_tokenize(doc.lower()), tags=[str(i)]) for i, doc in enumerate(data)]
 
 # Train the Doc2Vec model
-model = Doc2Vec(vector_size=50, min_count=2, epochs=40)
+model = Doc2Vec(vector_size=50, min_count=2, epochs=20, dm = 1)
 model.build_vocab(tagged_data)
 model.train(tagged_data, total_examples=model.corpus_count, epochs=model.epochs)
 

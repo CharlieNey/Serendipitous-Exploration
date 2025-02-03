@@ -32,7 +32,7 @@ for index, row in human_categorized_df.iterrows():
     labels_eval.append(label)
 
 # compute predictions
-predictions = [1 if score > 0.5 else 0 for score in similarity_scores_eval]
+predictions = [1 if score > 0.6 else 0 for score in similarity_scores_eval]
 
 # Compute accuracy (could add more here)
 accuracy = accuracy_score(labels_eval, predictions)
