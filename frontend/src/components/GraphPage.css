@@ -1,4 +1,6 @@
 .GraphPage {
+  margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
   font-family: Arial, sans-serif;
@@ -14,13 +16,13 @@
 }
 
 .simulation-container{
-  width: 75%; 
+  width: 100%; 
   height: 100vh; 
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: lightgray;
-  overflow:hidden;
+  overflow:auto;
  }
 /* set in javascript */
  .simulation-svg{
@@ -42,7 +44,7 @@ line {
 text {
   text-anchor: middle;
   font-family: "Helvetica Neue", Helvetica, sans-serif;
-  fill: #666;
+  fill: rgb(0, 0, 0);
   font-size: 4px;
 }
 
