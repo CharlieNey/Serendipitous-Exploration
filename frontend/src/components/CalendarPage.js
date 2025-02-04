@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import "./CalendarPage.css";
 import { useParams } from "react-router-dom";
 import { SavedCoursesContext } from './SavedCoursesContext.js';
@@ -7,13 +7,17 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 
-function Calendar(props) {
+function Calendar({ setShowNavbar }, props) {
   const {savedCourses, setSavedCourses} = useContext(SavedCoursesContext);
   const [expandedCourse, setExpandedCourse] = useState(null); // stores the course number of the currently expanded course (null by default)
 
 
   console.log("These are the saved courses (calendar page):")
   console.log(savedCourses)
+
+  useEffect(() => {
+      setShowNavbar(true);
+  }, []);
 
 
   function parseDaysOfWeek(days) {

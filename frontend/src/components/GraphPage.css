@@ -1,4 +1,6 @@
 .GraphPage {
+  margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
   font-family: Arial, sans-serif;
@@ -13,26 +15,26 @@
   height: 100vh;
 }
 
-.simulation-container {
-  width: 75%; 
+.simulation-container{
+  width: 100%; 
   height: 100vh; 
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: lightgray;
-  overflow: hidden;
-}
-
-.simulation-svg {
+  background-color: rgb(255, 255, 255);
+  overflow:auto;
+ }
+/* set in javascript */
+ .simulation-svg{
   width: 100%;
   height: 100%;
-}
+ }
 
 circle {
-  fill: rgb(123, 165, 199);
-  stroke: #fff;
+  fill: rgb(123, 165, 199); 
+  stroke: #fff; 
   stroke-width: 2px;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease; 
 }
 
 line {
@@ -42,7 +44,7 @@ line {
 text {
   text-anchor: middle;
   font-family: "Helvetica Neue", Helvetica, sans-serif;
-  fill: #666;
+  fill: rgb(0, 0, 0);
   font-size: 4px;
 }
 
@@ -68,7 +70,7 @@ text {
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow-x: hidden;
+  overflow-x:hidden;
   overflow-y: scroll;
 }
 
@@ -104,7 +106,7 @@ text {
   height: 20px;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: center;   
   float: right;
   margin-left: 10px;
 }
@@ -114,23 +116,10 @@ text {
   height: 20px;
 }
 
+/* Divider */
 .divider {
   width: 100%;
   height: 1px;
   background-color: #ccc;
   margin: 20px 0;
-}
-
-.node-popup {
-  position: absolute;
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 10px;
-  top: 10%;
-}
-
-.close-button {
-  float: right;
-  cursor: pointer;
 }

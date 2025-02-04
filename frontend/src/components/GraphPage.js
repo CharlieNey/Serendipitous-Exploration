@@ -7,108 +7,64 @@ import { SavedCoursesContext } from './SavedCoursesContext.js';
 import { SearchContext } from './SearchContext.js';
 import { GraphContext } from './GraphContext.js';
 
-function getAllNodeConnections(links) {
-  var connections = {}
-  for (var i in links) {
-    var node1 = links[i].source
-    var node2 = links[i].target
+const GraphPage = ({ setShowNavbar }) => {
+  // Code adapted from d3indepth.com. 
+  const graphWidth = 1100; // when I make both of these 1100, removes the gray column bug
+  const graphHeight = 1100;
 
-    if(node1 in connections) {
-      if(!connections[node1].includes(node2)){
-        connections[node1].push(node2)
-      }
-    } else {
-      connections[node1] = [node2]
-    }
-
-    if(node2 in connections) {
-      if(!connections[node2].includes(node1)){
-        connections[node2].push(node1)
-      }
-    } else {
-      connections[node2] = [node1]
-    }
-  }
-  return connections;
-}
-
-function getLinkOpacity(link, selectedNode) {
-  if(selectedNode === "" || link.source.id === selectedNode || link.target.id === selectedNode ) {
-    return 1;
-  }
-  return 0.05;
-}
-
-function getNodeOpacity(node, selectedNode, connectedNodes) {
-  if (selectedNode === "" || node === selectedNode || connectedNodes[selectedNode].includes(node)) {
-    return 1;
-  }
-  return 0.5;
-}
-
-function getNodeColor(node, selectedNode, connectedNodes) {
-  if (selectedNode === "" || connectedNodes[selectedNode] === undefined) {
-    return "pink";
-  }
-  if (node === selectedNode) {
-    return "red";
-  } else if (connectedNodes[selectedNode].includes(node)){
-    return "green";
-  }
-  return "pink";
-}
-
-const GraphPage = () => {
-  const graphWidth = 750;
-  const graphHeight = 750;
+  // Import state variables and fetching methods
   const {savedCourses, setSavedCourses} = useContext(SavedCoursesContext);
   const {courseList, searchTerm, isLoading, setSearchTerm, fetchCourses} = useContext(SearchContext);
-  const { selectedNode, nodes, links, setSelectedNode, fetchNodes, fetchLinks } = useContext(GraphContext);
-  const [clicked, setClicked] = useState(false);
-  const [connectedNodes, setConnectedNodes] = useState([]);
-  const [hoveredNode, setHoveredNode] = useState(null);
-  const [pinnedNode, setPinnedNode] = useState(null);
-  const [currentTransform, setCurrentTransform] = useState(d3.zoomIdentity);
-
-  function clickNode(node) {
-    const svg = d3.select("#simulation-svg");
-
-    if (clicked === true && selectedNode === node) {
-      setClicked(false);
-      setSelectedNode("");
-      if (pinnedNode && pinnedNode.id === node) {
-        setPinnedNode(null);
-        setHoveredNode(null);
-      }
-    } else {
-      setClicked(true);
-      setSelectedNode(node);
-
-      const transform = d3.zoomIdentity
-        .translate(graphWidth / 2 - node.x * 2, graphHeight / 2 - node.y * 2)
-        .scale(2); 
-
-      setPinnedNode(nodes.find(n => n.id === node));
-      setHoveredNode(nodes.find(n => n.id === node));
+  const { selectedNode, nodes, links, connectedNodes, setSelectedNode, fetchNodes, fetchLinks, fetchNodesConnections } = useContext(GraphContext);
+  const [nodeSelections, setNodeSelections] = useState(["", ""]) // index 0 is clicked node, index 1 is selected node
+  const [clicked, setClicked] = useState(false)
+  const zoomRef = useRef(null);
+  
+  function getLinkOpacity(link) {
+    if(nodeSelections[1] === "" || link.source.id === nodeSelections[1] || link.target.id === nodeSelections[1] ) { // if nothing selected, everything is colored
+      return 1;
+    }
+    return 0.05;
+  }
+  
+  function getNodeOpacity(node) {
+    if (nodeSelections[1] === "" || node === nodeSelections[1] || connectedNodes[nodeSelections[1]].includes(node)) {
+      return 1;
     }
   }
+  
+  function getNodeColor(node) {
+    if (nodeSelections[1] === "" || connectedNodes[nodeSelections[1]] === undefined) {
+      return "pink";
+    }
+  
+    if (node === nodeSelections[1]) {
+      return "red";
+    } else if (connectedNodes[nodeSelections[1]].includes(node)){
+      return "green";
+    }
+    return "pink";
+  }
 
-  function refreshGraph() {
+  async function refreshGraph() {
     d3.select(".links")
       .selectAll("line")
-      .style("opacity", (d) => getLinkOpacity(d, selectedNode))
-      .style("stroke", (d) => color((d.score - 0.5) * 2));
-
+      .style("opacity", (d) => getLinkOpacity(d))
+      .style("stroke", (d) => color((d.score - 0.5) * 2)) // Change to min similarity score
+  
     d3.select(".nodes")
       .selectAll("g")
       .selectAll("circle")
-      .style("fill", (d) => getNodeColor(d.id, selectedNode, connectedNodes))
-      .style("opacity", (d) => getNodeOpacity(d.id, selectedNode, connectedNodes));
+      .style("fill", (d) => getNodeColor(d.id))
+      .style("opacity", (d) => getNodeOpacity(d.id));
   }
 
+  // Fetch values for state variables
   useEffect(() => {
+    setShowNavbar(true);
     fetchNodes();
     fetchLinks();
+    fetchNodesConnections();
   }, []);
 
   useEffect(() => {
@@ -116,50 +72,63 @@ const GraphPage = () => {
   }, [searchTerm]);
 
   const color = d3.scaleSequential(d3.interpolatePuBuGn);
-
-  const zoomRef = useRef(null);
-
+  
+  // Create graph
   useEffect(() => {
-    if (nodes.length === 0 || links.length === 0) return;
-
-    setConnectedNodes(getAllNodeConnections(links));
-
+    if (nodes.length === 0 || links.length === 0 || connectedNodes.length === 0) return;
+    console.log("Initializing zoom...");
+    
     const svg = d3
       .select("#simulation-svg")
       .attr("width", graphWidth)
-      .attr("height", graphHeight);
-
-    svg
-      .append("rect")
-      .attr("width", graphWidth)
       .attr("height", graphHeight)
-      .style("fill", "transparent")
-      .on("click", () => {
-        setSelectedNode("");
-        setPinnedNode(null);
-        setHoveredNode(null);
+
+    if (!zoomRef.current) {
+      console.log("Creating new zoomRef");
+      zoomRef.current = d3.zoom()
+        .scaleExtent([0.5, 3])
+        .on("zoom", (event) => {
+          d3.select("#zoom-group").attr("transform", event.transform); 
+        });
+
+      svg.call(zoomRef.current);
+    } else {
+      console.log("Reapplying existing zoomRef");
+      svg.call(zoomRef.current);
+      }
+
+    svg.on("click", function (event) { // return to full graph look when non-node clicked
+      const isNode = event.target.tagName === "circle" || event.target.tagName === "text";
+      if (!isNode) {
         setClicked(false);
-      });
+        setSelectedNode("");
+  
+        svg.transition()
+          .duration(750)
+          .call(zoomRef.current.transform, d3.zoomIdentity);
+      }
+    });
     
-    svg.append("g").attr("class", "links");
-    svg.append("g").attr("class", "nodes");
+    svg.append("g").attr("id", "zoom-group");
+    svg.select("#zoom-group").append("g").attr("class", "links");
+    svg.select("#zoom-group").append("g").attr("class", "nodes");
 
     const simulation = d3
       .forceSimulation(nodes)
-      .force("charge", d3.forceManyBody().strength(-10))
-      .force("center", d3.forceCenter(graphWidth / 2, graphHeight / 2))
-      .force("link", d3.forceLink(links).id(d => d.id).distance(10));
+      .force("charge", d3.forceManyBody().strength(-14)) // spreads nodes apart
+      .force("center", d3.forceCenter(graphWidth / 2, graphHeight / 2)) // location on page
+      .force("link", d3.forceLink(links).id(d => d.id).distance(10)) // links nodes together
 
-    const linksGroup = d3.select(".links")
+    const linksGroup = d3.select(".links") // binds the links data to each link 
       .selectAll("line")
       .data(links)
       .join("line")
-      .style("stroke-width", 2);
+      .style("stroke-width", 2)
 
     const nodeGroup = d3.select(".nodes")
       .selectAll("g")
       .data(nodes)
-      .join("g");
+      .join("g")
 
     nodeGroup
       .selectAll("circle")
@@ -168,56 +137,86 @@ const GraphPage = () => {
       .style("r", 10)
       .style("stroke-width", 0.5)
       .style("stroke", "black")
-      .attr("id", d => d);
 
+    // Adding the text to the circles
     nodeGroup
       .selectAll("text")
       .data((d) => [d])
       .join("text")
       .text((d) => d.id)
-      .attr("dy", 1);
+      .attr("dy", 2)
+    refreshGraph()
 
     nodeGroup
-      .selectAll("circle")
-      .on("mouseover", (e, d) => {
-        if (!pinnedNode) {
-          setHoveredNode(d);
-        }
+      .selectAll('circle')
+      // .on('click', (e, d) => setSelectedNode([-1, d.id]))
+      .on('click', function (e, d) {
+        e.stopPropagation();
+        setSelectedNode([-1, d.id])
       })
-      .on("mouseout", (e, d) => {
-        if (!pinnedNode) {
-          setHoveredNode(null);
-        }
+      .on('mouseenter', function (e, d) {
+        setSelectedNode(d.id)
       })
-      .on("click", (e, d) => {
-        e.stopPropagation(); 
-        setSelectedNode(d.id);
-        clickNode(d.id);
+      .on('mouseout', function (e, d) {
+        setSelectedNode("")
       });
 
-    simulation.on("tick", () => {
-      linksGroup
-        .attr("x1", (d) => d.source.x)
-        .attr("y1", (d) => d.source.y)
-        .attr("x2", (d) => d.target.x)
-        .attr("y2", (d) => d.target.y);
+    simulation
+      .on("tick", () => {
+        linksGroup
+          .attr("x1", (d) => d.source.x)
+          .attr("y1", (d) => d.source.y)
+          .attr("x2", (d) => d.target.x)
+          .attr("y2", (d) => d.target.y)
 
-      nodeGroup
-        .attr("transform", (d) => `translate(${d.x},${d.y})`);
-    });
+        nodeGroup
+          .attr("transform", (d) => `translate(${d.x},${d.y})`)
+      });
 
-    refreshGraph();
+      return () => {
+        simulation.stop();
+        svg.selectAll(".links").remove();
+        svg.selectAll(".nodes").remove();
+      };
+    }, [links, nodes, connectedNodes]);
 
-    return () => {
-      simulation.stop();
-      svg.selectAll(".links").remove();
-      svg.selectAll(".nodes").remove();
-    };
-  }, [links, nodes]);
+    useEffect(() => {
+      if (selectedNode[0] === -1) { // A node is clicked
+        console.log("node clicked");
+        const node = nodes.find(n => n.id === selectedNode[1]);
+        if (!node) return;
+    
+        const svg = d3.select("#simulation-svg");
+        
+        if (nodeSelections[0] === selectedNode[1]) {
+          console.log("zooming back out!!!");
+          setNodeSelections(["", ""]) // The currently clicked node is clicked again
+          
+          svg.transition()
+            .duration(750)
+            .call(zoomRef.current.transform, d3.zoomIdentity);
+        } else {
+          console.log("zooming in!!!");
+          setNodeSelections([selectedNode[1], selectedNode[1]]) // A new node is clicked
+          
+          const transform = d3.zoomIdentity
+            .translate(graphWidth / 2 - node.x * 2, graphHeight / 2 - node.y * 2)
+            .scale(2);
+         
+          if (zoomRef.current){
+            svg.transition()
+              .duration(750)
+              .call(zoomRef.current.transform, transform);
+          }
+        }
+      } else if(nodeSelections[0] === "") { // Hover behavior
+        setNodeSelections(["", selectedNode]) // Update selected node, not clicked node
+      }
+    }, [selectedNode]);
 
-  useEffect(() => {
-    refreshGraph();
-  }, [selectedNode]);
+    useEffect(() => {
+      refreshGraph()
+    }, [nodeSelections]);
 
   return (
     <div className="GraphPage">
@@ -226,7 +225,7 @@ const GraphPage = () => {
           <img src={shopping_cart_logo} alt="Go to Calendar" />
         </Link>
       </div>
-      
+  
       <div className="content-container">
         <div className="scroll-sidebar">
           <div className="search-section">
@@ -243,95 +242,47 @@ const GraphPage = () => {
             ) : searchTerm && courseList.length === 0 ? (
               <p>No courses found matching your search.</p>
             ) : (
-              <ul className="course-list">
-                {courseList.map((course) => (
-                  <li
-                    key={course.course_number}
-                    className="course-item"
-                    onClick={() => {
-                      if (selectedNode === course.course_number) {
-                        setSelectedNode("");
-                      } else {
-                        setSelectedNode(course.course_number);
-                      }
+            <ul className="course-list">
+              {courseList.map((course) => (
+                <li 
+                  key={course.course_number} 
+                  className="course-item"
+                  onClick={() => setSelectedNode([-1, course.course_number])}  // update selected node when clicked
+                  style={{ cursor: 'pointer' }}  
+                >
+                  <button
+                    onClick={(e) => {
+                      setSavedCourses((prevCourses) => {
+                        const updatedCourses = [...prevCourses, course];
+                        return updatedCourses;
+                      });
                     }}
+                    className="add-to-calendar-button"
                   >
-                    <button
-                      className="add-to-calendar-button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSavedCourses((prevCourses) => {
-                          const updatedCourses = [...prevCourses, course];
-                          return updatedCourses;
-                        });
-                      }}
-                    >
-                      <img src={shopping_cart_logo} alt="Add to Calendar" />
-                    </button>
-                    <div className="course-summary">
-                      <strong>{course.course_number}:</strong> {course.course_title}
-                    </div>
-                  </li>
-                ))}
-              </ul>
+                    <img src={shopping_cart_logo} alt="Add to Calendar" />
+                  </button>
+
+                  <div className="course-summary">
+                    <strong>{course.course_number}:</strong> {course.course_title}
+                  </div>
+                </li>
+              ))}
+            </ul>
             )}
           </div>
         </div>
   
-        <div className="simulation-container">
+        <div className="simulation-container" >
           <svg id="simulation-svg">
-            <g id="zoom-group">
-              <g className="links"></g>
-              <g className="nodes"></g>
-            </g>
+              <g id="zoom-group">
+                <g class="links"></g>
+                <g class="nodes"></g>
+              </g>
           </svg>
         </div>
       </div>
-  
-      { (hoveredNode || pinnedNode) && (() => {
-          const nodeToDisplay = pinnedNode || hoveredNode;
-          const matchingCourse = courseList.find(c => c.course_number === nodeToDisplay.id);
-
-          return (
-            <div
-              className="node-popup"
-              style={{
-                left: currentTransform.applyX(nodeToDisplay.x),
-                top: currentTransform.applyY(nodeToDisplay.y)+50,
-              }}
-            >
-              <button
-                className="close-button"
-                onClick={() => {
-                  setPinnedNode(null);
-                  setHoveredNode(null);
-                }}
-              >
-                X
-              </button>
-
-              {matchingCourse ? (
-                <>
-                  <h3>{matchingCourse.course_number}</h3>
-                  <p><strong>Title:</strong> {matchingCourse.course_title}</p>
-                  <p><strong>Credits:</strong> {matchingCourse.credits}</p>
-                  <p><strong>Description:</strong> {matchingCourse.description}</p>
-                  <p><strong>Liberal Arts Requirements:</strong> {matchingCourse.liberal_arts_requirements}</p>
-                  <p><strong>Prerequisites:</strong> {matchingCourse.prerequisites || "None"}</p>
-                  <p><strong>Faculty:</strong> {matchingCourse.faculty}</p>
-                  <p><strong>Meeting Day:</strong> {matchingCourse.meeting_day}</p>
-                  <p><strong>Location:</strong> {matchingCourse.location}</p>
-                  <p><strong>Time:</strong> {matchingCourse.time}</p>
-                </>
-              ) : (
-                <p>No details found for {nodeToDisplay.id}.</p>
-              )}
-            </div>
-          );
-        })()
-      }
     </div>
-  );  
+  );
 }
 
 export default GraphPage;

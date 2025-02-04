@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useEffect } from "react";
 
+const SlotMachine = ({ setShowNavbar }) => {
+    useEffect(() => {
+        setShowNavbar(true);
+    }, []);
 
-const SlotMachine = () => {
     return(
         <div>
             <h1> this is the slot machine page</h1>
