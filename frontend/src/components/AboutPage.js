@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useEffect } from "react";
 
+const About = ({ setShowNavbar }) => {
+    useEffect(() => {
+        setShowNavbar(true);
+    }, []);
 
-const About = () => {
     return(
         <div>
             <h1> this is the about us page</h1>
