@@ -8,50 +8,58 @@ import { SearchContext } from './SearchContext.js';
 import { GraphContext } from './GraphContext.js';
 
 const GraphPage = ({ setShowNavbar }) => {
-  // Code adapted from d3indepth.com. 
-  const graphWidth = 1100; // when I make both of these 1100, removes the gray column bug
+  const graphWidth = 1100;
   const graphHeight = 1100;
 
-  // Import state variables and fetching methods
-  const {savedCourses, setSavedCourses} = useContext(SavedCoursesContext);
-  const {courseList, searchTerm, isLoading, setSearchTerm, fetchCourses} = useContext(SearchContext);
+  const { savedCourses, setSavedCourses } = useContext(SavedCoursesContext);
+  const { courseList, searchTerm, isLoading, setSearchTerm, fetchCourses } = useContext(SearchContext);
   const { selectedNode, nodes, links, connectedNodes, setSelectedNode, fetchNodes, fetchLinks, fetchNodesConnections } = useContext(GraphContext);
-  const [nodeSelections, setNodeSelections] = useState(["", ""]) // index 0 is clicked node, index 1 is selected node
-  const [clicked, setClicked] = useState(false)
+  const [nodeSelections, setNodeSelections] = useState(["", ""]);
   const zoomRef = useRef(null);
-  
+  const [hoverNode, setHoverNode] = useState(null);
+  const [pinnedNode, setPinnedNode] = useState(null);
+  const [pinnedTooltipClosed, setPinnedTooltipClosed] = useState(false);
+
+  // store each node's {x,y} for tooltip positioning
+  const [nodePositions, setNodePositions] = useState({});
+
   function getLinkOpacity(link) {
-    if(nodeSelections[1] === "" || link.source.id === nodeSelections[1] || link.target.id === nodeSelections[1] ) { // if nothing selected, everything is colored
+    if (nodeSelections[1] === "" || link.source.id === nodeSelections[1] || link.target.id === nodeSelections[1]) {
       return 1;
     }
     return 0.05;
   }
-  
+
+
+  function getNodeColor(nodeId) {
+    if (pinnedNode) {
+      if (pinnedNode === nodeId) {
+        return "red";
+      }
+      if (connectedNodes[pinnedNode]?.includes(nodeId)) {
+        return "green";
+      }
+      return "pink";
+    }
+    if (hoverNode === nodeId) {
+      return "red"; 
+    }
+    return "pink"; 
+  }
+
   function getNodeOpacity(node) {
     if (nodeSelections[1] === "" || node === nodeSelections[1] || connectedNodes[nodeSelections[1]].includes(node)) {
       return 1;
     }
-  }
-  
-  function getNodeColor(node) {
-    if (nodeSelections[1] === "" || connectedNodes[nodeSelections[1]] === undefined) {
-      return "pink";
-    }
-  
-    if (node === nodeSelections[1]) {
-      return "red";
-    } else if (connectedNodes[nodeSelections[1]].includes(node)){
-      return "green";
-    }
-    return "pink";
+    return 0.2;
   }
 
   async function refreshGraph() {
     d3.select(".links")
       .selectAll("line")
       .style("opacity", (d) => getLinkOpacity(d))
-      .style("stroke", (d) => color((d.score - 0.5) * 2)) // Change to min similarity score
-  
+      .style("stroke", (d) => color((d.score - 0.5) * 2));
+
     d3.select(".nodes")
       .selectAll("g")
       .selectAll("circle")
@@ -59,7 +67,6 @@ const GraphPage = ({ setShowNavbar }) => {
       .style("opacity", (d) => getNodeOpacity(d.id));
   }
 
-  // Fetch values for state variables
   useEffect(() => {
     setShowNavbar(true);
     fetchNodes();
@@ -72,64 +79,66 @@ const GraphPage = ({ setShowNavbar }) => {
   }, [searchTerm]);
 
   const color = d3.scaleSequential(d3.interpolatePuBuGn);
-  
-  // Create graph
+
+  // Build the graph
   useEffect(() => {
     if (nodes.length === 0 || links.length === 0 || connectedNodes.length === 0) return;
-    console.log("Initializing zoom...");
-    
+
     const svg = d3
       .select("#simulation-svg")
       .attr("width", graphWidth)
-      .attr("height", graphHeight)
+      .attr("height", graphHeight);
 
     if (!zoomRef.current) {
-      console.log("Creating new zoomRef");
       zoomRef.current = d3.zoom()
         .scaleExtent([0.5, 3])
         .on("zoom", (event) => {
-          d3.select("#zoom-group").attr("transform", event.transform); 
+          d3.select("#zoom-group").attr("transform", event.transform);
         });
-
       svg.call(zoomRef.current);
     } else {
-      console.log("Reapplying existing zoomRef");
       svg.call(zoomRef.current);
-      }
+    }
 
-    svg.on("click", function (event) { // return to full graph look when non-node clicked
+    // Clicking outside of a node => unselect
+    svg.on("click", function (event) {
       const isNode = event.target.tagName === "circle" || event.target.tagName === "text";
       if (!isNode) {
-        setClicked(false);
         setSelectedNode("");
-  
+        setNodeSelections(["", ""]);
+        setPinnedNode(null);
+        setPinnedTooltipClosed(false);
+        // Zoom out
         svg.transition()
           .duration(750)
           .call(zoomRef.current.transform, d3.zoomIdentity);
       }
     });
-    
+
     svg.append("g").attr("id", "zoom-group");
     svg.select("#zoom-group").append("g").attr("class", "links");
     svg.select("#zoom-group").append("g").attr("class", "nodes");
 
     const simulation = d3
       .forceSimulation(nodes)
-      .force("charge", d3.forceManyBody().strength(-14)) // spreads nodes apart
-      .force("center", d3.forceCenter(graphWidth / 2, graphHeight / 2)) // location on page
-      .force("link", d3.forceLink(links).id(d => d.id).distance(10)) // links nodes together
+      .force("charge", d3.forceManyBody().strength(-14))
+      .force("center", d3.forceCenter(graphWidth / 2, graphHeight / 2))
+      .force("link", d3.forceLink(links).id(d => d.id).distance(10));
 
-    const linksGroup = d3.select(".links") // binds the links data to each link 
+    // Links
+    const linksGroup = d3.select(".links")
       .selectAll("line")
       .data(links)
       .join("line")
-      .style("stroke-width", 2)
+      .style("stroke-width", 2);
 
+    // Nodes: each node is a <g>
     const nodeGroup = d3.select(".nodes")
       .selectAll("g")
       .data(nodes)
-      .join("g")
+      .join("g");
 
+    // Circles
     nodeGroup
       .selectAll("circle")
       .data((d) => [d])
@@ -138,85 +147,120 @@ const GraphPage = ({ setShowNavbar }) => {
       .style("stroke-width", 0.5)
       .style("stroke", "black")
 
-    // Adding the text to the circles
+      .on('mouseenter', function(e, d) {
+        if (!pinnedNode) {
+          setHoverNode(d.id);
+        }
+      })
+      .on('mouseout', function(e, d) {
+        if (!pinnedNode) {
+          setHoverNode(null);
+        }
+      })
+      .on('click', function(e, d) {
+        e.stopPropagation();
+
+        setSelectedNode([-1, d.id]);
+
+
+        if (pinnedNode === d.id) {
+
+          setPinnedNode(null);
+          setHoverNode(null);
+        } else {
+          setPinnedNode(d.id);
+          setPinnedTooltipClosed(false);
+          setHoverNode(null);
+        }
+      });
+
     nodeGroup
       .selectAll("text")
       .data((d) => [d])
       .join("text")
       .text((d) => d.id)
-      .attr("dy", 2)
-    refreshGraph()
+      .attr("dy", 2);
 
-    nodeGroup
-      .selectAll('circle')
-      // .on('click', (e, d) => setSelectedNode([-1, d.id]))
-      .on('click', function (e, d) {
-        e.stopPropagation();
-        setSelectedNode([-1, d.id])
-      })
-      .on('mouseenter', function (e, d) {
-        setSelectedNode(d.id)
-      })
-      .on('mouseout', function (e, d) {
-        setSelectedNode("")
-      });
+    simulation.on("tick", () => {
+      linksGroup
+        .attr("x1", (d) => d.source.x)
+        .attr("y1", (d) => d.source.y)
+        .attr("x2", (d) => d.target.x)
+        .attr("y2", (d) => d.target.y);
 
-    simulation
-      .on("tick", () => {
-        linksGroup
-          .attr("x1", (d) => d.source.x)
-          .attr("y1", (d) => d.source.y)
-          .attr("x2", (d) => d.target.x)
-          .attr("y2", (d) => d.target.y)
+      nodeGroup
+        .attr("transform", (d) => {
+          // store positions for tooltip
+          setNodePositions(prev => ({
+            ...prev,
+            [d.id]: { x: d.x, y: d.y }
+          }));
+          return `translate(${d.x},${d.y})`;
+        });
+    });
 
-        nodeGroup
-          .attr("transform", (d) => `translate(${d.x},${d.y})`)
-      });
+    return () => {
+      simulation.stop();
+      svg.selectAll(".links").remove();
+      svg.selectAll(".nodes").remove();
+    };
+  }, [links, nodes, connectedNodes, pinnedNode]);
 
-      return () => {
-        simulation.stop();
-        svg.selectAll(".links").remove();
-        svg.selectAll(".nodes").remove();
-      };
-    }, [links, nodes, connectedNodes]);
+  // Once we have a "clicked" event => zoom in or out
+  useEffect(() => {
+    if (selectedNode[0] === -1) {
+      const node = nodes.find(n => n.id === selectedNode[1]);
+      if (!node) return;
+      const svg = d3.select("#simulation-svg");
 
-    useEffect(() => {
-      if (selectedNode[0] === -1) { // A node is clicked
-        console.log("node clicked");
-        const node = nodes.find(n => n.id === selectedNode[1]);
-        if (!node) return;
-    
-        const svg = d3.select("#simulation-svg");
-        
-        if (nodeSelections[0] === selectedNode[1]) {
-          console.log("zooming back out!!!");
-          setNodeSelections(["", ""]) // The currently clicked node is clicked again
-          
+      if (nodeSelections[0] === selectedNode[1]) {
+        // user clicked the same pinned node => unselect & zoom out
+        setNodeSelections(["", ""]);
+        svg.transition()
+          .duration(750)
+          .call(zoomRef.current.transform, d3.zoomIdentity);
+      } else {
+        // new pinned node => zoom in
+        setNodeSelections([selectedNode[1], selectedNode[1]]);
+        const transform = d3.zoomIdentity
+          .translate(graphWidth / 2 - node.x * 2, graphHeight / 2 - node.y * 2)
+          .scale(2);
+
+        if (zoomRef.current) {
           svg.transition()
             .duration(750)
-            .call(zoomRef.current.transform, d3.zoomIdentity);
-        } else {
-          console.log("zooming in!!!");
-          setNodeSelections([selectedNode[1], selectedNode[1]]) // A new node is clicked
-          
-          const transform = d3.zoomIdentity
-            .translate(graphWidth / 2 - node.x * 2, graphHeight / 2 - node.y * 2)
-            .scale(2);
-         
-          if (zoomRef.current){
-            svg.transition()
-              .duration(750)
-              .call(zoomRef.current.transform, transform);
-          }
+            .call(zoomRef.current.transform, transform);
         }
-      } else if(nodeSelections[0] === "") { // Hover behavior
-        setNodeSelections(["", selectedNode]) // Update selected node, not clicked node
       }
-    }, [selectedNode]);
+    } else if (nodeSelections[0] === "") {
+      // For hover-based selection 
+      setNodeSelections(["", selectedNode]);
+    }
+  }, [selectedNode]);
 
-    useEffect(() => {
-      refreshGraph()
-    }, [nodeSelections]);
+  // Redraw if pinned/hover changes
+  useEffect(() => {
+    refreshGraph();
+  }, [pinnedNode, hoverNode, nodeSelections]);
+
+  // Helper to get the course data from your context by nodeId
+  function getCourseData(nodeId) {
+    if (!nodeId) return null;
+    return courseList.find(c => c.course_number === nodeId);
+  }
+
+  // Decide which node's tooltip (if any) to show
+  const tooltipNodeId = pinnedNode && !pinnedTooltipClosed
+    ? pinnedNode
+    : (!pinnedNode ? hoverNode : null);
+
+  const tooltipCourseData = getCourseData(tooltipNodeId);
+  const tooltipPos = tooltipNodeId && nodePositions[tooltipNodeId]
+    ? nodePositions[tooltipNodeId]
+    : null;
+
+  // Adjust tooltip position relative to node
+  const tooltipOffset = { x: 15, y: -20 };
 
   return (
     <div className="GraphPage">
@@ -225,7 +269,7 @@ const GraphPage = ({ setShowNavbar }) => {
           <img src={shopping_cart_logo} alt="Go to Calendar" />
         </Link>
       </div>
-  
+
       <div className="content-container">
         <div className="scroll-sidebar">
           <div className="search-section">
@@ -236,53 +280,90 @@ const GraphPage = ({ setShowNavbar }) => {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="search-input"
             />
-  
+
             {isLoading ? (
               <p>Loading courses...</p>
             ) : searchTerm && courseList.length === 0 ? (
               <p>No courses found matching your search.</p>
             ) : (
-            <ul className="course-list">
-              {courseList.map((course) => (
-                <li 
-                  key={course.course_number} 
-                  className="course-item"
-                  onClick={() => setSelectedNode([-1, course.course_number])}  // update selected node when clicked
-                  style={{ cursor: 'pointer' }}  
-                >
-                  <button
-                    onClick={(e) => {
-                      setSavedCourses((prevCourses) => {
-                        const updatedCourses = [...prevCourses, course];
-                        return updatedCourses;
-                      });
-                    }}
-                    className="add-to-calendar-button"
+              <ul className="course-list">
+                {courseList.map((course) => (
+                  <li 
+                    key={course.course_number}
+                    className="course-item"
+                    onClick={() => setSelectedNode([-1, course.course_number])}
+                    style={{ cursor: 'pointer' }}
                   >
-                    <img src={shopping_cart_logo} alt="Add to Calendar" />
-                  </button>
+                    <button
+                      onClick={(e) => {
+                        // stopPropagation so it doesn't also select/zoom the node
+                        e.stopPropagation();
+                        setSavedCourses((prevCourses) => {
+                          const updatedCourses = [...prevCourses, course];
+                          return updatedCourses;
+                        });
+                      }}
+                      className="add-to-calendar-button"
+                    >
+                      <img src={shopping_cart_logo} alt="Add to Calendar" />
+                    </button>
 
-                  <div className="course-summary">
-                    <strong>{course.course_number}:</strong> {course.course_title}
-                  </div>
-                </li>
-              ))}
-            </ul>
+                    <div className="course-summary">
+                      <strong>{course.course_number}:</strong> {course.course_title}
+                    </div>
+                  </li>
+                ))}
+              </ul>
             )}
           </div>
         </div>
-  
-        <div className="simulation-container" >
+
+        <div className="simulation-container">
           <svg id="simulation-svg">
-              <g id="zoom-group">
-                <g class="links"></g>
-                <g class="nodes"></g>
-              </g>
+            <g id="zoom-group">
+              <g className="links"></g>
+              <g className="nodes"></g>
+            </g>
           </svg>
+
+          {/* Tooltip overlay */}
+          {tooltipNodeId && tooltipCourseData && tooltipPos && (
+            <div
+              className="tooltip"
+              style={{
+                top: tooltipPos.y + tooltipOffset.y,
+                left: tooltipPos.x + tooltipOffset.x
+              }}
+            >
+              {/* The X button only if pinned tooltip */}
+              {pinnedNode === tooltipNodeId && !pinnedTooltipClosed && (
+                <button
+                  className="tooltip-close"
+                  onClick={() => setPinnedTooltipClosed(true)}
+                >
+                  X
+                </button>
+              )}
+
+              <div className="tooltip-content">
+                <h4>{tooltipCourseData.course_number}: {tooltipCourseData.course_title}</h4>
+                <p><strong>Credits:</strong> {tooltipCourseData.credits}</p>
+                <p><strong>Description:</strong> {tooltipCourseData.description}</p>
+                <p><strong>Offered Term:</strong> {tooltipCourseData.offered_term}</p>
+                <p><strong>Liberal Arts Requirements:</strong> {tooltipCourseData.liberal_arts_requirements}</p>
+                <p><strong>Tags:</strong> {tooltipCourseData.tags}</p>
+                <p><strong>Prerequisites:</strong> {tooltipCourseData.prerequisites}</p>
+                <p><strong>Faculty:</strong> {tooltipCourseData.faculty}</p>
+                <p><strong>Meeting Day:</strong> {tooltipCourseData.meeting_day}</p>
+                <p><strong>Location:</strong> {tooltipCourseData.location}</p>
+                <p><strong>Time:</strong> {tooltipCourseData.time}</p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default GraphPage;
