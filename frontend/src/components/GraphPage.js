@@ -16,12 +16,8 @@ const GraphPage = ({ setShowNavbar }) => {
   const { selectedNode, nodes, links, connectedNodes, setSelectedNode, fetchNodes, fetchLinks, fetchNodesConnections } = useContext(GraphContext);
   const [nodeSelections, setNodeSelections] = useState(["", ""]);
   const zoomRef = useRef(null);
-  const [hoverNode, setHoverNode] = useState(null);
-  const [pinnedNode, setPinnedNode] = useState(null);
   const [pinnedTooltipClosed, setPinnedTooltipClosed] = useState(false);
-
-  // store each node's {x,y} for tooltip positioning
-  const [nodePositions, setNodePositions] = useState({});
+  const [nodePositions, setNodePositions] = useState({}); // store each node's {x,y} for tooltip positioning
 
   function getLinkOpacity(link) {
     if (nodeSelections[1] === "" || link.source.id === nodeSelections[1] || link.target.id === nodeSelections[1]) {
@@ -30,21 +26,17 @@ const GraphPage = ({ setShowNavbar }) => {
     return 0.05;
   }
 
-
-  function getNodeColor(nodeId) {
-    if (pinnedNode) {
-      if (pinnedNode === nodeId) {
-        return "red";
-      }
-      if (connectedNodes[pinnedNode]?.includes(nodeId)) {
-        return "green";
-      }
+  function getNodeColor(node) {
+    if (nodeSelections[1] === "" || connectedNodes[nodeSelections[1]] === undefined) {
       return "pink";
     }
-    if (hoverNode === nodeId) {
-      return "red"; 
+  
+    if (node === nodeSelections[1]) {
+      return "red";
+    } else if (connectedNodes[nodeSelections[1]].includes(node)){
+      return "green";
     }
-    return "pink"; 
+    return "pink";
   }
 
   function getNodeOpacity(node) {
@@ -65,6 +57,35 @@ const GraphPage = ({ setShowNavbar }) => {
       .selectAll("circle")
       .style("fill", (d) => getNodeColor(d.id))
       .style("opacity", (d) => getNodeOpacity(d.id));
+  }
+
+  function doubleClickNode() {
+    const svg = d3.select("#simulation-svg");
+
+    // user clicked the same pinned node => unselect & zoom out
+    setNodeSelections(["", ""]);
+    setPinnedTooltipClosed(false);
+
+    svg.transition()
+      .duration(750)
+      .call(zoomRef.current.transform, d3.zoomIdentity);
+  }
+
+  function clickNewNode(node) {
+    const svg = d3.select("#simulation-svg");
+
+    // new pinned node => zoom in
+    setPinnedTooltipClosed(false);
+    setNodeSelections([selectedNode[1], selectedNode[1]]);
+    const transform = d3.zoomIdentity
+      .translate(graphWidth / 2 - node.x * 2, graphHeight / 2 - node.y * 2)
+      .scale(2);
+
+    if (zoomRef.current) {
+      svg.transition()
+        .duration(750)
+        .call(zoomRef.current.transform, transform);
+    }
   }
 
   useEffect(() => {
@@ -104,14 +125,7 @@ const GraphPage = ({ setShowNavbar }) => {
     svg.on("click", function (event) {
       const isNode = event.target.tagName === "circle" || event.target.tagName === "text";
       if (!isNode) {
-        setSelectedNode("");
-        setNodeSelections(["", ""]);
-        setPinnedNode(null);
-        setPinnedTooltipClosed(false);
-        // Zoom out
-        svg.transition()
-          .duration(750)
-          .call(zoomRef.current.transform, d3.zoomIdentity);
+        doubleClickNode()
       }
     });
 
@@ -137,7 +151,7 @@ const GraphPage = ({ setShowNavbar }) => {
       .selectAll("g")
       .data(nodes)
       .join("g");
-
+    
     // Circles
     nodeGroup
       .selectAll("circle")
@@ -148,30 +162,14 @@ const GraphPage = ({ setShowNavbar }) => {
       .style("stroke", "black")
 
       .on('mouseenter', function(e, d) {
-        if (!pinnedNode) {
-          setHoverNode(d.id);
-        }
+        setSelectedNode(d.id)
       })
       .on('mouseout', function(e, d) {
-        if (!pinnedNode) {
-          setHoverNode(null);
-        }
+        setSelectedNode("")
       })
       .on('click', function(e, d) {
         e.stopPropagation();
-
         setSelectedNode([-1, d.id]);
-
-
-        if (pinnedNode === d.id) {
-
-          setPinnedNode(null);
-          setHoverNode(null);
-        } else {
-          setPinnedNode(d.id);
-          setPinnedTooltipClosed(false);
-          setHoverNode(null);
-        }
       });
 
     nodeGroup
@@ -180,6 +178,8 @@ const GraphPage = ({ setShowNavbar }) => {
       .join("text")
       .text((d) => d.id)
       .attr("dy", 2);
+
+    refreshGraph();
 
     simulation.on("tick", () => {
       linksGroup
@@ -204,44 +204,30 @@ const GraphPage = ({ setShowNavbar }) => {
       svg.selectAll(".links").remove();
       svg.selectAll(".nodes").remove();
     };
-  }, [links, nodes, connectedNodes, pinnedNode]);
+  }, [links, nodes, connectedNodes]);
 
   // Once we have a "clicked" event => zoom in or out
   useEffect(() => {
     if (selectedNode[0] === -1) {
       const node = nodes.find(n => n.id === selectedNode[1]);
-      if (!node) return;
-      const svg = d3.select("#simulation-svg");
+      if (!node) {
+        return;
+      }
 
       if (nodeSelections[0] === selectedNode[1]) {
-        // user clicked the same pinned node => unselect & zoom out
-        setNodeSelections(["", ""]);
-        svg.transition()
-          .duration(750)
-          .call(zoomRef.current.transform, d3.zoomIdentity);
+        doubleClickNode()
       } else {
-        // new pinned node => zoom in
-        setNodeSelections([selectedNode[1], selectedNode[1]]);
-        const transform = d3.zoomIdentity
-          .translate(graphWidth / 2 - node.x * 2, graphHeight / 2 - node.y * 2)
-          .scale(2);
-
-        if (zoomRef.current) {
-          svg.transition()
-            .duration(750)
-            .call(zoomRef.current.transform, transform);
-        }
+        clickNewNode(node)
       }
     } else if (nodeSelections[0] === "") {
-      // For hover-based selection 
-      setNodeSelections(["", selectedNode]);
+      setNodeSelections(["", selectedNode]); // For hover-based selection 
     }
   }, [selectedNode]);
 
   // Redraw if pinned/hover changes
   useEffect(() => {
     refreshGraph();
-  }, [pinnedNode, hoverNode, nodeSelections]);
+  }, [nodeSelections]);
 
   // Helper to get the course data from your context by nodeId
   function getCourseData(nodeId) {
@@ -250,9 +236,9 @@ const GraphPage = ({ setShowNavbar }) => {
   }
 
   // Decide which node's tooltip (if any) to show
-  const tooltipNodeId = pinnedNode && !pinnedTooltipClosed
-    ? pinnedNode
-    : (!pinnedNode ? hoverNode : null);
+  const tooltipNodeId = nodeSelections[0] && !pinnedTooltipClosed
+    ? nodeSelections[0]
+    : (!(nodeSelections[0] === "") ? nodeSelections[0] : null); //THIS WAS hoverNode
 
   const tooltipCourseData = getCourseData(tooltipNodeId);
   const tooltipPos = tooltipNodeId && nodePositions[tooltipNodeId]
@@ -336,7 +322,7 @@ const GraphPage = ({ setShowNavbar }) => {
               }}
             >
               {/* The X button only if pinned tooltip */}
-              {pinnedNode === tooltipNodeId && !pinnedTooltipClosed && (
+              {nodeSelections[0] === tooltipNodeId && !pinnedTooltipClosed && (
                 <button
                   className="tooltip-close"
                   onClick={() => setPinnedTooltipClosed(true)}

@@ -5,6 +5,7 @@ import AboutPage from './components/AboutPage';
 import CalendarPage from './components/CalendarPage';
 import SlotMachine from './components/SlotMachine';
 import GraphPage from './components/GraphPage';
+import EmailPage from './components/EmailPage';
 import { SavedCoursesProvider } from './components/SavedCoursesContext.js';
 import { SearchProvider } from './components/SearchContext.js';
 import { GraphProvider } from "./components/GraphContext";
@@ -26,6 +27,7 @@ const App = () => {
               <Route path="/slot-machine" element={<SlotMachine setShowNavbar={setShowNavbar}/>} />
               <Route path="/calendar" element={<CalendarPage setShowNavbar={setShowNavbar}/>} />
               <Route path="/graph" element={<GraphPage setShowNavbar={setShowNavbar}/>} />
+              <Route path="/email" element={<EmailPage setShowNavbar={setShowNavbar}/>} />
             </Routes>
           </Router>
         </GraphProvider>

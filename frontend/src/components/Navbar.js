@@ -28,6 +28,9 @@ const Navbar = () => {
                 <li>
                 <a href="/about">About</a>
                 </li>
+                <li>
+                <a href="/email">email</a>
+                </li>
             </ul>
             </div>
             <div className="navbar-right">
