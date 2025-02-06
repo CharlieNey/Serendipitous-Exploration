@@ -4,7 +4,7 @@ from sklearn.decomposition import LatentDirichletAllocation
 import numpy as np
 
 # Load the CSV file (replace 'your_file.csv' with your actual file path)
-df = pd.read_csv('../data/doc2vec_top10_output.csv')
+df = pd.read_csv('../data/graph_data/charlie_graph.csv')
 
 # Combine the two course descriptions into a single text column for topic modeling
 df['combined_description'] = df['Description_1'] + " " + df['Description_2']
