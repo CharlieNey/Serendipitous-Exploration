@@ -10,7 +10,6 @@ import { GraphContext } from './GraphContext.js';
 const GraphPage = ({ setShowNavbar }) => {
   const graphWidth = 1100;
   const graphHeight = 1100;
-
   const { savedCourses, setSavedCourses } = useContext(SavedCoursesContext);
   const { courseList, searchTerm, isLoading, setSearchTerm, fetchCourses } = useContext(SearchContext);
   const { selectedNode, nodes, links, connectedNodes, setSelectedNode, fetchNodes, fetchLinks, fetchNodesConnections } = useContext(GraphContext);
@@ -238,7 +237,8 @@ const GraphPage = ({ setShowNavbar }) => {
   // Decide which node's tooltip (if any) to show
   const tooltipNodeId = nodeSelections[0] && !pinnedTooltipClosed
     ? nodeSelections[0]
-    : (!(nodeSelections[0] === "") ? nodeSelections[0] : null); //THIS WAS hoverNode
+    : null;
+  //THIS WAS hoverNode
 
   const tooltipCourseData = getCourseData(tooltipNodeId);
   const tooltipPos = tooltipNodeId && nodePositions[tooltipNodeId]
@@ -322,7 +322,7 @@ const GraphPage = ({ setShowNavbar }) => {
               }}
             >
               {/* The X button only if pinned tooltip */}
-              {nodeSelections[0] === tooltipNodeId && !pinnedTooltipClosed && (
+              {tooltipNodeId && !pinnedTooltipClosed && (
                 <button
                   className="tooltip-close"
                   onClick={() => setPinnedTooltipClosed(true)}
