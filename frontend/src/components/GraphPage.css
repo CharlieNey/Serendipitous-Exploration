@@ -50,8 +50,8 @@ text {
 
 .calendar-button {
   position: fixed;
-  top: 20px;
-  right: 20px;
+  top: 65px;
+  right: 5px;
 }
 
 .calendar-button img {
