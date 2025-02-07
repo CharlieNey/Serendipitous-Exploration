@@ -135,9 +135,9 @@ const GraphPage = ({ setShowNavbar }) => {
 
     const simulation = d3
       .forceSimulation(nodes)
-      .force("charge", d3.forceManyBody().strength(-14))
+      .force("charge", d3.forceManyBody().strength(-200))
       .force("center", d3.forceCenter(graphWidth / 2, graphHeight / 2))
-      .force("link", d3.forceLink(links).id(d => d.id).distance(10));
+      .force("link", d3.forceLink(links).id(d => d.id).distance(100));
 
     // Links
     const linksGroup = d3.select(".links")

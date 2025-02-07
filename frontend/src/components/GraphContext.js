@@ -31,7 +31,7 @@ export const GraphProvider = ({ children }) => {
 
             const links = []; 
             for (let i in response_links) { 
-                links.push({source : response_links[i]["source"], target : response_links[i]["target"], score : response_links[i]["similarity"]}) // grabs source and target
+                links.push({source : response_links[i]["source"], target : response_links[i]["target"], score : response_links[i]["similarity"], word : response_links[i]["most_similar_word"]}) // grabs source and target
             }
             setConnectionList(links)
         } catch (error) {
