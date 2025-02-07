@@ -11,15 +11,15 @@ export const SearchProvider = ({ children }) => {
     try {
         setIsLoading(true);
         if (searchTerm === "") {
-        const response = await fetch("http://localhost:3001/api/courses");
-        const response_json = await response.json();
-        setCourseList(response_json);
-        setIsLoading(false);
+            const response = await fetch("http://localhost:3001/api/courses");
+            const response_json = await response.json();
+            setCourseList(response_json);
+            setIsLoading(false);
         } else {
-        const response = await fetch("http://localhost:3001/mycourses/" + searchTerm);
-        const response_json = await response.json();
-        setCourseList(response_json);
-        setIsLoading(false);
+            const response = await fetch("http://localhost:3001/mycourses/" + searchTerm);
+            const response_json = await response.json();
+            setCourseList(response_json);
+            setIsLoading(false);
         }
     } catch (error) {
         console.error('Error fetching nodes:', error);

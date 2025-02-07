@@ -52,7 +52,6 @@ const GraphPage = ({ setShowNavbar }) => {
     d3.select(".links")
       .selectAll("line")
       .style("opacity", (d) => getLinkOpacity(d))
-      .style("stroke", (d) => color((d.score - 0.5) * 2));
 
     d3.select(".nodes")
       .selectAll("g")
@@ -92,9 +91,6 @@ const GraphPage = ({ setShowNavbar }) => {
 
   useEffect(() => {
     setShowNavbar(true);
-    fetchNodes();
-    fetchLinks();
-    fetchNodesConnections();
   }, []);
 
   useEffect(() => {
@@ -139,20 +135,27 @@ const GraphPage = ({ setShowNavbar }) => {
       .forceSimulation(nodes)
       .force("charge", d3.forceManyBody().strength(-200))
       .force("center", d3.forceCenter(graphWidth / 2, graphHeight / 2))
-      .force("link", d3.forceLink(links).id(d => d.id).distance(100));
+      // .force("link", d3.forceLink(links).id(d => d.id).distance(100));
+      .force("link", d3.forceLink(links).id(d => d.id).distance((d) => d.score ** 2)); // IDK if this is working
 
     // Links
     const linksGroup = d3.select(".links")
-      .selectAll("line")
+      .selectAll("g")
       .data(links)
-      .join("line")
-      .style("stroke-width", 2);
+      .join("g")
 
     // Nodes: each node is a <g>
     const nodeGroup = d3.select(".nodes")
       .selectAll("g")
       .data(nodes)
       .join("g");
+
+    linksGroup
+      .selectAll("line")
+      .data((d) => [d])
+      .join("line")
+      .style("stroke", (d) => color((d.score - 0.5) * 2))
+      .style("stroke-width", 2);
     
     // Circles
     nodeGroup
@@ -181,14 +184,29 @@ const GraphPage = ({ setShowNavbar }) => {
       .text((d) => d.id)
       .attr("dy", 2);
 
+    linksGroup
+      .selectAll("text")
+      .data((d) => [d])
+      .join("text")
+      .text((d) => d.word)
+      // .attr("dy", 2)
+
     refreshGraph();
 
     simulation.on("tick", () => {
       linksGroup
+        .selectAll("line")
         .attr("x1", (d) => d.source.x)
         .attr("y1", (d) => d.source.y)
         .attr("x2", (d) => d.target.x)
         .attr("y2", (d) => d.target.y);
+
+      linksGroup
+      .selectAll("text")
+      .attr("transform", (d) => {
+        var angle = Math.atan(Math.abs(d.source.y - d.target.y)/Math.abs(d.source.x - d.target.x)) * 180 / Math.PI
+        return `translate(${(d.source.x + d.target.x)/2},${(d.source.y + d.target.y)/2})rotate(${angle})`
+      })
 
       nodeGroup
         .attr("transform", (d) => {
@@ -203,8 +221,9 @@ const GraphPage = ({ setShowNavbar }) => {
 
     return () => {
       simulation.stop();
-      svg.selectAll(".links").remove();
+      svg.selectAll(".links").remove(); // SHOULD WE CLEAN THESE UP IN OTHER PLACES?
       svg.selectAll(".nodes").remove();
+      svg.selectAll(".zoom-group").remove();
     };
   }, [links, nodes, connectedNodes]);
 
@@ -226,7 +245,7 @@ const GraphPage = ({ setShowNavbar }) => {
     }
   }, [selectedNode]);
 
-  // Redraw if pinned/hover changes
+  // Redraw if hovered/clicked nodes
   useEffect(() => {
     refreshGraph();
   }, [nodeSelections]);
