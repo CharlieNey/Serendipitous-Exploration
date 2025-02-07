@@ -357,9 +357,7 @@ const GraphPage = ({ setShowNavbar }) => {
                 <h4>{pinnedCourseData.course_number}: {pinnedCourseData.course_title}</h4>
                 <p><strong>Credits:</strong> {pinnedCourseData.credits}</p>
                 <p><strong>Description:</strong> {pinnedCourseData.description}</p>
-                <p><strong>Offered Term:</strong> {pinnedCourseData.offered_term}</p>
                 <p><strong>Liberal Arts Requirements:</strong> {pinnedCourseData.liberal_arts_requirements}</p>
-                <p><strong>Tags:</strong> {pinnedCourseData.tags}</p>
                 <p><strong>Prerequisites:</strong> {pinnedCourseData.prerequisites}</p>
                 <p><strong>Faculty:</strong> {pinnedCourseData.faculty}</p>
                 <p><strong>Meeting Day:</strong> {pinnedCourseData.meeting_day}</p>
@@ -395,9 +393,7 @@ const GraphPage = ({ setShowNavbar }) => {
                 <h4>{hoveredCourseData.course_number}: {hoveredCourseData.course_title}</h4>
                 <p><strong>Credits:</strong> {hoveredCourseData.credits}</p>
                 <p><strong>Description:</strong> {hoveredCourseData.description}</p>
-                <p><strong>Offered Term:</strong> {hoveredCourseData.offered_term}</p>
                 <p><strong>Liberal Arts Requirements:</strong> {hoveredCourseData.liberal_arts_requirements}</p>
-                <p><strong>Tags:</strong> {hoveredCourseData.tags}</p>
                 <p><strong>Prerequisites:</strong> {hoveredCourseData.prerequisites}</p>
                 <p><strong>Faculty:</strong> {hoveredCourseData.faculty}</p>
                 <p><strong>Meeting Day:</strong> {hoveredCourseData.meeting_day}</p>
