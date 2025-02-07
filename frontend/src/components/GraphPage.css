@@ -131,7 +131,8 @@ text {
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
-  max-width: 300px;
+  max-width: 600px;
+  max-height: fit-content;
 }
 
 .tooltip-close {
