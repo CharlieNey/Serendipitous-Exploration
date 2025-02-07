@@ -7,12 +7,12 @@ import numpy as np
 import pandas as pd
 from collections import Counter
 
-# Download necessary NLTK resources
+# download necessary NLTK resources
 nltk.download('punkt')
 nltk.download('stopwords')
 
-# Load the course descriptions and titles from the CSV file
-file_path = "data/courses.csv"  # Make sure this file exists in the same directory
+# load the course descriptions and titles from the CSV file
+file_path = "data/courses.csv"  # make sure this file exists in the same directory
 courses_df = pd.read_csv(file_path)
 courses_df = courses_df.dropna(subset=['Description', 'Course Number'])
 courses_df = courses_df.drop_duplicates(subset=['Course Title', 'Course Number'])

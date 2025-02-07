@@ -1,30 +1,33 @@
-import React from 'react';
+import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import HomePage from './components/HomePage.js';
-import ExplorePage from './components/ExplorePage';
 import AboutPage from './components/AboutPage';
 import CalendarPage from './components/CalendarPage';
 import SlotMachine from './components/SlotMachine';
 import GraphPage from './components/GraphPage';
-import TestPage from './components/TestPage';
+import EmailPage from './components/EmailPage';
 import { SavedCoursesProvider } from './components/SavedCoursesContext.js';
 import { SearchProvider } from './components/SearchContext.js';
 import { GraphProvider } from "./components/GraphContext";
+import Navbar from './components/Navbar';
 
 const App = () => {
+  // From https://stackoverflow.com/questions/76942172/in-react-how-to-have-a-navbar-on-specific-pages-only
+  const [showNavbar, setShowNavbar] = useState(false);
+
   return (
     <SavedCoursesProvider>
       <SearchProvider>
         <GraphProvider>
           <Router>
+          {showNavbar && <Navbar />}
             <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/explore" element={<ExplorePage />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/slot-machine" element={<SlotMachine />} />
-              <Route path="/calendar" element={<CalendarPage />} />
-              <Route path="/graph" element={<GraphPage />} />
-              <Route path="/test-page" element={<TestPage />} />
+              <Route path="/" element={<HomePage setShowNavbar={setShowNavbar}/>} />
+              <Route path="/about" element={<AboutPage setShowNavbar={setShowNavbar}/>} />
+              <Route path="/slot-machine" element={<SlotMachine setShowNavbar={setShowNavbar}/>} />
+              <Route path="/calendar" element={<CalendarPage setShowNavbar={setShowNavbar}/>} />
+              <Route path="/graph" element={<GraphPage setShowNavbar={setShowNavbar}/>} />
+              <Route path="/email" element={<EmailPage setShowNavbar={setShowNavbar}/>} />
             </Routes>
           </Router>
         </GraphProvider>
