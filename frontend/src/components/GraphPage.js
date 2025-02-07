@@ -11,7 +11,7 @@ const GraphPage = ({ setShowNavbar }) => {
   const graphWidth = 1100;
   const graphHeight = 1100;
   const { savedCourses, setSavedCourses } = useContext(SavedCoursesContext);
-  const { courseList, searchTerm, isLoading, setSearchTerm, fetchCourses } = useContext(SearchContext);
+  const { allCourses, courseList, searchTerm, isLoading, setSearchTerm, fetchCourses } = useContext(SearchContext);
   const { selectedNode, nodes, links, connectedNodes, setSelectedNode, fetchNodes, fetchLinks, fetchNodesConnections } = useContext(GraphContext);
   const [nodeSelections, setNodeSelections] = useState(["", ""]);
   const zoomRef = useRef(null);
@@ -257,7 +257,7 @@ const GraphPage = ({ setShowNavbar }) => {
 
   // Retrieve the course data for that tooltipNodeId
   const tooltipCourseData = tooltipNodeId
-    ? courseList.find(c => c.course_number === tooltipNodeId)
+    ? allCourses.find(c => c.course_number === tooltipNodeId)
     : null;
 
   // If we know the node's (x,y) from `setNodePositions`, grab that
@@ -355,15 +355,11 @@ const GraphPage = ({ setShowNavbar }) => {
                 </button>
               )}
 
-
-
               <div className="tooltip-content">
                 <h4>{tooltipCourseData.course_number}: {tooltipCourseData.course_title}</h4>
                 <p><strong>Credits:</strong> {tooltipCourseData.credits}</p>
                 <p><strong>Description:</strong> {tooltipCourseData.description}</p>
-                <p><strong>Offered Term:</strong> {tooltipCourseData.offered_term}</p>
                 <p><strong>Liberal Arts Requirements:</strong> {tooltipCourseData.liberal_arts_requirements}</p>
-                <p><strong>Tags:</strong> {tooltipCourseData.tags}</p>
                 <p><strong>Prerequisites:</strong> {tooltipCourseData.prerequisites}</p>
                 <p><strong>Faculty:</strong> {tooltipCourseData.faculty}</p>
                 <p><strong>Meeting Day:</strong> {tooltipCourseData.meeting_day}</p>
