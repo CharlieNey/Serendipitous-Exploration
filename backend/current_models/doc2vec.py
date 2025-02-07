@@ -5,7 +5,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 import os
 
 # Load course data
-file_path = 'data/filtered_courses.csv'
+file_path = 'data/course_data/filtered_courses/filtered_courses.csv'
 data_frame = pd.read_csv(file_path).dropna(subset=["Description"])
 
 # Extract data
@@ -16,13 +16,13 @@ course_titles = data_frame["Course Number"].tolist()
 tagged_data = [TaggedDocument(words=word_tokenize(doc.lower()), tags=[str(i)]) for i, doc in enumerate(data)]
 
 # Train the Doc2Vec model
-model = Doc2Vec(vector_size=50, min_count=2, epochs=20, dm = 1)
+model = Doc2Vec(vector_size=50, min_count=2, epochs=40, dm = 1)
 model.build_vocab(tagged_data)
 model.train(tagged_data, total_examples=model.corpus_count, epochs=model.epochs)
 
 # Save the model
 os.makedirs("models", exist_ok=True)
-model.save("models/doc2vec.model")
+model.save("current_models/saved_models/doc2vec.model")
 
 # Save similarity results
 document_vectors = [model.dv[i] for i in range(len(tagged_data))]

@@ -7,10 +7,16 @@ from sklearn.metrics import accuracy_score
 from sklearn.metrics.pairwise import cosine_similarity
 
 # load trained model
-model = Doc2Vec.load("models/doc2vec.model")
+model = Doc2Vec.load("current_models/saved_models/doc2vec_glove.model")
 
 # load human-categorized data
-human_categorized_df = pd.read_csv("data/random_sample_categorized_top_10.csv") 
+# Load the two CSV files
+human_categorized_df1 = pd.read_csv("data/metadata_outputs/random_sample_categorized.csv")
+human_categorized_df2 = pd.read_csv("data/metadata_outputs/random_sample_categorized_top_10.csv")
+
+# Combine the two DataFrames vertically (row-wise)
+human_categorized_df = pd.concat([human_categorized_df1, human_categorized_df2], ignore_index=True)
+
 
 # Function to infer vector for new text
 def get_embedding(text):
