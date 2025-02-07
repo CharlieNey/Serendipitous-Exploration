@@ -7,7 +7,10 @@ const About = ({ setShowNavbar }) => {
 
     return(
         <div>
-            <h1> this is the about us page</h1>
+            <h3> What is this project? (haha def change this zoey)</h3>
+            <h6> stuff about our project: description of project as whole, more details regarding NLP, then details about frontend</h6>
+            <h3> A little about us:</h3>
+            <h6> photo, name, hometown, funfact...,  </h6>
         </div>
     )
 };

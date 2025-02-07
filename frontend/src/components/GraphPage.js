@@ -10,14 +10,16 @@ import { GraphContext } from './GraphContext.js';
 const GraphPage = ({ setShowNavbar }) => {
   const graphWidth = 1100;
   const graphHeight = 1100;
-
   const { savedCourses, setSavedCourses } = useContext(SavedCoursesContext);
   const { courseList, searchTerm, isLoading, setSearchTerm, fetchCourses } = useContext(SearchContext);
   const { selectedNode, nodes, links, connectedNodes, setSelectedNode, fetchNodes, fetchLinks, fetchNodesConnections } = useContext(GraphContext);
   const [nodeSelections, setNodeSelections] = useState(["", ""]);
   const zoomRef = useRef(null);
   const [pinnedTooltipClosed, setPinnedTooltipClosed] = useState(false);
-  const [nodePositions, setNodePositions] = useState({}); // store each node's {x,y} for tooltip positioning
+  const [nodePositions, setNodePositions] = useState({}); 
+  const pinnedNodeId = nodeSelections[0];    // pinned node or ""
+  const activeNodeId = nodeSelections[1];    // hovered OR pinned, used for color highlight
+
 
   function getLinkOpacity(link) {
     if (nodeSelections[1] === "" || link.source.id === nodeSelections[1] || link.target.id === nodeSelections[1]) {
@@ -229,23 +231,22 @@ const GraphPage = ({ setShowNavbar }) => {
     refreshGraph();
   }, [nodeSelections]);
 
-  // Helper to get the course data from your context by nodeId
-  function getCourseData(nodeId) {
-    if (!nodeId) return null;
-    return courseList.find(c => c.course_number === nodeId);
-  }
-
   // Decide which node's tooltip (if any) to show
-  const tooltipNodeId = nodeSelections[0] && !pinnedTooltipClosed
-    ? nodeSelections[0]
-    : (!(nodeSelections[0] === "") ? nodeSelections[0] : null); //THIS WAS hoverNode
+  const tooltipNodeId = pinnedNodeId && !pinnedTooltipClosed
+    ? pinnedNodeId
+    : (activeNodeId !== "" ? activeNodeId : null);
 
-  const tooltipCourseData = getCourseData(tooltipNodeId);
+  // Retrieve the course data for that tooltipNodeId
+  const tooltipCourseData = tooltipNodeId
+    ? courseList.find(c => c.course_number === tooltipNodeId)
+    : null;
+
+  // If we know the node's (x,y) from `setNodePositions`, grab that
   const tooltipPos = tooltipNodeId && nodePositions[tooltipNodeId]
     ? nodePositions[tooltipNodeId]
     : null;
 
-  // Adjust tooltip position relative to node
+  // offset the tooltip a bit so it doesn't cover the node
   const tooltipOffset = { x: 15, y: -20 };
 
   return (
@@ -321,15 +322,21 @@ const GraphPage = ({ setShowNavbar }) => {
                 left: tooltipPos.x + tooltipOffset.x
               }}
             >
-              {/* The X button only if pinned tooltip */}
-              {nodeSelections[0] === tooltipNodeId && !pinnedTooltipClosed && (
+              {/* Show the "X" button ONLY if this tooltip is the pinned node */}
+              {tooltipNodeId === pinnedNodeId && !pinnedTooltipClosed && (
                 <button
                   className="tooltip-close"
-                  onClick={() => setPinnedTooltipClosed(true)}
+                  onClick={() => {
+                    // Clicking X hides pinned tooltip
+                    setPinnedTooltipClosed(true);
+                    setNodeSelections(["", ""]);
+                  }}
                 >
                   X
                 </button>
               )}
+
+
 
               <div className="tooltip-content">
                 <h4>{tooltipCourseData.course_number}: {tooltipCourseData.course_title}</h4>
