@@ -10,3 +10,4 @@
 9. Open another terminal, cd into frontend, run **npm start**
 10. See the graph by clicking the _Graph!_ button from the home page!
 11. _If you don't have the courses table: _ run **psql -U _your_username_ -d courses < zoeyTable.sql**
+C

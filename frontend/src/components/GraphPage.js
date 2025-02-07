@@ -60,49 +60,49 @@ function getNodeColor(node, selectedNode, connectedNodes) {
 }
 
 const GraphPage = () => {
-  // Mock dummy graph. Code adapted from d3indepth.com. 
-  const graphWidth = 750;
+  // Code adapted from d3indepth.com. 
+  const graphWidth = 750; // when I make both of these 1100, removes the gray column bug
   const graphHeight = 750;
 
   // Import state variables and fetching methods
   const {savedCourses, setSavedCourses} = useContext(SavedCoursesContext);
   const {courseList, searchTerm, isLoading, setSearchTerm, fetchCourses} = useContext(SearchContext);
   const { selectedNode, nodes, links, setSelectedNode, fetchNodes, fetchLinks } = useContext(GraphContext);
-  const [clicked, setClicked] = useState(false)
+  const [clicked, setClicked] = useState(false);
+  const [connectedNodes, setConnectedNodes] = useState([]);
 
-  const[connectedNodes, setConnectedNodes] = useState([]);
+  const zoomRef = useRef(null);
 
-  // function clickNode(node) {
-  //   if (clicked === true && selectedNode === node) { // to unclick something already selected
-  //     setClicked(false);
-  //     setSelectedNode("");
-  //   } else {
-  //     setClicked(true);
-  //     setSelectedNode(node);
-  //   }
-  // }
+  function clickNode(nodeId) {
+    console.log("node clicked");
+    const node = nodes.find(n => n.id === nodeId);
+    if (!node) return;
 
-  function clickNode(node) {
     const svg = d3.select("#simulation-svg");
 
-    if (clicked === true && selectedNode === node) {
+    if (clicked === true && selectedNode === nodeId) {
+      console.log("zooming back out!!!");
       setClicked(false);
       setSelectedNode(""); 
       
-    } else {
-      setClicked(true);
-      setSelectedNode(node);
+      svg.transition()
+        .duration(750)
+        .call(zoomRef.current.transform, d3.zoomIdentity);
 
-      const svg = d3.select("#simulation-svg");
-  
+    } else {
+      console.log("zooming in!!!");
+      setClicked(true);
+      setSelectedNode(nodeId);
+
       const transform = d3.zoomIdentity
         .translate(graphWidth / 2 - node.x * 2, graphHeight / 2 - node.y * 2)
         .scale(2);
-  
      
-      svg.transition()
-        .duration(750)
-        .call(zoomRef.current.transform, transform);
+      if (zoomRef.current){
+        svg.transition()
+          .duration(750)
+          .call(zoomRef.current.transform, transform);
+      }
     }
   }
 
@@ -130,43 +130,58 @@ const GraphPage = () => {
   }, [searchTerm]);
 
   const color = d3.scaleSequential(d3.interpolatePuBuGn);
-
-  const zoomRef = useRef(null);
   
   // Create graph
   useEffect(() => {
     if (nodes.length === 0 || links.length === 0) return;
 
     setConnectedNodes(getAllNodeConnections(links))
+    console.log("Initializing zoom...");
 
+    
     const svg = d3
       .select("#simulation-svg")
       .attr("width", graphWidth)
-      .attr("height", graphHeight)
-      // .on("zoom", (event) => {
-      //   svg.select("g").attr("transform", event.transform);
-      // });
-
+      .attr("height", graphHeight);
+  
     if (!zoomRef.current) {
+      console.log("Creating new zoomRef");
       zoomRef.current = d3.zoom()
         .scaleExtent([0.5, 3])
         .on("zoom", (event) => {
-          svg.select("g").attr("transform", event.transform);
+          d3.select("#zoom-group").attr("transform", event.transform); 
         });
-  
+
       svg.call(zoomRef.current);
-    }
+    } else {
+      console.log("Reapplying existing zoomRef");
+      svg.call(zoomRef.current);
+      }
+
+    svg.on("click", function (event) { // return to full graph look when non-node clicked
+      const isNode = event.target.tagName === "circle" || event.target.tagName === "text";
+      if (!isNode) {
+        setClicked(false);
+        setSelectedNode("");
+  
+        svg.transition()
+          .duration(750)
+          .call(zoomRef.current.transform, d3.zoomIdentity);
+      }
+    });
     
-    svg.append("g").attr("class", "links");
-    svg.append("g").attr("class", "nodes");
+
+    svg.append("g").attr("id", "zoom-group");
+    svg.select("#zoom-group").append("g").attr("class", "links");
+    svg.select("#zoom-group").append("g").attr("class", "nodes");
 
     const simulation = d3
       .forceSimulation(nodes)
-      .force("charge", d3.forceManyBody().strength(-10)) // spreads nodes apart
+      .force("charge", d3.forceManyBody().strength(-14)) // spreads nodes apart
       .force("center", d3.forceCenter(graphWidth / 2, graphHeight / 2)) // location on page
       .force("link", d3.forceLink(links).id(d => d.id).distance(10)) // links nodes together
 
-    const linksGroup = d3.select(".links")
+    const linksGroup = d3.select(".links") // binds the links data to each link 
       .selectAll("line")
       .data(links)
       .join("line")
@@ -181,7 +196,7 @@ const GraphPage = () => {
       .selectAll("circle")
       .data((d) => [d])
       .join("circle")
-      .style("r", 5)
+      .style("r", 10)
       .style("stroke-width", 0.5)
       .style("stroke", "black")
       .attr("id", d => d)
@@ -192,17 +207,14 @@ const GraphPage = () => {
       .data((d) => [d])
       .join("text")
       .text((d) => d.id)
-      .attr("dy", 1)
+      .attr("dy", 2)
 
     nodeGroup
       .selectAll('circle')
       .on('click', function (e, d) {
-        setSelectedNode(d.id);
+        e.stopPropagation();
         clickNode(d.id);
-        
       })
-
-    
 
     // .on('mouseover', function (e, d) {
     //   if(!clicked){
@@ -234,7 +246,7 @@ const GraphPage = () => {
         svg.selectAll(".links").remove();
         svg.selectAll(".nodes").remove();
       };
-    }, [links, nodes]);
+    }, [nodes,links]);
 
   useEffect(() => {
     // console.log("Rerun")
