@@ -12,7 +12,7 @@ const GraphPage = ({ setShowNavbar }) => {
   const graphHeight = 1100;
 
   const { savedCourses, setSavedCourses } = useContext(SavedCoursesContext);
-  const { courseList, searchTerm, isLoading, setSearchTerm, fetchCourses } = useContext(SearchContext);
+  const { allCourses, courseList, searchTerm, setSearchTerm, isLoading, fetchCourses } = useContext(SearchContext);
   const { nodes, links, connectedNodes, fetchNodes, fetchLinks, fetchNodesConnections } = useContext(GraphContext);
 
   // separate pinned vs hovered
@@ -125,7 +125,7 @@ const GraphPage = ({ setShowNavbar }) => {
       .forceSimulation(nodes)
       .force("charge", d3.forceManyBody().strength(-14))
       .force("center", d3.forceCenter(graphWidth / 2, graphHeight / 2))
-      .force("link", d3.forceLink(links).id(d => d.id).distance(10));
+      .force("link", d3.forceLink(links).id(d => d.id).distance(20));
 
     // Links
     const linksGroup = d3.select(".links")
@@ -224,22 +224,24 @@ const GraphPage = ({ setShowNavbar }) => {
   
   // pinned tooltip data & position
   const pinnedCourseData = pinnedNodeId
-    ? courseList.find((c) => c.course_number === pinnedNodeId)
+    ? allCourses.find((c) => c.course_number === pinnedNodeId)
     : null;
+
   const pinnedPos = pinnedNodeId && nodePositions[pinnedNodeId]
     ? nodePositions[pinnedNodeId]
     : null;
 
   // hovered tooltip data & position
   const hoveredCourseData = hoveredNodeId
-    ? courseList.find((c) => c.course_number === hoveredNodeId)
+    ? allCourses.find((c) => c.course_number === hoveredNodeId)
     : null;
+
   const hoveredPos = hoveredNodeId && nodePositions[hoveredNodeId]
     ? nodePositions[hoveredNodeId]
     : null;
 
   // offset so the tooltip doesn't cover the node exactly
-  const tooltipOffset = { x: 15, y: -20 };
+  const tooltipOffset = { x: 50, y: -50 };
 
   return (
     <div className="GraphPage">
@@ -380,6 +382,15 @@ const GraphPage = ({ setShowNavbar }) => {
                 left: hoveredPos.x + tooltipOffset.x
               }}
             >
+              <button
+                className="tooltip-close"
+                onClick={() => {
+                  // Hide pinned tooltip but keep it pinned
+                  setPinnedTooltipClosed(true);
+                }}
+              >
+                X
+              </button>
               <div className="tooltip-content">
                 <h4>{hoveredCourseData.course_number}: {hoveredCourseData.course_title}</h4>
                 <p><strong>Credits:</strong> {hoveredCourseData.credits}</p>
