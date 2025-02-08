@@ -5,6 +5,12 @@ import { SearchContext } from '../SearchContext.js';
 
 // FROM: https://www.codevertiser.com/quiz-app-using-reactjs/#understand-the-logic-behind-the-quiz-app
 
+// FUTURE STEPS: 
+// 1. ADD ABILITY TO CHANGE BETWEEN QUIZZES
+// 2. ADD SELECT COURSE FUNCTIONALITY AT FINAL PAGE
+// 3. ADD BRANCHING PATHS: SOME ANSWERS JUMP YOU TO SPECIFIC QUESTIONS
+// 4. ADD FUNCTIONALITY FOR MULTIPLE SELECTION/BOOLEAN/USER INPUT
+
 const QuizPage = ({ setShowNavbar }) => {
     const { allCourses } = useContext(SearchContext);
     const [activeQuestion, setActiveQuestion] = useState(0)
@@ -30,6 +36,13 @@ const QuizPage = ({ setShowNavbar }) => {
       }
     
       return output_courses
+  }
+
+  function getFinalCourse() {
+    if (result.length === 0) {
+      return "No course"
+    }
+    return result[Math.floor(Math.random() * result.length)].course_number
   }
   
     const onClickNext = () => {
@@ -78,7 +91,7 @@ const QuizPage = ({ setShowNavbar }) => {
             <div className="result">
               <h3>Result</h3>
               <p>
-                Your course: <span>{result[0].course_number}</span>
+                Your course: <span>{getFinalCourse()}</span>
               </p>
             </div>
           )}
