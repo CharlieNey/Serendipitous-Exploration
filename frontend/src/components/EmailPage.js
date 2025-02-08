@@ -1,15 +1,10 @@
 import React, { useRef, useEffect } from 'react';
 import emailjs from '@emailjs/browser';
 
-// const ContactUs = ({ setShowNavbar }) => {
-//     useEffect(() => {
-//         setShowNavbar(true);
-//     }, []);
-
-//   return (
-//     <p>Hello world!</p>
-//   )
-// }
+//TODO:
+// 1. Style the page
+// 2. Make form clear after you press submit and tell user about the sucess/loading of their email
+// 3. Plug in data we want to send to user (probably shopping cart and courses table?) (could even have gcal functionality?)
 
 const ContactUs = ({ setShowNavbar }) => {
     useEffect(() => {

@@ -7,6 +7,10 @@ import { SavedCoursesContext } from './SavedCoursesContext.js';
 import { SearchContext } from './SearchContext.js';
 import { GraphContext } from './GraphContext.js';
 
+// TODO:
+// Create data table doubling the connections- each source target pair appears once inverted
+// Text for each- showing word connection, nearer to source. When clicked- takes you to target
+
 const GraphPage = ({ setShowNavbar }) => {
   const graphWidth = 1100;
   const graphHeight = 1100;
@@ -52,6 +56,10 @@ const GraphPage = ({ setShowNavbar }) => {
     d3.select(".links")
       .selectAll("line")
       .style("opacity", (d) => getLinkOpacity(d))
+    
+    // d3.select(links)
+    //   .selectAll("text")
+    //   .style("fill", (d) => getTextFill(d))
 
     d3.select(".nodes")
       .selectAll("g")
@@ -188,8 +196,11 @@ const GraphPage = ({ setShowNavbar }) => {
       .selectAll("text")
       .data((d) => [d])
       .join("text")
-      .text((d) => d.word)
-      .style("font-size", "10px")
+      .text((d) => "<-" + d.word + "->")
+      .attr("width", 3)
+      .on('click', function(e, d) {
+        setSelectedNode([-1, d.target.id]);
+      });
 
     refreshGraph();
 
@@ -205,7 +216,7 @@ const GraphPage = ({ setShowNavbar }) => {
       .selectAll("text")
       .attr("transform", (d) => {
         var angle = Math.atan((d.source.y - d.target.y)/(d.source.x - d.target.x)) * 180 / Math.PI
-        return `translate(${(d.source.x + d.target.x)/2},${(d.source.y + d.target.y)/2})rotate(${angle})`
+        return `translate(${(d.source.x * 7 + d.target.x)/8},${(d.source.y * 7 + d.target.y)/8})rotate(${angle})`
       })
 
       nodeGroup
