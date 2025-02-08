@@ -136,7 +136,7 @@ const GraphPage = ({ setShowNavbar }) => {
       .force("charge", d3.forceManyBody().strength(-200))
       .force("center", d3.forceCenter(graphWidth / 2, graphHeight / 2))
       // .force("link", d3.forceLink(links).id(d => d.id).distance(100));
-      .force("link", d3.forceLink(links).id(d => d.id).distance((d) => d.score ** 2)); // IDK if this is working
+      .force("link", d3.forceLink(links).id(d => d.id).distance((d) => d.score ** 2 * 100)); // IDK if this is working
 
     // Links
     const linksGroup = d3.select(".links")
@@ -189,7 +189,7 @@ const GraphPage = ({ setShowNavbar }) => {
       .data((d) => [d])
       .join("text")
       .text((d) => d.word)
-      // .attr("dy", 2)
+      .style("font-size", "10px")
 
     refreshGraph();
 
@@ -204,7 +204,7 @@ const GraphPage = ({ setShowNavbar }) => {
       linksGroup
       .selectAll("text")
       .attr("transform", (d) => {
-        var angle = Math.atan(Math.abs(d.source.y - d.target.y)/Math.abs(d.source.x - d.target.x)) * 180 / Math.PI
+        var angle = Math.atan((d.source.y - d.target.y)/(d.source.x - d.target.x)) * 180 / Math.PI
         return `translate(${(d.source.x + d.target.x)/2},${(d.source.y + d.target.y)/2})rotate(${angle})`
       })
 

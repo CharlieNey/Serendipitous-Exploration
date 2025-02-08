@@ -23,13 +23,16 @@ const Navbar = () => {
                 <a href="/graph">Graph</a>
                 </li>
                 <li>
+                <a href="/Quiz">Quiz</a>
+                </li>
+                <li>
                 <a href="/calendar">Calendar</a>
                 </li>
                 <li>
                 <a href="/about">About</a>
                 </li>
                 <li>
-                <a href="/email">email</a>
+                <a href="/email">Email</a>
                 </li>
             </ul>
             </div>
