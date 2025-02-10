@@ -23,6 +23,7 @@
   align-items: center;
   background-color: rgb(255, 255, 255);
   overflow:auto;
+  position: relative;
  }
 /* set in javascript */
  .simulation-svg{
@@ -35,6 +36,7 @@ circle {
   stroke: #fff; 
   stroke-width: 2px;
   transition: transform 0.2s ease; 
+  cursor: pointer;
 }
 
 line {
@@ -57,7 +59,7 @@ text {
 
 .calendar-button {
   position: fixed;
-  top: 20px;
+  top: 7px;
   right: 20px;
 }
 
@@ -167,7 +169,7 @@ text {
 .randomizer {
   position: fixed;
   bottom: 20px;
-  right: 20px;
+  right: 330px;
   background-color: #fbeee0;
   border: 2px solid #422800;
   border-radius: 30px;
@@ -176,9 +178,9 @@ text {
   cursor: pointer;
   display: inline-block;
   font-weight: 600;
-  font-size: 18px;
+  font-size: 14px;
   padding: 0 18px;
-  line-height: 50px;
+  line-height: 40px;
   text-align: center;
   text-decoration: none;
   user-select: none;
@@ -200,4 +202,18 @@ text {
     min-width: 120px;
     padding: 0 25px;
   }
+}
+
+.metadata-section {
+  width: 30%;
+  padding-left: 20px;
+  padding-right: 20px;
+  background-color: #f4f4f4;
+  border-right: 1px solid #ddd;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow-x:hidden;
+  overflow-y: scroll;
 }
