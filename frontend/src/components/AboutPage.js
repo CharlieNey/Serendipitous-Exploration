@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
 
+import './AboutUs.css'; // Import the CSS file
+
 const About = ({ setShowNavbar }) => {
     useEffect(() => {
         setShowNavbar(true);
@@ -10,17 +12,14 @@ const About = ({ setShowNavbar }) => {
             <h3>Background/About the Project</h3>
             <p>
             Carleton College provides students with extensive tools like Workday and the Academic Course Catalog for students to filter and search for classes. These search tools function well and are what all students use to search for classes currently. However, Carleton lacks tools that emphasize exploration and browsing. It is therefore our aim to build a tool that highlights the liberal arts experience. Our tool will function in tandem to the existing tools, to help students consider more unique classes, before they solidify their schedule and register using Workday. 
-
             </p>
             <p>
             Our main inspiration for this project comes from the research paper, The Bohemian Bookshelf: Supporting Serendipitous Book Discoveries through Information Visualization (Thudt, 2012). Researchers, Alice Thudt, Uta Hinrichs and Sheelagh Carpendale, created 5 visualizations of book collections aimed at encouraging “serendipitous discoveries” through highlighting different patterns and connections between books. We hope to emulate their success through encouraging students at Carleton College to have their own “serendipitous discoveries” when exploring courses to register for future terms. We seek to create our own tool to highlight unique connections between Carleton’s courses and use NLP tools on course descriptions.
-
             </p>
 
             <h3>The Model</h3>
             <p>
             Before applying our model, we had to filter out the course descriptions that were not relevant to our project. This includes all P.E. courses, courses that are only 1-2 credits, and courses that were missing data. Using this data, we implemented Gensim's Doc2Vec (Paragraph Vector) model to capture the semantic meaning of each document in a multidimensional space. Unlike traditional bag-of-words models, which disregard word order and relationships, our Document Vectorizer enriches each representation with contextual and structural information, learning fixed-length vectors that encode both word frequencies and their sequences. By simultaneously training individual word vectors and a document vector, the model better captures overall meaning. With our courses vectorized, we used cosine similarity to compare them, calculating the cosine of the angle between vectors to measure their semantic closeness and to give us accurate course recommendations that we could finally use in creating the graph’s connections.
-
             </p>
 
             <h3>Our Web-App</h3>

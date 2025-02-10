@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
+import './fonts.css'; // Import the font definitions
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

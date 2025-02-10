@@ -1,6 +1,7 @@
 .calendar-page-container {
     display: flex;
     height: 100%;
+    font-family: Gotham;
 }
 
 .calendar-section {
