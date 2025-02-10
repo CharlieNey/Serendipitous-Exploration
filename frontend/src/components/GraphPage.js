@@ -77,7 +77,7 @@ const GraphPage = ({ setShowNavbar }) => {
 
     svg.transition()
       .duration(750)
-      .call(zoomRef.current.transform, d3.zoomIdentity);
+      .call(zoomRef.current.transform, d3.zoomIdentity); // zooms out
   }
 
   function clickNewNode(node) {
@@ -86,6 +86,7 @@ const GraphPage = ({ setShowNavbar }) => {
     // new pinned node => zoom in
     setPinnedTooltipClosed(false);
     setNodeSelections([selectedNode[1], selectedNode[1]]);
+
     const transform = d3.zoomIdentity
       .translate(graphWidth / 2 - node.x * 2, graphHeight / 2 - node.y * 2)
       .scale(2);
@@ -118,7 +119,7 @@ const GraphPage = ({ setShowNavbar }) => {
 
     if (!zoomRef.current) {
       zoomRef.current = d3.zoom()
-        .scaleExtent([0.5, 3])
+        .scaleExtent([0.3, 3])
         .on("zoom", (event) => {
           d3.select("#zoom-group").attr("transform", event.transform);
         });
@@ -170,7 +171,7 @@ const GraphPage = ({ setShowNavbar }) => {
       .selectAll("circle")
       .data((d) => [d])
       .join("circle")
-      .style("r", 10)
+      .style("r", 12)
       .style("stroke-width", 0.5)
       .style("stroke", "black")
 
@@ -193,11 +194,13 @@ const GraphPage = ({ setShowNavbar }) => {
       .attr("dy", 2);
 
     linksGroup
-      .selectAll("text")
+      .selectAll("text.line-text")
       .data((d) => [d])
       .join("text")
-      .text((d) => "<-" + d.word + "->")
+      .classed("line-text", true)
+      .text((d) => "<--" + d.word + "-->")
       .attr("width", 3)
+      .attr("dy", 3) // proximity to line
       .on('click', function(e, d) {
         setSelectedNode([-1, d.target.id]);
       });
@@ -213,7 +216,7 @@ const GraphPage = ({ setShowNavbar }) => {
         .attr("y2", (d) => d.target.y);
 
       linksGroup
-      .selectAll("text")
+      .selectAll("text.line-text")
       .attr("transform", (d) => {
         var angle = Math.atan((d.source.y - d.target.y)/(d.source.x - d.target.x)) * 180 / Math.PI
         return `translate(${(d.source.x * 7 + d.target.x)/8},${(d.source.y * 7 + d.target.y)/8})rotate(${angle})`
@@ -334,6 +337,12 @@ const GraphPage = ({ setShowNavbar }) => {
             )}
           </div>
         </div>
+
+        <button class="randomizer" role="button"
+          onClick={() => {
+            const randomCourse = Math.floor(Math.random() * nodes.length);
+            setSelectedNode([-1, nodes[randomCourse].id]);
+        }}>Randomizer</button>
 
         <div className="simulation-container">
           <svg id="simulation-svg">
