@@ -31,8 +31,19 @@ function isHard(course) {
   return "CHEM" !== subject_code
 }
 
+function isChem(course) {
+  var subject_code = course.course_number.substring(0, course.course_number.indexOf(" "))
+  return "CHEM" === subject_code
+}
 
-export const Quiz_1 = {
+function isNotChem(course) {
+  var subject_code = course.course_number.substring(0, course.course_number.indexOf(" "))
+  return "CHEM" !== subject_code
+}
+
+const Quiz_1 = {
+    title: "Choose your adventurer",
+    description: "Quiz 1 description",
     questions: [
       {
         question: 'What style of adventurer are you?',
@@ -46,11 +57,32 @@ export const Quiz_1 = {
         type: 'MCQs',
         filters: [isEasy, isMedium, isHard]
       },
-      {
-        question: 'Choose a Companion',
-        choices: ['Brilliant Bird', 'Watchful Whale', 'Resiliant Racoon'],
-        type: 'MCQs',
-        filters: [isEarly, isMiddle, isLate]
-      },
+      // {
+      //   question: 'Choose a Companion',
+      //   choices: ['Brilliant Bird', 'Watchful Whale', 'Resiliant Racoon'],
+      //   type: 'MCQs',
+      //   filters: [isEarly, isMiddle, isLate]
+      // },
     ],
   }
+
+const Quiz_2 = {
+    title: "Just testing",
+    description: "Quiz 2 description",
+      questions: [
+        {
+          question: 'DISTINCT QUESTIONAIRRE',
+          choices: ['STEM', 'HUMANITIES', 'ART'],
+          type: 'MCQs',
+          filters: [isStem, isHum, isArt]
+        },
+        {
+          question: 'Choose a Quest Difficulty',
+          choices: ['CHEM', 'NOT CHEM'],
+          type: 'MCQs',
+          filters: [isChem, isNotChem]
+        },
+      ],
+    }
+
+export const Quizzes = [Quiz_1, Quiz_2];
