@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 
 export const GraphContext = createContext();
 
@@ -31,7 +31,8 @@ export const GraphProvider = ({ children }) => {
 
             const links = []; 
             for (let i in response_links) { 
-                links.push({source : response_links[i]["source"], target : response_links[i]["target"], score : response_links[i]["similarity"]}) // grabs source and target
+                // links.push({source : response_links[i]["source"], target : response_links[i]["target"], score : response_links[i]["similarity"], word : response_links[i]["most_similar_word"]}) // grabs source and target
+                links.push({source : response_links[i]["source"], target : response_links[i]["target"], score : response_links[i]["similarity"], word : "banana"})
             }
             setConnectionList(links)
         } catch (error) {
@@ -76,6 +77,12 @@ export const GraphProvider = ({ children }) => {
             console.error('Error fetching nodes:', error);
         }
     };
+
+    useEffect(() => {
+        fetchNodes();
+        fetchLinks();
+        fetchNodesConnections();
+    }, []);
 
     return (
         <GraphContext.Provider

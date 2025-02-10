@@ -7,11 +7,15 @@ import { SavedCoursesContext } from './SavedCoursesContext.js';
 import { SearchContext } from './SearchContext.js';
 import { GraphContext } from './GraphContext.js';
 
+// TODO:
+// Create data table doubling the connections- each source target pair appears once inverted
+// Text for each- showing word connection, nearer to source. When clicked- takes you to target
+
 const GraphPage = ({ setShowNavbar }) => {
   const graphWidth = 1100;
   const graphHeight = 1100;
   const { savedCourses, setSavedCourses } = useContext(SavedCoursesContext);
-  const { courseList, searchTerm, isLoading, setSearchTerm, fetchCourses } = useContext(SearchContext);
+  const { allCourses, courseList, searchTerm, isLoading, setSearchTerm, fetchCourses } = useContext(SearchContext);
   const { selectedNode, nodes, links, connectedNodes, setSelectedNode, fetchNodes, fetchLinks, fetchNodesConnections } = useContext(GraphContext);
   const [nodeSelections, setNodeSelections] = useState(["", ""]);
   const zoomRef = useRef(null);
@@ -52,7 +56,10 @@ const GraphPage = ({ setShowNavbar }) => {
     d3.select(".links")
       .selectAll("line")
       .style("opacity", (d) => getLinkOpacity(d))
-      .style("stroke", (d) => color((d.score - 0.5) * 2));
+    
+    // d3.select(links)
+    //   .selectAll("text")
+    //   .style("fill", (d) => getTextFill(d))
 
     d3.select(".nodes")
       .selectAll("g")
@@ -92,9 +99,6 @@ const GraphPage = ({ setShowNavbar }) => {
 
   useEffect(() => {
     setShowNavbar(true);
-    fetchNodes();
-    fetchLinks();
-    fetchNodesConnections();
   }, []);
 
   useEffect(() => {
@@ -137,22 +141,29 @@ const GraphPage = ({ setShowNavbar }) => {
 
     const simulation = d3
       .forceSimulation(nodes)
-      .force("charge", d3.forceManyBody().strength(-14))
+      .force("charge", d3.forceManyBody().strength(-200))
       .force("center", d3.forceCenter(graphWidth / 2, graphHeight / 2))
-      .force("link", d3.forceLink(links).id(d => d.id).distance(10));
+      // .force("link", d3.forceLink(links).id(d => d.id).distance(100));
+      .force("link", d3.forceLink(links).id(d => d.id).distance((d) => d.score ** 2 * 100)); // IDK if this is working
 
     // Links
     const linksGroup = d3.select(".links")
-      .selectAll("line")
+      .selectAll("g")
       .data(links)
-      .join("line")
-      .style("stroke-width", 2);
+      .join("g")
 
     // Nodes: each node is a <g>
     const nodeGroup = d3.select(".nodes")
       .selectAll("g")
       .data(nodes)
       .join("g");
+
+    linksGroup
+      .selectAll("line")
+      .data((d) => [d])
+      .join("line")
+      .style("stroke", (d) => color((d.score - 0.5) * 2))
+      .style("stroke-width", 2);
     
     // Circles
     nodeGroup
@@ -181,14 +192,32 @@ const GraphPage = ({ setShowNavbar }) => {
       .text((d) => d.id)
       .attr("dy", 2);
 
+    linksGroup
+      .selectAll("text")
+      .data((d) => [d])
+      .join("text")
+      .text((d) => "<-" + d.word + "->")
+      .attr("width", 3)
+      .on('click', function(e, d) {
+        setSelectedNode([-1, d.target.id]);
+      });
+
     refreshGraph();
 
     simulation.on("tick", () => {
       linksGroup
+        .selectAll("line")
         .attr("x1", (d) => d.source.x)
         .attr("y1", (d) => d.source.y)
         .attr("x2", (d) => d.target.x)
         .attr("y2", (d) => d.target.y);
+
+      linksGroup
+      .selectAll("text")
+      .attr("transform", (d) => {
+        var angle = Math.atan((d.source.y - d.target.y)/(d.source.x - d.target.x)) * 180 / Math.PI
+        return `translate(${(d.source.x * 7 + d.target.x)/8},${(d.source.y * 7 + d.target.y)/8})rotate(${angle})`
+      })
 
       nodeGroup
         .attr("transform", (d) => {
@@ -203,8 +232,9 @@ const GraphPage = ({ setShowNavbar }) => {
 
     return () => {
       simulation.stop();
-      svg.selectAll(".links").remove();
+      svg.selectAll(".links").remove(); // SHOULD WE CLEAN THESE UP IN OTHER PLACES?
       svg.selectAll(".nodes").remove();
+      svg.selectAll(".zoom-group").remove();
     };
   }, [links, nodes, connectedNodes]);
 
@@ -226,7 +256,7 @@ const GraphPage = ({ setShowNavbar }) => {
     }
   }, [selectedNode]);
 
-  // Redraw if pinned/hover changes
+  // Redraw if hovered/clicked nodes
   useEffect(() => {
     refreshGraph();
   }, [nodeSelections]);
@@ -238,7 +268,7 @@ const GraphPage = ({ setShowNavbar }) => {
 
   // Retrieve the course data for that tooltipNodeId
   const tooltipCourseData = tooltipNodeId
-    ? courseList.find(c => c.course_number === tooltipNodeId)
+    ? allCourses.find(c => c.course_number === tooltipNodeId)
     : null;
 
   // If we know the node's (x,y) from `setNodePositions`, grab that
@@ -336,15 +366,11 @@ const GraphPage = ({ setShowNavbar }) => {
                 </button>
               )}
 
-
-
               <div className="tooltip-content">
                 <h4>{tooltipCourseData.course_number}: {tooltipCourseData.course_title}</h4>
                 <p><strong>Credits:</strong> {tooltipCourseData.credits}</p>
                 <p><strong>Description:</strong> {tooltipCourseData.description}</p>
-                <p><strong>Offered Term:</strong> {tooltipCourseData.offered_term}</p>
                 <p><strong>Liberal Arts Requirements:</strong> {tooltipCourseData.liberal_arts_requirements}</p>
-                <p><strong>Tags:</strong> {tooltipCourseData.tags}</p>
                 <p><strong>Prerequisites:</strong> {tooltipCourseData.prerequisites}</p>
                 <p><strong>Faculty:</strong> {tooltipCourseData.faculty}</p>
                 <p><strong>Meeting Day:</strong> {tooltipCourseData.meeting_day}</p>

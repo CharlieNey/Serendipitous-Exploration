@@ -1,42 +1,59 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 
 export const SearchContext = createContext();
 
 export const SearchProvider = ({ children }) => {
-    const [courseList, setCourseList] = useState([]);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [isLoading, setIsLoading] = useState(true);
+  const [allCourses, setAllCourses] = useState([]);
+  const [courseList, setCourseList] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
-    const fetchCourses = async () => {
+  const fetchCourses = async () => {
     try {
-        setIsLoading(true);
-        if (searchTerm === "") {
-        const response = await fetch("http://localhost:3001/api/courses");
-        const response_json = await response.json();
-        setCourseList(response_json);
-        setIsLoading(false);
-        } else {
-        const response = await fetch("http://localhost:3001/mycourses/" + searchTerm);
-        const response_json = await response.json();
-        setCourseList(response_json);
-        setIsLoading(false);
-        }
-    } catch (error) {
-        console.error('Error fetching nodes:', error);
-    }
-    };
+      setIsLoading(true);
+      const response = await fetch("http://localhost:3001/api/courses");
+      const courses = await response.json();
 
-    return (
-        <SearchContext.Provider
-            value={{
-                courseList,
-                searchTerm,
-                isLoading,
-                setSearchTerm,
-                fetchCourses
-            }}
-        >
-            {children}
-        </SearchContext.Provider>
-    );
+      setAllCourses(courses);
+
+      // filtered list for the sidebar.
+      if (searchTerm === "") {
+        setCourseList(courses);
+      } else {
+        const term = searchTerm.toLowerCase();
+        const filteredCourses = courses.filter(course => {
+          const description = course.description ? course.description.toLowerCase() : "";
+          return (
+            course.course_number.toLowerCase().includes(term) ||
+            course.course_title.toLowerCase().includes(term) ||
+            description.includes(term)
+          );
+        });
+        setCourseList(filteredCourses);
+      }
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error fetching courses:", error);
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCourses();
+  }, [searchTerm]);
+
+  return (
+    <SearchContext.Provider
+      value={{
+        allCourses,  
+        courseList,   // filtered data for the sidebar
+        searchTerm,
+        setSearchTerm,
+        isLoading,
+        fetchCourses
+      }}
+    >
+      {children}
+    </SearchContext.Provider>
+  );
 };
