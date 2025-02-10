@@ -50,7 +50,7 @@ export const Quiz_1 = {
         question: 'Choose a Companion',
         choices: ['Brilliant Bird', 'Watchful Whale', 'Resiliant Racoon'],
         type: 'MCQs',
-        filters: [isEarly, isMiddle, isLate]
+        //filters: [isEarly, isMiddle, isLate]
       },
     ],
   }
