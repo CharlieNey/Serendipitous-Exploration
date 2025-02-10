@@ -3,8 +3,7 @@ import emailjs from '@emailjs/browser';
 
 //TODO:
 // 1. Style the page
-// 2. Make form clear after you press submit and tell user about the sucess/loading of their email
-// 3. Plug in data we want to send to user (probably shopping cart and courses table?) (could even have gcal functionality?)
+// 2. Plug in data we want to send to user (probably shopping cart and courses table?) (could even have gcal functionality?)
 
 const ContactUs = ({ setShowNavbar }) => {
     useEffect(() => {
@@ -16,6 +15,10 @@ const ContactUs = ({ setShowNavbar }) => {
   const publicKey = 'kvJdr1eEmb0GjbfI0'
 
   const form = useRef();
+
+  function resetForm() {
+    document.getElementById("emailForm").reset();
+  }
 
   const sendEmail = (e) => {
     e.preventDefault();
@@ -35,14 +38,14 @@ const ContactUs = ({ setShowNavbar }) => {
   };
 
   return (
-    <form ref={form} onSubmit={sendEmail}>
+    <form id="emailForm" ref={form} onSubmit={sendEmail}>
       <label>Name</label>
       <input type="text" name="to_name" />
       <label>Email</label>
       <input type="email" name="to_email" />
       <label>Message</label>
       <textarea name="message" />
-      <input type="submit" value="Send" />
+      <input type="submit" onClick={() => resetForm()} value="Send"/>
     </form>
   );
 };

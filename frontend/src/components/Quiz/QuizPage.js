@@ -6,7 +6,6 @@ import { SearchContext } from '../SearchContext.js';
 // FROM: https://www.codevertiser.com/quiz-app-using-reactjs/#understand-the-logic-behind-the-quiz-app
 
 // FUTURE STEPS:
-// 1. ADD ABILITY TO CHANGE BETWEEN QUIZZES
 // 2. ADD SELECT COURSE FUNCTIONALITY AT FINAL PAGE
 // 3. ADD BRANCHING PATHS: SOME ANSWERS JUMP YOU TO SPECIFIC QUESTIONS
 // 4. ADD FUNCTIONALITY FOR MULTIPLE SELECTION/BOOLEAN/USER INPUT

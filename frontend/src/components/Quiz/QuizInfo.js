@@ -32,12 +32,12 @@ function isEasy(course) {
 
 function isMedium(course) {
   var subject_code = course.course_number.substring((course.course_number.indexOf(" ") + 1), (course.course_number.indexOf(" ") + 2))
-  return "2" == subject_code
+  return "2" === subject_code
 }
 
 function isHard(course) {
   var subject_code = course.course_number.substring((course.course_number.indexOf(" ") + 1), (course.course_number.indexOf(" ") + 2))
-  return "3" == subject_code
+  return "3" === subject_code
 }
 
 function isChem(course) {
