@@ -14,4 +14,4 @@ CREATE TABLE courses (
     time TEXT
 );
 
-\copy courses(course_number, course_title, credits, description, offered_term, liberal_arts_requirements, tags, prerequisites, faculty, meeting_day, location, time) FROM 'data/filtered_courses.csv' DELIMITER ',' CSV HEADER;
+\copy courses(course_number, course_title, credits, description, offered_term, liberal_arts_requirements, tags, prerequisites, faculty, meeting_day, location, time) FROM './data/course_data/filtered_courses/filtered_courses.csv' DELIMITER ',' CSV HEADER;

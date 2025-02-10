@@ -12,32 +12,17 @@ const Navbar = () => {
             </a>
             </div>
             <div className="navbar-center">
-            <ul className="nav-links">
-            <li>
-                <a href="/">Home</a>
-                </li>
-            <li>
-                <a href="/slot-machine">Slot Machine</a>
-                </li>
-                <li>
-                <a href="/graph">Graph</a>
-                </li>
-                <li>
-                <a href="/Quiz">Quiz</a>
-                </li>
-                <li>
-                <a href="/calendar">Calendar</a>
-                </li>
-                <li>
-                <a href="/about">About</a>
-                </li>
-                <li>
-                <a href="/email">Email</a>
-                </li>
-            </ul>
+                <ul className="nav-links">
+                <li> <a href="/">Home</a></li>
+                <li> <a href="/slot-machine">Slot Machine</a> </li>
+                <li> <a href="/graph">Graph</a> </li>
+                <li> <a href="/Quiz">Quiz</a> </li>
+                <li> <a href="/calendar">Calendar</a> </li>
+                <li> <a href="/about">About</a> </li>
+                <li> <a href="/email">Email</a> </li>
+                </ul>
             </div>
-            <div className="navbar-right">
-            </div>
+            <div className="navbar-right"></div>
         </nav>
     );
 };
