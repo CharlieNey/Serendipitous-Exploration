@@ -5,7 +5,7 @@ import { SearchContext } from '../SearchContext.js';
 
 // FROM: https://www.codevertiser.com/quiz-app-using-reactjs/#understand-the-logic-behind-the-quiz-app
 
-// FUTURE STEPS: 
+// FUTURE STEPS:
 // 1. ADD ABILITY TO CHANGE BETWEEN QUIZZES
 // 2. ADD SELECT COURSE FUNCTIONALITY AT FINAL PAGE
 // 3. ADD BRANCHING PATHS: SOME ANSWERS JUMP YOU TO SPECIFIC QUESTIONS
@@ -25,13 +25,8 @@ const QuizPage = ({ setShowNavbar }) => {
     setResult(allCourses)
   }, [allCourses]);
 
-  console.log(Quizzes)
-  console.log(selectedQuiz)
-
   const { title, description, questions } = selectedQuiz
-  console.log(title)
   const { question, choices, filters } = questions[activeQuestion]
-  console.log(question)
 
   function applyQuestionFilter(courses, matchesAnswer) {
     var output_courses = []
@@ -53,7 +48,6 @@ const QuizPage = ({ setShowNavbar }) => {
   }
   
   const onClickNext = () => {
-    console.log(selectedAnswerIndex)
     setResult((prev) =>
       applyQuestionFilter(prev, filters[selectedAnswerIndex])
     )
@@ -69,6 +63,13 @@ const QuizPage = ({ setShowNavbar }) => {
   const startQuiz = (quiz) => {
     setSelectedQuiz(quiz)
     setIsQuizSelected(true)
+  }
+
+  const restartQuiz = () => {
+    setResult(allCourses)
+    setShowResult(false)
+    setIsQuizSelected(false)
+    
   }
 
   const addLeadingZero = (number) => (number > 9 ? number : `0${number}`)
@@ -120,9 +121,10 @@ const QuizPage = ({ setShowNavbar }) => {
             <p>
               Your course: <span>{getFinalCourse()}</span>
             </p>
-            <button onClick={setIsQuizSelected(false)}>
+            <button onClick={() => restartQuiz()}>Do Another Quiz</button>
+            {/* <button onClick={setIsQuizSelected(true)}>
                 {'Do Another Quiz?'}
-            </button>
+            </button> */}
           </div>
         )}
       </div>
