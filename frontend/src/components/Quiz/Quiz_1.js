@@ -16,12 +16,17 @@ function isArt(course) {
   return ["MUSC", "ARTS"].includes(subject_code)
 }
 
-function isChem(course) {
+function isEasy(course) {
   var subject_code = course.course_number.substring(0, course.course_number.indexOf(" "))
   return "CHEM" === subject_code
 }
 
-function isNotChem(course) {
+function isMedium(course) {
+  var subject_code = course.course_number.substring(0, course.course_number.indexOf(" "))
+  return "CHEM" !== subject_code
+}
+
+function isHard(course) {
   var subject_code = course.course_number.substring(0, course.course_number.indexOf(" "))
   return "CHEM" !== subject_code
 }
@@ -36,10 +41,16 @@ export const Quiz_1 = {
         filters: [isStem, isHum, isArt]
       },
       {
-        question: 'Chem or nah?',
-        choices: ['Chem all the way!!!', 'Hard pass'],
+        question: 'Choose a Quest Difficulty',
+        choices: ['EASY REWARD: $1000', 'MODERATE REWARD: $2000', 'HARD REWARD: $3000'],
         type: 'MCQs',
-        filters: [isChem, isNotChem]
+        filters: [isEasy, isMedium, isHard]
+      },
+      {
+        question: 'Choose a Companion',
+        choices: ['Brilliant Bird', 'Watchful Whale', 'Resiliant Racoon'],
+        type: 'MCQs',
+        filters: [isEarly, isMiddle, isLate]
       },
     ],
   }
