@@ -3,7 +3,7 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  font-family: Arial, sans-serif;
+  font-family: Gotham;
   height: 100vh;
   /* overflow: hidden; */
 }
