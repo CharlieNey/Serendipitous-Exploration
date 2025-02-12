@@ -13,7 +13,7 @@ wv = api.load('word2vec-google-news-300')
 nltk.download('stopwords')
 
 # File paths
-common_word_data = "../data/metadata_output/stop_words_handpicked.csv"
+common_word_data = "../data/course_data/stop_words_handpicked.csv"
 input_file = "../data/graph_data/charlie_graph.csv"
 output_file = "../data/graph_data/current_graph_data.csv"
 
@@ -59,5 +59,7 @@ df["most_similar_word"] = df.apply(lambda row: find_most_similar_word(row["desc1
 
 # Save to a new CSV file
 df.to_csv(output_file, index=False)
+
+# word + course title from source node which connects to target node
 
 print(f"Processed data saved to {output_file}")
