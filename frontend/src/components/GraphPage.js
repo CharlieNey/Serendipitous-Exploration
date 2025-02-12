@@ -18,6 +18,13 @@ const GraphPage = ({ setShowNavbar }) => {
   const [nodePositions, setNodePositions] = useState({}); 
   const [metadata, setMetadata] = useState(null); 
 
+  function getTextOpacity(link) {
+    if (link.source.id === nodeSelections[0]) {
+      return 1;
+    }
+    return 0;
+  }
+
   function getLinkOpacity(link) {
     if (nodeSelections[1] === "" || link.source.id === nodeSelections[1] || link.target.id === nodeSelections[1]) {
       return 1;
@@ -49,6 +56,10 @@ const GraphPage = ({ setShowNavbar }) => {
     d3.select(".links")
       .selectAll("line")
       .style("opacity", (d) => getLinkOpacity(d))
+
+    d3.select(".links")
+      .selectAll("text.line-text")
+      .style("opacity", (d) => getTextOpacity(d))
     
     d3.select(".nodes")
       .selectAll("g")
@@ -71,7 +82,7 @@ const GraphPage = ({ setShowNavbar }) => {
   function clickNewNode(node) {
     const svg = d3.select("#simulation-svg");
 
-    setNodeSelections([selectedNode[1], selectedNode[1]]);
+    setNodeSelections([node.id, node.id]);
     setMetadata(allCourses.find(c => c.course_number === node.id)); 
 
     const transform = d3.zoomIdentity
@@ -187,7 +198,7 @@ const GraphPage = ({ setShowNavbar }) => {
       .attr("width", 3)
       .attr("dy", 3) // proximity to line
       .on('click', function(e, d) {
-        setSelectedNode([-1, d.target.id]);
+        setSelectedNode([-2, d]);
       });
 
     refreshGraph();
@@ -201,11 +212,14 @@ const GraphPage = ({ setShowNavbar }) => {
         .attr("y2", (d) => d.target.y);
 
       linksGroup
-      .selectAll("text.line-text")
-      .attr("transform", (d) => {
-        var angle = Math.atan((d.source.y - d.target.y)/(d.source.x - d.target.x)) * 180 / Math.PI
-        return `translate(${(d.source.x * 7 + d.target.x)/8},${(d.source.y * 7 + d.target.y)/8})rotate(${angle})`
-      })
+        .selectAll("text.line-text")
+        .attr("transform", (d) => {
+          var angle = Math.atan((d.source.y - d.target.y)/(d.source.x - d.target.x)) * 180 / Math.PI
+          if (isNaN(angle)) { //DO WE NEED THIS?
+            angle = 0
+          }
+          return `translate(${(d.source.x * 7 + d.target.x)/8},${(d.source.y * 7 + d.target.y)/8})rotate(${angle})`
+        })
 
       nodeGroup
         .attr("transform", (d) => {
@@ -237,6 +251,15 @@ const GraphPage = ({ setShowNavbar }) => {
       if (nodeSelections[0] === selectedNode[1]) {
         doubleClickNode()
       } else {
+        clickNewNode(node)
+      }
+    } else if (selectedNode[0] === -2) {
+      if (nodeSelections[0] === selectedNode[1].source.id) {
+        const node = nodes.find(n => n.id === selectedNode[1].target.id);
+        if (!node) {
+          return;
+        }
+  
         clickNewNode(node)
       }
     } else if (nodeSelections[0] === "") {
