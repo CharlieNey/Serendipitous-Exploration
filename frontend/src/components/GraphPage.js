@@ -12,7 +12,7 @@ const GraphPage = ({ setShowNavbar }) => {
   const graphHeight = 1100;
   const { savedCourses, setSavedCourses } = useContext(SavedCoursesContext);
   const { allCourses, courseList, searchTerm, isLoading, setSearchTerm, fetchCourses } = useContext(SearchContext);
-  const { selectedNode, nodes, links, connectedNodes, setSelectedNode, fetchNodes, fetchNodesConnections } = useContext(GraphContext);
+  const { selectedNode, nodes, links, connectedNodes, minval, setSelectedNode } = useContext(GraphContext);
   const [nodeSelections, setNodeSelections] = useState(["", ""]);
   const zoomRef = useRef(null);
   const [nodePositions, setNodePositions] = useState({}); 
@@ -160,8 +160,8 @@ const GraphPage = ({ setShowNavbar }) => {
       .selectAll("line")
       .data((d) => [d])
       .join("line")
-      .style("stroke", (d) => color((d.score - 0.5) * 2))
-      .style("stroke-width", 2);
+      .style("stroke", (d) => color((d.score - minval) / (1 - minval)))
+      .style("stroke-width", 3);
     
     // Circles
     nodeGroup
@@ -215,9 +215,9 @@ const GraphPage = ({ setShowNavbar }) => {
         .selectAll("text.line-text")
         .attr("transform", (d) => {
           var angle = Math.atan((d.source.y - d.target.y)/(d.source.x - d.target.x)) * 180 / Math.PI
-          if (isNaN(angle)) { //DO WE NEED THIS?
-            angle = 0
-          }
+          // if (isNaN(angle)) { //DO WE NEED THIS?
+          //   angle = 0
+          // }
           return `translate(${(d.source.x * 7 + d.target.x)/8},${(d.source.y * 7 + d.target.y)/8})rotate(${angle})`
         })
 
