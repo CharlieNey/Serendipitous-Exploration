@@ -4,7 +4,6 @@ import { useParams } from "react-router-dom";
 import { SavedCoursesContext } from './SavedCoursesContext.js';
 import shopping_cart_logo from '../images/shopping_cart_logo.png'; 
 import FullCalendar from '@fullcalendar/react'
-import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 
 function Calendar({ setShowNavbar }, props) {

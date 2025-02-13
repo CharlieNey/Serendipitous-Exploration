@@ -10,48 +10,49 @@ var stemList = ['BIOC', 'BIOL', 'CGSC', 'CHEM', 'GEOL', 'STAT', 'NEUR',
 
 var artList = ['THEA', 'DANC','ARTH', 'ARTS', 'ARCN', 'CAMS', 'MUSC']
 
+// course.course_number.substring... is now course.section_listings.split('-')[0].substring(...) because of how the new csv is.
 function isStem(course) {
-  var subject_code = course.course_number.substring(0, course.course_number.indexOf(" "))
+  var subject_code = course.section_listings.split('-')[0].split(' ')[0]
   return stemList.includes(subject_code)
 }
 
 function isHum(course) {
-  var subject_code = course.course_number.substring(0, course.course_number.indexOf(" "))
+  var subject_code = course.section_listings.split('-')[0].split(' ')[0]
   return humList.includes(subject_code)
 }
 
 function isArt(course) {
-  var subject_code = course.course_number.substring(0, course.course_number.indexOf(" "))
+  var subject_code = course.section_listings.split('-')[0].split(' ')[0]
   return artList.includes(subject_code)
 }
 
 function isEasy(course) {
-  var subject_code = course.course_number.substring((course.course_number.indexOf(" ") + 1), (course.course_number.indexOf(" ") + 2))
+  var subject_code = course.section_listings.split('-')[0].substring((course.section_listings.split('-')[0].indexOf(" ") + 1), (course.section_listings.split('-')[0].indexOf(" ") + 2))
   return "1" === subject_code
 }
 
 function isMedium(course) {
-  var subject_code = course.course_number.substring((course.course_number.indexOf(" ") + 1), (course.course_number.indexOf(" ") + 2))
+  var subject_code = course.section_listings.split('-')[0].substring((course.section_listings.split('-')[0].indexOf(" ") + 1), (course.section_listings.split('-')[0].indexOf(" ") + 2))
   return "2" === subject_code
 }
 
 function isHard(course) {
-  var subject_code = course.course_number.substring((course.course_number.indexOf(" ") + 1), (course.course_number.indexOf(" ") + 2))
+  var subject_code = course.section_listings.split('-')[0].substring((course.section_listings.split('-')[0].indexOf(" ") + 1), (course.section_listings.split('-')[0].indexOf(" ") + 2))
   return "3" === subject_code
 }
 
 function isChem(course) {
-  var subject_code = course.course_number.substring(0, course.course_number.indexOf(" "))
+  var subject_code = course.section_listings.split('-')[0].substring(0, course.section_listings.split('-')[0].indexOf(" "))
   return "CHEM" === subject_code
 }
 
 function isNotChem(course) {
-  var subject_code = course.course_number.substring(0, course.course_number.indexOf(" "))
+  var subject_code = course.section_listings.split('-')[0].substring(0, course.section_listings.split('-')[0].indexOf(" "))
   return "CHEM" !== subject_code
 }
 function timeCheck(course) {
-  var subject_code = course.time.substring(0, course.time.indexOf(":"))
-  var midday = course.time.substring((course.time.indexOf(":") + 3), (course.time.indexOf(":") + 5))
+  var subject_code = course.day_start_end.split('|')[1].substring(0, course.day_start_end.split('|')[1].indexOf(":"))
+  var midday = course.day_start_end.split('|')[1].substring((course.day_start_end.split('|')[1].indexOf(":") + 3), (course.day_start_end.split('|')[1].indexOf(":") + 5))
 
   if (((subject_code === "8") || (subject_code === "9") || (subject_code === "10")) && (midday === "am")) 
     {
