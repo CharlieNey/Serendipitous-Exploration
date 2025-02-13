@@ -308,14 +308,30 @@ const GraphPage = ({ setShowNavbar }) => {
                       onClick={(e) => {
                         // stopPropagation so it doesn't also select/zoom the node
                         e.stopPropagation();
-                        setSavedCourses((prevCourses) => {
-                          const updatedCourses = [...prevCourses, course];
-                          return updatedCourses;
+                        // set saved courses
+                        setSavedCourses((savedCourse) => {
+                          console.log('Clicked course:', course);
+                          // check if the course is already in the savedCourses
+                          if (savedCourse.some(saved => saved.course_number === course.course_number)) {
+                            // if course is already saved, remove it
+                            const updatedCourses = savedCourse.filter(savedCourse => savedCourse.course_number !== course.course_number);
+                            console.log('Updated courses after removal:', updatedCourses);
+                            return updatedCourses;
+                          } else { // if not saved, add it
+                            const updatedCourses = [...savedCourse, course];
+                            console.log('Updated courses after addition:', updatedCourses);
+                            return updatedCourses;
+                          }
                         });
                       }}
                       className="add-to-calendar-button"
                     >
-                      <img src={shopping_cart_logo} alt="Add to Calendar" />
+                      <img 
+                      src={shopping_cart_logo}
+                      alt="Add to Calendar"
+                      // if course is already saved, make the cart logo grey
+                      className={savedCourses.some(saved => saved.course_number === course.course_number) ? "grey-cart-button" : ""}
+                      />
                     </button>
 
                     <div className="course-summary">
