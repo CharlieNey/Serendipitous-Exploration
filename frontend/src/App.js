@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import HomePage from './components/HomePage.js';
 import AboutPage from './components/AboutPage';
 import CalendarPage from './components/CalendarPage';
-import SlotMachine from './components/SlotMachine';
 import GraphPage from './components/GraphPage';
 import QuizPage from './components/Quiz/QuizPage';
 import EmailPage from './components/EmailPage';
@@ -25,7 +24,6 @@ const App = () => {
             <Routes>
               <Route path="/" element={<HomePage setShowNavbar={setShowNavbar}/>} />
               <Route path="/about" element={<AboutPage setShowNavbar={setShowNavbar}/>} />
-              <Route path="/slot-machine" element={<SlotMachine setShowNavbar={setShowNavbar}/>} />
               <Route path="/calendar" element={<CalendarPage setShowNavbar={setShowNavbar}/>} />
               <Route path="/graph" element={<GraphPage setShowNavbar={setShowNavbar}/>} />
               <Route path="/quiz" element={<QuizPage setShowNavbar={setShowNavbar}/>} />

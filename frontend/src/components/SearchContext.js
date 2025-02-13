@@ -24,8 +24,8 @@ export const SearchProvider = ({ children }) => {
         const filteredCourses = courses.filter(course => {
           const description = course.description ? course.description.toLowerCase() : "";
           return (
-            course.course_number.toLowerCase().includes(term) ||
-            course.course_title.toLowerCase().includes(term) ||
+            course.section_listings.split("-")[0].toLowerCase().includes(term) ||
+            course.section_listings.split(" - ")[1].toLowerCase().includes(term) ||
             description.includes(term)
           );
         });

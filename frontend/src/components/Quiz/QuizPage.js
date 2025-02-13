@@ -43,7 +43,7 @@ const QuizPage = ({ setShowNavbar }) => {
     if (result.length === 0) {
       return "No course"
     }
-    return result[Math.floor(Math.random() * result.length)].course_number
+    return result[Math.floor(Math.random() * result.length)].section_listings.split('-')[0]
   }
   
   const onClickNext = () => {

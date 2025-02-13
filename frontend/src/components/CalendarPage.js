@@ -4,14 +4,14 @@ import { useParams } from "react-router-dom";
 import { SavedCoursesContext } from './SavedCoursesContext.js';
 import shopping_cart_logo from '../images/shopping_cart_logo.png'; 
 import FullCalendar from '@fullcalendar/react'
-import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 
 function Calendar({ setShowNavbar }, props) {
   const {savedCourses, setSavedCourses} = useContext(SavedCoursesContext);
   const [expandedCourse, setExpandedCourse] = useState(null); // stores the course number of the currently expanded course (null by default)
 
-
+  console.log("React version:");
+  console.log(React.version);
   console.log("These are the saved courses (calendar page):")
   console.log(savedCourses)
 
@@ -168,27 +168,25 @@ function Calendar({ setShowNavbar }, props) {
       </div>
 
       <div className="calendar-section">
-      <FullCalendar
-        // plugins={[ dayGridPlugin ]}
-        // initialView="dayGridWeek"
-        plugins={[ timeGridPlugin ]}
-        initialView="timeGridWeek"
-        dayHeaderFormat={{ weekday: 'long' }}
-        weekends={false}
-        minTime="08:00:00"
-        maxTime="18:00:00"
+        <FullCalendar
+          plugins={[ timeGridPlugin ]}
+          initialView="timeGridWeek"
+          dayHeaderFormat={{ weekday: 'long' }}
+          weekends={false}
+          slotMinTime="08:00:00"
+          slotMaxTime="18:00:00"
+          allDaySlot={false}
 
-        headerToolbar={false}
-        // headerToolbar={{
-        //   start: 'title', 
-        //   center: '',
-        //   end: 'today prev,next' 
-        // }}
-        
-        events={calendarEvents}
-      />
-
-    </div>
+          headerToolbar={false}
+          // headerToolbar={{
+          //   start: 'title', 
+          //   center: '',
+          //   end: 'today prev,next' 
+          // }}
+          
+          events={calendarEvents}
+        />
+      </div>
 
     </div>
   );

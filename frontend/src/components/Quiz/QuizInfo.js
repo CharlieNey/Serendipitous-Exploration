@@ -10,6 +10,16 @@ var stemList = ['BIOC', 'BIOL', 'CGSC', 'CHEM', 'GEOL', 'STAT', 'NEUR',
 
 var artList = ['THEA', 'DANC','ARTH', 'ARTS', 'ARCN', 'CAMS', 'MUSC']
 
+// function MostRecomendedDepartment(chosen_course) {
+//   var MostRecomended = []
+//   var courseCount = []
+//   // Save all recomended courses based on department of chosen Course to count_courses
+//   // save top 2,3 departments from course count to Most Recomended
+//   // return only courses which are part of the top 2,3 departments
+//   var subject_code = chosen_course.course_number.substring(0, chosen_course.course_number.indexOf(" "))
+//   return stemList.includes(subject_code)
+// }
+
 function isStem(course) {
   var subject_code = course.course_number.substring(0, course.course_number.indexOf(" "))
   return stemList.includes(subject_code)
