@@ -1,5 +1,5 @@
 // Question Types
-// 1. MCQs | Multiple Choice | single
+// 1. MCQs | DropDown | Multiple Choice | single
 var humList = ['AFST', 'AMST', 'ARBC', 'ASLN', 
   'ASST', 'CHIN', 'CLAS', 'ECON', 'EDUC', 'CCST',
   'ENGL', 'FREN', 'GERM', 'GRK ', 'GWSS', 'HEBR', 'HIST', 'JAPN', 
@@ -21,17 +21,17 @@ var artList = ['THEA', 'DANC','ARTH', 'ARTS', 'ARCN', 'CAMS', 'MUSC']
 // }
 
 function isStem(course) {
-  var subject_code = course.course_number.substring(0, course.course_number.indexOf(" "))
+  var subject_code = course.section_listings.substring(0, course.section_listings.indexOf(" "))
   return stemList.includes(subject_code)
 }
 
 function isHum(course) {
-  var subject_code = course.course_number.substring(0, course.course_number.indexOf(" "))
+  var subject_code = course.section_listings.substring(0, course.section_listings.indexOf(" "))
   return humList.includes(subject_code)
 }
 
 function isArt(course) {
-  var subject_code = course.course_number.substring(0, course.course_number.indexOf(" "))
+  var subject_code = course.section_listings.substring(0, course.section_listings.indexOf(" "))
   return artList.includes(subject_code)
 }
 
@@ -51,12 +51,12 @@ function isHard(course) {
 }
 
 function isChem(course) {
-  var subject_code = course.course_number.substring(0, course.course_number.indexOf(" "))
+  var subject_code = course.section_listings.substring(0, course.section_listings.indexOf(" "))
   return "CHEM" === subject_code
 }
 
 function isNotChem(course) {
-  var subject_code = course.course_number.substring(0, course.course_number.indexOf(" "))
+  var subject_code = course.section_listings.substring(0, course.section_listings.indexOf(" "))
   return "CHEM" !== subject_code
 }
 function timeCheck(course) {
@@ -118,7 +118,7 @@ const Quiz_2 = {
         {
           question: 'DISTINCT QUESTIONAIRRE',
           choices: ['STEM', 'HUMANITIES', 'ART'],
-          type: 'MCQs',
+          type: 'DropDown',
           filters: [isStem, isHum, isArt]
         },
         {
