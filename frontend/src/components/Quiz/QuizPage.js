@@ -16,8 +16,9 @@ const QuizPage = ({ setShowNavbar }) => {
   const { allCourses } = useContext(SearchContext);
   const [activeQuestion, setActiveQuestion] = useState(0)
   const [showResult, setShowResult] = useState(false)
-  const [selectedAnswerIndex, setSelectedAnswerIndex] = useState(null)
+  const [selectedAnswerIndex, setSelectedAnswerIndex] = useState([])
   const [result, setResult] = useState([])
+  const [questionHTML, setQuestionHTML] = useState(null)
 
   useEffect(() => {
     setShowNavbar(true);
@@ -25,7 +26,7 @@ const QuizPage = ({ setShowNavbar }) => {
   }, [allCourses]);
 
   const { title, description, questions } = selectedQuiz
-  const { question, choices, filters } = questions[activeQuestion]
+  const { question, choices, type, filters } = questions[activeQuestion]
 
   function applyQuestionFilter(courses, matchesAnswer) {
     var output_courses = []
@@ -47,29 +48,57 @@ const QuizPage = ({ setShowNavbar }) => {
   }
   
   const onClickNext = () => {
-    setResult((prev) =>
-      applyQuestionFilter(prev, filters[selectedAnswerIndex])
-    )
-    setSelectedAnswerIndex(null)
+    if (selectedAnswerIndex.length === 1) {
+      setResult((prev) =>
+        applyQuestionFilter(prev, filters[selectedAnswerIndex[0]])
+      )
+    }
+
+    setSelectedAnswerIndex([])
     if (activeQuestion !== questions.length - 1) {
       setActiveQuestion((prev) => prev + 1)
     } else {
       setActiveQuestion(0)
       setShowResult(true)
     }
+
+    getQuestionHTML()
   }
 
   const startQuiz = (quiz) => {
+    setResult(allCourses)
+    setShowResult(false)
     setSelectedQuiz(quiz)
     setIsQuizSelected(true)
   }
 
-  const restartQuiz = () => {
-    setResult(allCourses)
-    setShowResult(false)
-    setIsQuizSelected(false)
-    
+  const getQuestionHTML = () => {
+    if(type === "DropDown") {
+      const dropDownHTML = choices.map((answer, index) => (
+        <li
+          onClick={() => setSelectedAnswerIndex([index])}
+          key={answer}
+          className={(selectedAnswerIndex.length !== 0 && selectedAnswerIndex[0] === index) ? 'selected-answer' : null}>
+          {answer}
+        </li>
+      ))
+      setQuestionHTML(dropDownHTML)
+    } else {
+      const MCQHTML = choices.map((answer, index) => (
+        <li
+          onClick={() => setSelectedAnswerIndex([index])}
+          key={answer}
+          className={(selectedAnswerIndex.length !== 0 && selectedAnswerIndex[0] === index) ? 'selected-answer' : null}>
+          {answer}
+        </li>
+      ))
+      setQuestionHTML(MCQHTML)
+    }
   }
+
+  useEffect(() => {
+    getQuestionHTML()
+  }, [question, selectedAnswerIndex]);
 
   const addLeadingZero = (number) => (number > 9 ? number : `0${number}`)
 
@@ -97,17 +126,10 @@ const QuizPage = ({ setShowNavbar }) => {
             </div>
             <h2>{question}</h2>
             <ul>
-              {choices.map((answer, index) => (
-                <li
-                  onClick={() => setSelectedAnswerIndex(index)}
-                  key={answer}
-                  className={selectedAnswerIndex === index ? 'selected-answer' : null}>
-                  {answer}
-                </li>
-              ))}
+              {questionHTML}
             </ul>
             <div className="flex-right">
-              <button onClick={onClickNext} disabled={selectedAnswerIndex === null}>
+              <button onClick={onClickNext} disabled={selectedAnswerIndex.length === 0}>
                 {activeQuestion === questions.length - 1 ? 'Finish' : 'Next'}
               </button>
             </div>
@@ -120,7 +142,7 @@ const QuizPage = ({ setShowNavbar }) => {
             <p>
               Your course: <span>{getFinalCourse()}</span>
             </p>
-            <button onClick={() => restartQuiz()}>Do Another Quiz</button>
+            <button onClick={() => setIsQuizSelected(false)}>Do Another Quiz</button>
             {/* <button onClick={setIsQuizSelected(true)}>
                 {'Do Another Quiz?'}
             </button> */}

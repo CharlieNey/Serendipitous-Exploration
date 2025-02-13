@@ -56,16 +56,16 @@ const GraphPage = ({ setShowNavbar }) => {
     d3.select(".links")
       .selectAll("line")
       .style("opacity", (d) => getLinkOpacity(d))
-
-    d3.select(".links")
-      .selectAll("text.line-text")
-      .style("opacity", (d) => getTextOpacity(d))
     
     d3.select(".nodes")
       .selectAll("g")
       .selectAll("circle")
       .style("fill", (d) => getNodeColor(d.id))
       .style("opacity", (d) => getNodeOpacity(d.id));
+
+    d3.select(".links")
+      .selectAll("text.line-text")
+      .style("opacity", (d) => getTextOpacity(d))
   }
 
   function doubleClickNode() {
@@ -218,7 +218,7 @@ const GraphPage = ({ setShowNavbar }) => {
           // if (isNaN(angle)) { //DO WE NEED THIS?
           //   angle = 0
           // }
-          return `translate(${(d.source.x * 7 + d.target.x)/8},${(d.source.y * 7 + d.target.y)/8})rotate(${angle})`
+          return `translate(${(d.source.x * 5 + d.target.x)/6},${(d.source.y * 5 + d.target.y)/6})rotate(${angle})`
         })
 
       nodeGroup

@@ -128,7 +128,7 @@
 // export const Quizzes = [Quiz_1, Quiz_2];
 
 // Question Types
-// 1. MCQs | Multiple Choice | single
+// 1. MCQs | DropDown | Multiple Choice | single
 var humList = ['AFST', 'AMST', 'ARBC', 'ASLN', 
   'ASST', 'CHIN', 'CLAS', 'ECON', 'EDUC', 'CCST',
   'ENGL', 'FREN', 'GERM', 'GRK ', 'GWSS', 'HEBR', 'HIST', 'JAPN', 
@@ -141,17 +141,17 @@ var artList = ['THEA', 'DANC','ARTH', 'ARTS', 'ARCN', 'CAMS', 'MUSC']
 
 // course.course_number.substring... is now course.section_listings.split('-')[0].substring(...) because of how the new csv is.
 function isStem(course) {
-  var subject_code = course.section_listings.split('-')[0].split(' ')[0]
+  var subject_code = course.section_listings.substring(0, course.section_listings.indexOf(" "))
   return stemList.includes(subject_code)
 }
 
 function isHum(course) {
-  var subject_code = course.section_listings.split('-')[0].split(' ')[0]
+  var subject_code = course.section_listings.substring(0, course.section_listings.indexOf(" "))
   return humList.includes(subject_code)
 }
 
 function isArt(course) {
-  var subject_code = course.section_listings.split('-')[0].split(' ')[0]
+  var subject_code = course.section_listings.substring(0, course.section_listings.indexOf(" "))
   return artList.includes(subject_code)
 }
 
@@ -171,12 +171,12 @@ function isHard(course) {
 }
 
 function isChem(course) {
-  var subject_code = course.section_listings.split('-')[0].substring(0, course.section_listings.split('-')[0].indexOf(" "))
+  var subject_code = course.section_listings.substring(0, course.section_listings.indexOf(" "))
   return "CHEM" === subject_code
 }
 
 function isNotChem(course) {
-  var subject_code = course.section_listings.split('-')[0].substring(0, course.section_listings.split('-')[0].indexOf(" "))
+  var subject_code = course.section_listings.substring(0, course.section_listings.indexOf(" "))
   return "CHEM" !== subject_code
 }
 function timeCheck(course) {
@@ -238,7 +238,7 @@ const Quiz_2 = {
         {
           question: 'DISTINCT QUESTIONAIRRE',
           choices: ['STEM', 'HUMANITIES', 'ART'],
-          type: 'MCQs',
+          type: 'DropDown',
           filters: [isStem, isHum, isArt]
         },
         {
