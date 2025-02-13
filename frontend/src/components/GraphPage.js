@@ -8,15 +8,15 @@ import { SearchContext } from './SearchContext.js';
 import { GraphContext } from './GraphContext.js';
 
 const GraphPage = ({ setShowNavbar }) => {
-  const graphWidth = 1100;
+  const graphWidth = 1100; // TODO: Make this more dynamic for different screen sizes
   const graphHeight = 1100;
   const { savedCourses, setSavedCourses } = useContext(SavedCoursesContext);
   const { allCourses, courseList, searchTerm, isLoading, setSearchTerm, fetchCourses } = useContext(SearchContext);
-  const { selectedNode, nodes, links, connectedNodes, setSelectedNode, fetchNodes, fetchLinks, fetchNodesConnections } = useContext(GraphContext);
+  const { selectedNode, nodes, links, connectedNodes, setSelectedNode, fetchNodes, fetchNodesConnections } = useContext(GraphContext);
   const [nodeSelections, setNodeSelections] = useState(["", ""]);
   const zoomRef = useRef(null);
   const [nodePositions, setNodePositions] = useState({}); 
-  const [metadata, setMetadata] = useState(null); 
+  const [metadata, setMetadata] = useState(null);
 
   function getTextOpacity(link) {
     if (link.source.id === nodeSelections[0]) {
@@ -83,7 +83,7 @@ const GraphPage = ({ setShowNavbar }) => {
     const svg = d3.select("#simulation-svg");
 
     setNodeSelections([node.id, node.id]);
-    setMetadata(allCourses.find(c => c.course_number === node.id)); 
+    setMetadata(allCourses.find(c => c.section_listings.split('-')[0] === node.id)); 
 
     const transform = d3.zoomIdentity
       .translate(graphWidth / 2 - node.x * 2, graphHeight / 2 - node.y * 2)
@@ -299,9 +299,9 @@ const GraphPage = ({ setShowNavbar }) => {
               <ul className="course-list">
                 {courseList.map((course) => (
                   <li 
-                    key={course.course_number}
+                    key={course.section_listings.split('-')[0]}
                     className="course-item"
-                    onClick={() => setSelectedNode([-1, course.course_number])}
+                    onClick={() => setSelectedNode([-1, course.section_listings.split('-')[0]])}
                     style={{ cursor: 'pointer' }}
                   >
                     <button
@@ -335,7 +335,7 @@ const GraphPage = ({ setShowNavbar }) => {
                     </button>
 
                     <div className="course-summary">
-                      <strong>{course.course_number}:</strong> {course.course_title}
+                      <strong>{course.section_listings.split('-')[0]}:</strong> {course.section_listings.split(' - ')[1]}
                     </div>
                   </li>
                 ))}
@@ -366,15 +366,12 @@ const GraphPage = ({ setShowNavbar }) => {
         <div className="metadata-section">
           {metadata ? (
             <div className="metadata-content">
-              <h4>{metadata.course_number}: {metadata.course_title}</h4>
+              <h4>{metadata.section_listings.split('-')[0]}: {metadata.section_listings.split(' - ')[1]}</h4>
               <p><strong>Credits:</strong> {metadata.credits}</p>
               <p><strong>Description:</strong> {metadata.description}</p>
-              <p><strong>Liberal Arts Requirements:</strong> {metadata.liberal_arts_requirements}</p>
-              <p><strong>Prerequisites:</strong> {metadata.prerequisites}</p>
-              <p><strong>Faculty:</strong> {metadata.faculty}</p>
-              <p><strong>Meeting Day:</strong> {metadata.meeting_day}</p>
-              <p><strong>Location:</strong> {metadata.location}</p>
-              <p><strong>Time:</strong> {metadata.time}</p>
+              <p><strong>Liberal Arts Requirements:</strong> {metadata.course_tags}</p>
+              <p><strong>Meeting Day:</strong> {metadata.day_start_end.split('|')[0]}</p>
+              <p><strong>Time:</strong> {metadata.day_start_end.split('|')[1]}</p>
             </div>
           ) : (
             <h4>Select a node to view its info!</h4>

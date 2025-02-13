@@ -45,14 +45,14 @@ line {
 
 text {
   text-anchor: middle;
-  font-family: Gotham;
+  font-family: "Helvetica Neue", Helvetica, sans-serif;
   fill: rgb(0, 0, 0);
   font-size: 4px;
 }
 
 .line-text {
   text-anchor: middle;
-  font-family: Gotham;
+  font-family: "Helvetica Neue", Helvetica, sans-serif;
   fill: rgb(14, 6, 166);
   font-size: 6px;
 }
@@ -182,9 +182,6 @@ text {
   padding: 0 18px;
   line-height: 40px;
   text-align: center;
-  text-decoration: none;
-  user-select: none;
-  -webkit-user-select: none;
   touch-action: manipulation;
 }
 
@@ -195,13 +192,6 @@ text {
 .randomizer:active {
   box-shadow: #422800 2px 2px 0 0;
   transform: translate(2px, 2px);
-}
-
-@media (min-width: 768px) {
-  .randomizer {
-    min-width: 120px;
-    padding: 0 25px;
-  }
 }
 
 .metadata-section {
