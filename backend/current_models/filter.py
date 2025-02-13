@@ -1,6 +1,7 @@
 import csv
 
 def filter_courses(input_file, output_file):
+    count = 0
     good_sections = ["-00", "-01"]
     # Open the input CSV file for reading
     with open(input_file, mode='r', newline='', encoding='utf-8') as infile:
@@ -21,7 +22,8 @@ def filter_courses(input_file, output_file):
                         if num  in row["Section Listings"]:
                     # Write the row to the output CSV
                             writer.writerow(row)
-
+                            count += 1
+    print (count)
 # Specify the input and output file paths
 input_csv = 'data/course_data/classes.csv'
 output_csv = 'data/course_data/filtered_classes.csv'
