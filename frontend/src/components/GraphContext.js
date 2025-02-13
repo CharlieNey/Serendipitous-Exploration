@@ -7,6 +7,7 @@ export const GraphProvider = ({ children }) => {
     const [links, setConnectionList] = useState([]); // stores the list of connections fetched from the server, which connect the graph nodes
     const [selectedNode, setSelectedNode] = useState("")
     const[connectedNodes, setConnectedNodes] = useState([]);
+    const [minval, setMinval] = useState(0);
 
     const fetchNodes = async () => {
         try {
@@ -24,6 +25,16 @@ export const GraphProvider = ({ children }) => {
         }
     };
 
+    function getMinVal(links) {
+        var min = links[0].score
+        for (var i in links) {
+          if (min > links[i].score) {
+            min = links[i].score
+          }
+        }
+        return min
+    }
+
     const fetchLinks = async () => {
         try {
             const response = await fetch("http://localhost:3001/api/connections");
@@ -34,6 +45,7 @@ export const GraphProvider = ({ children }) => {
                 // links.push({source : response_links[i]["source"], target : response_links[i]["target"], score : response_links[i]["similarity"], word : response_links[i]["most_similar_word"]}) // grabs source and target
                 links.push({source : response_links[i]["source"], target : response_links[i]["target"], score : response_links[i]["similarity"], word : "banana"})
             }
+            setMinval(getMinVal(links))
             setConnectionList(links)
         } catch (error) {
             console.error('Error fetching nodes:', error);
@@ -91,6 +103,7 @@ export const GraphProvider = ({ children }) => {
                 nodes,
                 links,
                 connectedNodes,
+                minval,
                 setSelectedNode,
                 fetchNodes,
                 fetchLinks,
