@@ -77,7 +77,7 @@ const QuizPage = ({ setShowNavbar }) => {
     if(type === "DropDown") {
       return (
         <div>
-          <select id ="dropdown" onClick={(e) => setSelectedAnswerIndex([Number(e.target.value)])}>
+          <select id ="dropdown" onChange={(e) => setSelectedAnswerIndex([Number(e.target.value)])}>
             {choices.map((answer, index) => (
               <option
                 value={index}>
