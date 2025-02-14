@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 import csv
 
 # Making a GET request
-r = requests.get('https://www.carleton.edu/catalog/current/search/?text=%20&term=25SP')
+r = requests.get('https://www.carleton.edu/catalog/current/search/?text=%20&term=25WI')
 
 if r.status_code == 200:
     soup = BeautifulSoup(r.content, 'html.parser')
@@ -23,6 +23,6 @@ if r.status_code == 200:
          writer.writerow('Description')
          for description in descriptions:
              writer.writerow([description])
-    print("CSV file 'courses.csv' has been created successfully.")
+    print("CSV file 'winter2025courses.csv' has been created successfully.")
 else:
     print("Failed to retrieve the page")
