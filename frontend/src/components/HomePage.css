@@ -9,7 +9,7 @@
   }
   
   .homepage-header {
-    font-family: 'Arial', sans-serif;
+    font-family: Gotham;
     font-weight: bold;
     font-style: italic;
     color: #003069;
@@ -42,7 +42,7 @@
     text-decoration: none;
   }
 
-  .graphpage-button {
+  /* .graphpage-button {
     padding: 10px 20px;
     font-size: 16px;
     background-color: #1ead38;
@@ -51,7 +51,7 @@
     border-radius: 5px;
     cursor: pointer;
     text-decoration: none;
-  }
+  } */
   
   .homepage-button:hover {
     background-color: #FFD24F;

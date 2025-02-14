@@ -11,18 +11,10 @@ const HomePage = () => {
         <h1>
          Curriculum Exploration
         </h1>
-        <Link to="/slot-machine">
-          <button className="homepage-button">Slot Machine!</button>
-        </Link>
         <br />
         <Link to="/graph">
-          <button className="graphpage-button">Graph!</button>
+          <button className="homepage-button">Get Started!</button>
         </Link>
-        <br />
-        <Link to="/calendar">
-          <button className="homepage-button">Calendar!</button>
-        </Link>
-        <br />
         <br />
         <Link to="/about" className="learn-more-link">Learn more about this website</Link>
       </header>

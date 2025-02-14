@@ -8,15 +8,22 @@ import { SearchContext } from './SearchContext.js';
 import { GraphContext } from './GraphContext.js';
 
 const GraphPage = ({ setShowNavbar }) => {
-  const graphWidth = 1100;
+  const graphWidth = 1100; // TODO: Make this more dynamic for different screen sizes
   const graphHeight = 1100;
   const { savedCourses, setSavedCourses } = useContext(SavedCoursesContext);
   const { allCourses, courseList, searchTerm, isLoading, setSearchTerm, fetchCourses } = useContext(SearchContext);
-  const { selectedNode, nodes, links, connectedNodes, setSelectedNode, fetchNodes, fetchLinks, fetchNodesConnections } = useContext(GraphContext);
+  const { selectedNode, nodes, links, connectedNodes, minval, setSelectedNode } = useContext(GraphContext);
   const [nodeSelections, setNodeSelections] = useState(["", ""]);
   const zoomRef = useRef(null);
   const [nodePositions, setNodePositions] = useState({}); 
-  const [metadata, setMetadata] = useState(null); 
+  const [metadata, setMetadata] = useState(null);
+
+  function getTextOpacity(link) {
+    if (link.source.id === nodeSelections[0]) {
+      return 1;
+    }
+    return 0;
+  }
 
   function getLinkOpacity(link) {
     if (nodeSelections[1] === "" || link.source.id === nodeSelections[1] || link.target.id === nodeSelections[1]) {
@@ -55,6 +62,38 @@ const GraphPage = ({ setShowNavbar }) => {
       .selectAll("circle")
       .style("fill", (d) => getNodeColor(d.id))
       .style("opacity", (d) => getNodeOpacity(d.id));
+
+    d3.select(".links")
+      .selectAll("text.line-text")
+      .style("opacity", (d) => getTextOpacity(d))
+  }
+
+  function doubleClickNode() {
+    const svg = d3.select("#simulation-svg");
+
+    setNodeSelections(["", ""]);
+    setMetadata(null); // Clear metadata when unselecting a node
+
+    svg.transition()
+      .duration(750)
+      .call(zoomRef.current.transform, d3.zoomIdentity); // zooms out
+  }
+
+  function clickNewNode(node) {
+    const svg = d3.select("#simulation-svg");
+
+    setNodeSelections([node.id, node.id]);
+    setMetadata(allCourses.find(c => c.section_listings.split('-')[0] === node.id)); 
+
+    const transform = d3.zoomIdentity
+      .translate(graphWidth / 2 - node.x * 2, graphHeight / 2 - node.y * 2)
+      .scale(2);
+
+    if (zoomRef.current) {
+      svg.transition()
+        .duration(750)
+        .call(zoomRef.current.transform, transform);
+    }
   }
 
   function doubleClickNode() {
@@ -149,8 +188,8 @@ const GraphPage = ({ setShowNavbar }) => {
       .selectAll("line")
       .data((d) => [d])
       .join("line")
-      .style("stroke", (d) => color((d.score - 0.5) * 2))
-      .style("stroke-width", 2);
+      .style("stroke", (d) => color((d.score - minval) / (1 - minval)))
+      .style("stroke-width", 3);
     
     // Circles
     nodeGroup
@@ -185,9 +224,9 @@ const GraphPage = ({ setShowNavbar }) => {
       .classed("line-text", true)
       .text((d) => "<--" + d.word + "-->")
       .attr("width", 3)
-      .attr("dy", 3) // proximity to line
+      .attr("dy", -5) // proximity to line
       .on('click', function(e, d) {
-        setSelectedNode([-1, d.target.id]);
+        setSelectedNode([-2, d]);
       });
 
     refreshGraph();
@@ -201,11 +240,14 @@ const GraphPage = ({ setShowNavbar }) => {
         .attr("y2", (d) => d.target.y);
 
       linksGroup
-      .selectAll("text.line-text")
-      .attr("transform", (d) => {
-        var angle = Math.atan((d.source.y - d.target.y)/(d.source.x - d.target.x)) * 180 / Math.PI
-        return `translate(${(d.source.x * 7 + d.target.x)/8},${(d.source.y * 7 + d.target.y)/8})rotate(${angle})`
-      })
+        .selectAll("text.line-text")
+        .attr("transform", (d) => {
+          var angle = Math.atan((d.source.y - d.target.y)/(d.source.x - d.target.x)) * 180 / Math.PI
+          // if (isNaN(angle)) { //DO WE NEED THIS?
+          //   angle = 0
+          // }
+          return `translate(${(d.source.x * 5 + d.target.x)/6},${(d.source.y * 5 + d.target.y)/6})rotate(${angle})`
+        })
 
       nodeGroup
         .attr("transform", (d) => {
@@ -237,6 +279,15 @@ const GraphPage = ({ setShowNavbar }) => {
       if (nodeSelections[0] === selectedNode[1]) {
         doubleClickNode()
       } else {
+        clickNewNode(node)
+      }
+    } else if (selectedNode[0] === -2) {
+      if (nodeSelections[0] === selectedNode[1].source.id) {
+        const node = nodes.find(n => n.id === selectedNode[1].target.id);
+        if (!node) {
+          return;
+        }
+  
         clickNewNode(node)
       }
     } else if (nodeSelections[0] === "") {
@@ -276,27 +327,43 @@ const GraphPage = ({ setShowNavbar }) => {
               <ul className="course-list">
                 {courseList.map((course) => (
                   <li 
-                    key={course.course_number}
+                    key={course.section_listings.split('-')[0]}
                     className="course-item"
-                    onClick={() => setSelectedNode([-1, course.course_number])}
+                    onClick={() => setSelectedNode([-1, course.section_listings.split('-')[0]])}
                     style={{ cursor: 'pointer' }}
                   >
                     <button
                       onClick={(e) => {
                         // stopPropagation so it doesn't also select/zoom the node
                         e.stopPropagation();
-                        setSavedCourses((prevCourses) => {
-                          const updatedCourses = [...prevCourses, course];
-                          return updatedCourses;
+                        // set saved courses
+                        setSavedCourses((savedCourse) => {
+                          console.log('Clicked course:', course);
+                          // check if the course is already in the savedCourses
+                          if (savedCourse.some(saved => saved.course_number === course.course_number)) {
+                            // if course is already saved, remove it
+                            const updatedCourses = savedCourse.filter(savedCourse => savedCourse.course_number !== course.course_number);
+                            console.log('Updated courses after removal:', updatedCourses);
+                            return updatedCourses;
+                          } else { // if not saved, add it
+                            const updatedCourses = [...savedCourse, course];
+                            console.log('Updated courses after addition:', updatedCourses);
+                            return updatedCourses;
+                          }
                         });
                       }}
                       className="add-to-calendar-button"
                     >
-                      <img src={shopping_cart_logo} alt="Add to Calendar" />
+                      <img 
+                      src={shopping_cart_logo}
+                      alt="Add to Calendar"
+                      // if course is already saved, make the cart logo grey
+                      className={savedCourses.some(saved => saved.course_number === course.course_number) ? "grey-cart-button" : ""}
+                      />
                     </button>
 
                     <div className="course-summary">
-                      <strong>{course.course_number}:</strong> {course.course_title}
+                      <strong>{course.section_listings.split('-')[0]}:</strong> {course.section_listings.split(' - ')[1]}
                     </div>
                   </li>
                 ))}
@@ -327,15 +394,12 @@ const GraphPage = ({ setShowNavbar }) => {
         <div className="metadata-section">
           {metadata ? (
             <div className="metadata-content">
-              <h4>{metadata.course_number}: {metadata.course_title}</h4>
+              <h4>{metadata.section_listings.split('-')[0]}: {metadata.section_listings.split(' - ')[1]}</h4>
               <p><strong>Credits:</strong> {metadata.credits}</p>
               <p><strong>Description:</strong> {metadata.description}</p>
-              <p><strong>Liberal Arts Requirements:</strong> {metadata.liberal_arts_requirements}</p>
-              <p><strong>Prerequisites:</strong> {metadata.prerequisites}</p>
-              <p><strong>Faculty:</strong> {metadata.faculty}</p>
-              <p><strong>Meeting Day:</strong> {metadata.meeting_day}</p>
-              <p><strong>Location:</strong> {metadata.location}</p>
-              <p><strong>Time:</strong> {metadata.time}</p>
+              <p><strong>Liberal Arts Requirements:</strong> {metadata.course_tags}</p>
+              <p><strong>Meeting Day:</strong> {metadata.day_start_end.split('|')[0]}</p>
+              <p><strong>Time:</strong> {metadata.day_start_end.split('|')[1]}</p>
             </div>
           ) : (
             <h4>Select a node to view its info!</h4>

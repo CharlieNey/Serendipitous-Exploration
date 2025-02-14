@@ -53,10 +53,10 @@ app.get('/api/nodes', async (req, res) => {
     }
 });
 
-// defining the /api/courses api route
-app.get('/api/connections', async (req, res) => { 
+// defining the /api/similarities api route
+app.get('/api/similarities', async (req, res) => { 
     try {
-        const result = await pool.query("SELECT * FROM Connections");
+        const result = await pool.query("SELECT * FROM Similarities");
         res.json(result.rows); 
     } catch (err) {
         console.error("Error fetching courses:", err.message);
@@ -64,14 +64,15 @@ app.get('/api/connections', async (req, res) => {
     }
 });
 
-// defining the /api/courses api route
+// defining the /api/:search api route - something is NOT working...
 router.get('/:search', async (req, res) => { 
     try {
         const search = req.params.search;
-        const query1 = "SELECT * FROM courses WHERE LOWER(course_title) LIKE '%" + search + "%' OR LOWER(course_title) LIKE '" + search + "%' OR LOWER(course_title) LIKE '%" + search +"'";
-        const query2 = " OR LOWER(course_number) LIKE '%" + search + "%' OR LOWER(course_number) LIKE '" + search + "%' OR LOWER(course_number) LIKE '%" + search +"'";
+        const query1 = "SELECT * FROM courses WHERE LOWER(SUBSTRING_INDEX(section_listings, '-', 0)) LIKE '%" + search + "%' OR LOWER(SUBSTRING_INDEX(section_listings, '-', 1)) LIKE '" + search + "%' OR LOWER(SUBSTRING_INDEX(section_listings, '-', 1)) LIKE '%" + search +"'";
+        const query2 = " OR LOWER(SUBSTRING_INDEX(section_listings, '-', 1)) LIKE '%" + search + "%' OR LOWER(SUBSTRING_INDEX(section_listings, '-', 1)) LIKE '" + search + "%' OR LOWER(SUBSTRING_INDEX(section_listings, '-', 1)) LIKE '%" + search +"'";
         const query3 = " OR LOWER(description) LIKE '%" + search + "%' OR LOWER(description) LIKE '" + search + "%' OR LOWER(description) LIKE '%" + search +"'";
         const result = await pool.query(query1 + query2 + query3);
+
         res.json(result.rows);
     } catch (err) {
         console.error("Error querying courses:", err.message);
