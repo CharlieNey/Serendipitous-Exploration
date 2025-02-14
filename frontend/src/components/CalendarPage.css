@@ -14,9 +14,8 @@
 }
 
 .fc {
-    height: 50%;
+    height: 100%;
 }
-
 
 .Calendar {
     display: flex;
