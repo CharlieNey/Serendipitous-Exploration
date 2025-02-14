@@ -196,7 +196,7 @@ const GraphPage = ({ setShowNavbar }) => {
       .classed("line-text", true)
       .text((d) => "<--" + d.word + "-->")
       .attr("width", 3)
-      .attr("dy", 3) // proximity to line
+      .attr("dy", -5) // proximity to line
       .on('click', function(e, d) {
         setSelectedNode([-2, d]);
       });
