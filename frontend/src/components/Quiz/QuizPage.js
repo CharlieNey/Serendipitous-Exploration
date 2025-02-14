@@ -47,9 +47,6 @@ const QuizPage = ({ setShowNavbar }) => {
   }
   
   const onClickNext = () => {
-    console.log("WE SUBMITTED")
-    console.log(selectedAnswerIndex)
-
     if (selectedAnswerIndex.length === 1) {
       setResult((prev) =>
         applyQuestionFilter(prev, filters[selectedAnswerIndex[0]])
@@ -118,9 +115,9 @@ const QuizPage = ({ setShowNavbar }) => {
 
   const addLeadingZero = (number) => (number > 9 ? number : `0${number}`)
 
-  useEffect(() => {
-    console.log(selectedAnswerIndex)
-  }, [selectedAnswerIndex]);
+  // useEffect(() => {
+  //   console.log(selectedAnswerIndex)
+  // }, [selectedAnswerIndex]);
 
   return (
     <div className="quiz-body">

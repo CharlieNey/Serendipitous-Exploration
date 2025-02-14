@@ -37,18 +37,18 @@ function isArt(course) {
 }
 
 function isEasy(course) {
-  var subject_code = course.section_listings.split('-')[0].substring((course.section_listings.split('-')[0].indexOf(" ") + 1), (course.section_listings.split('-')[0].indexOf(" ") + 2))
-  return "1" === subject_code
+  var level_code = course.section_listings.substring(course.section_listings.indexOf(" ") + 1, course.section_listings.indexOf(" ") + 2)
+  return "1" === level_code
 }
 
 function isMedium(course) {
-  var subject_code = course.section_listings.split('-')[0].substring((course.section_listings.split('-')[0].indexOf(" ") + 1), (course.section_listings.split('-')[0].indexOf(" ") + 2))
-  return "2" === subject_code
+  var level_code = course.section_listings.substring(course.section_listings.indexOf(" ") + 1, course.section_listings.indexOf(" ") + 2)
+  return "2" === level_code
 }
 
 function isHard(course) {
-  var subject_code = course.section_listings.split('-')[0].substring((course.section_listings.split('-')[0].indexOf(" ") + 1), (course.section_listings.split('-')[0].indexOf(" ") + 2))
-  return "3" === subject_code
+  var level_code = course.section_listings.substring(course.section_listings.indexOf(" ") + 1, course.section_listings.indexOf(" ") + 2)
+  return "3" === level_code
 }
 
 function isChem(course) {
@@ -60,32 +60,29 @@ function isNotChem(course) {
   var subject_code = course.section_listings.substring(0, course.section_listings.indexOf(" "))
   return "CHEM" !== subject_code
 }
-function timeCheck(course) {
-  var subject_code = course.day_start_end.split('|')[1].substring(0, course.day_start_end.split('|')[1].indexOf(":"))
-  var midday = course.day_start_end.split('|')[1].substring((course.day_start_end.split('|')[1].indexOf(":") + 3), (course.day_start_end.split('|')[1].indexOf(":") + 5))
 
-  if (((subject_code === "8") || (subject_code === "9") || (subject_code === "10")) && (midday === "am")) 
-    {
-    return subject_code;
-    }
+function isMorning(course) {
+  var hour_code = course.day_start_end.split('|')[1].substring(1, course.day_start_end.split('|')[1].indexOf(":"))
+  var midday = course.day_start_end.split('|')[1].substring((course.day_start_end.split('|')[1].indexOf(":") + 3) + 1, (course.day_start_end.split('|')[1].indexOf(":") + 5))
 
-  else if ((((subject_code === "11")) && (midday === "am")) ||
-   (((subject_code === 12) || (subject_code === 1)) && (midday === "pm"))) 
-    {
-    return subject_code;
-    }
+  return (((hour_code === "8") || (hour_code === "9") || (hour_code === "10")) && (midday === "A"))
+}
 
-  else if (((subject_code === "2") || (subject_code === "3") || (subject_code === "4") || (subject_code === "5")) 
-    && (midday === "pm")) 
-    {
-    return subject_code;
-    }
+function isAfternoon(course) {
+  var hour_code = course.day_start_end.split('|')[1].substring(1, course.day_start_end.split('|')[1].indexOf(":"))
+  var midday = course.day_start_end.split('|')[1].substring((course.day_start_end.split('|')[1].indexOf(":") + 3) + 1, (course.day_start_end.split('|')[1].indexOf(":") + 5))
+  
+  return ((((hour_code === "11")) && (midday === "A")) || (((hour_code === "12") || (hour_code === "1")) && (midday === "P")))
+}
 
-  else 
-    {
-    return "time outside of bounds";
-    }
-  }
+function isLateAfternoon(course) {
+  var hour_code = course.day_start_end.split('|')[1].substring(1, course.day_start_end.split('|')[1].indexOf(":"))
+  var midday = course.day_start_end.split('|')[1].substring((course.day_start_end.split('|')[1].indexOf(":") + 3) + 1, (course.day_start_end.split('|')[1].indexOf(":") + 5))
+  console.log(hour_code)
+  console.log(midday)
+  return (((hour_code === "2") || (hour_code === "3") || (hour_code === "4") || (hour_code === "5")) && (midday === "P"))
+}
+
 
 const Quiz_1 = {
     title: "Choose your adventurer",
@@ -107,7 +104,7 @@ const Quiz_1 = {
         question: 'Choose a Companion',
         choices: ['Brilliant Bird', 'Watchful Whale', 'Resiliant Racoon'],
         type: 'MCQs',
-        filters: [timeCheck, timeCheck, timeCheck]
+        filters: [isMorning, isAfternoon, isLateAfternoon]
       },
     ],
   }
