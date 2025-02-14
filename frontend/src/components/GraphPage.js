@@ -96,34 +96,6 @@ const GraphPage = ({ setShowNavbar }) => {
     }
   }
 
-  function doubleClickNode() {
-    const svg = d3.select("#simulation-svg");
-
-    setNodeSelections(["", ""]);
-    setMetadata(null); // Clear metadata when unselecting a node
-
-    svg.transition()
-      .duration(750)
-      .call(zoomRef.current.transform, d3.zoomIdentity); // zooms out
-  }
-
-  function clickNewNode(node) {
-    const svg = d3.select("#simulation-svg");
-
-    setNodeSelections([selectedNode[1], selectedNode[1]]);
-    setMetadata(allCourses.find(c => c.course_number === node.id)); 
-
-    const transform = d3.zoomIdentity
-      .translate(graphWidth / 2 - node.x * 2, graphHeight / 2 - node.y * 2)
-      .scale(2);
-
-    if (zoomRef.current) {
-      svg.transition()
-        .duration(750)
-        .call(zoomRef.current.transform, transform);
-    }
-  }
-
   useEffect(() => {
     setShowNavbar(true);
   }, []);
