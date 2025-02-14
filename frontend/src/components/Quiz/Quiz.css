@@ -55,6 +55,11 @@
   cursor: pointer;
 }
 
+.quiz-container .all-quizzes ul li:hover {
+  background-color: #04AA6D;
+  color: white;
+}
+
 .quiz-container ul .selected-answer {
   background: #ffd6ff;
   border: 1px solid #800080;
