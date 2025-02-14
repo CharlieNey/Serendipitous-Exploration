@@ -224,6 +224,8 @@ function Calendar({ setShowNavbar }, props) {
             
             events={calendarEvents}
 
+            // eventColor="#003069"
+
             // set clicked course (to be expanded)
             eventClick={(info) => {
               const clickedCourse = info.event.title;
@@ -236,8 +238,9 @@ function Calendar({ setShowNavbar }, props) {
             eventDidMount={(info) => {
               const eventTitle = info.event.title;
               if (eventTitle === expandedCourse) {
-                info.el.style.backgroundColor = "#FFD24F";
-                info.el.style.borderColor = "#FFD24F";
+                info.el.style.backgroundColor = "rgb(242, 148, 24)";
+                // info.el.style.backgroundColor = " #FFD24F";
+                info.el.style.borderColor = "rgb(242, 148, 24)";
               }
             }}
             
