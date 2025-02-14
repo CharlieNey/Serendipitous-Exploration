@@ -237,6 +237,7 @@ function Calendar({ setShowNavbar }, props) {
               const eventTitle = info.event.title;
               if (eventTitle === expandedCourse) {
                 info.el.style.backgroundColor = "#FFD24F";
+                info.el.style.borderColor = "#FFD24F";
               }
             }}
             
