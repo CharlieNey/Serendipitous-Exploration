@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, startTransition } from "react";
 import "./CalendarPage.css";
 import { useParams } from "react-router-dom";
 import { SavedCoursesContext } from './SavedCoursesContext.js';
@@ -30,7 +30,8 @@ function Calendar({ setShowNavbar }, props) {
     };
   
     // split input string by comma + trim extra spaces
-    const daysArray = days.split(',').map(day => day.trim());
+    // const daysArray = days.split(',').map(day => day.trim());
+    const daysArray = days.map(day => day.trim());
   
     // map day abbreviations to number code
     const parsedDays = daysArray.map(day => dayMapping[day]);
@@ -41,11 +42,11 @@ function Calendar({ setShowNavbar }, props) {
   function parseTimeRange(timeRange) {
     // helper function to convert from 12h to 24h format
     function convertTo24HourFormat(time) {
-      const [hours, minutes] = time.match(/(\d+):(\d+)(am|pm)/).slice(1, 3);
+      const [, hours, minutes, period] = time.match(/(\d+):(\d+)\s*(AM|PM)/);
       let hours24 = parseInt(hours, 10);
   
       // convert a/pm to 24h
-      if (time.includes('pm') && hours24 < 12) {
+      if (period.includes('PM') && hours24 < 12) {
         hours24 += 12;
       }
   
@@ -66,23 +67,65 @@ function Calendar({ setShowNavbar }, props) {
     };
   }
 
-  // map saved courses to events for the calendar
-  const calendarEvents = savedCourses.map(course => ({
-    title: course.course_number,
-    // daysOfWeek: [1, 3, 5],
-    daysOfWeek: parseDaysOfWeek(course.meeting_day),
-    startTime: parseTimeRange(course.time).startTime,
-    endTime: parseTimeRange(course.time).endTime
-  }));
+
+  function parseSchedule(day_start_end) {
+  // split by line breaks
+  const lines = day_start_end.split('\n\n');
+  let allSchedules = [];
+  // let daysOfWeek = [];
+  // let timeRange = '';
+  
+  // parse each line
+  lines.forEach(line => {
+    const [days, time] = line.split(' | ');
+    
+    // const [startTime, endTime] = timeRange.split(' - ');
+
+    // extract days of the week
+    let daysOfWeekTemp = [];
+    if (days.includes('M')) daysOfWeekTemp.push('M');
+    if (days.includes('T')) daysOfWeekTemp.push('T');
+    if (days.includes('W')) daysOfWeekTemp.push('W');
+    if (days.includes('TH')) daysOfWeekTemp.push('TH');
+    if (days.includes('F')) daysOfWeekTemp.push('F');
+
+    let timeRange = time;
+    let daysOfWeek = daysOfWeekTemp
+    allSchedules.push({
+      DaysOfWeek: parseDaysOfWeek(daysOfWeek),
+      startTime: parseTimeRange(timeRange).startTime,
+      endTime: parseTimeRange(timeRange).endTime
+      });
+    })
+
+    console.log("allSchedules:")
+    console.log(allSchedules)
+
+    return allSchedules;
+  }
+
+  const calendarEvents = savedCourses.map(course => {
+    const allSchedule = parseSchedule(course.day_start_end);
+
+    return allSchedule.map(schedule => {
+      return {
+        title: course.section_listings,
+        daysOfWeek: schedule.DaysOfWeek,
+        startTime: schedule.startTime,
+        endTime: schedule.endTime
+      };
+    })
+  }).flat();
+  
 
   console.log("calendar events created:")
   console.log(calendarEvents);
   
 
   return (
-    <div className="calendar-page-container">
+    <div className="CalendarPage">
 
-      <div className="sidebar"> 
+      <div className="scroll-sidebar"> 
         <div className="search-section"> 
         <h1>Your Saved Courses:</h1>
           {/* <input
@@ -101,15 +144,15 @@ function Calendar({ setShowNavbar }, props) {
           ) : ( */}
             <ul className="course-list"> {/* this is an unordered list of courses */}
               {savedCourses.map((course) => ( // `map` iterates over the `savedCourses` array and renders a list item for each course
-                <li key={course.course_number} className="course-item"> 
+                <li key={course.section_listings} className="course-item"> 
                   <button
                     onClick={() => {
                       setSavedCourses((savedCourse) => {
                         console.log('Clicked course:', course);
                         // check if the course is already in the savedCourses
-                        if (savedCourse.some(saved => saved.course_number === course.course_number)) {
+                        if (savedCourse.some(saved => saved.section_listings === course.section_listings)) {
                           // if course is already saved, remove it
-                          const updatedCourses = savedCourse.filter(savedCourse => savedCourse.course_number !== course.course_number);
+                          const updatedCourses = savedCourse.filter(savedCourse => savedCourse.section_listings !== course.section_listings);
                           console.log('Updated courses after removal:', updatedCourses);
                           return updatedCourses;
                         } else { // if not saved, add it
@@ -126,7 +169,7 @@ function Calendar({ setShowNavbar }, props) {
                       src={shopping_cart_logo}
                       alt="Add to Calendar"
                       // if course is already saved, make the cart logo grey
-                      className={savedCourses.some(saved => saved.course_number === course.course_number) ? "grey-cart-button" : ""}
+                      className={savedCourses.some(saved => saved.section_listings === course.section_listings) ? "grey-cart-button" : ""}
                     />
                   </button>
 
@@ -134,19 +177,19 @@ function Calendar({ setShowNavbar }, props) {
                     className="course-summary"
                     onClick={() =>
                       setExpandedCourse(
-                        expandedCourse === course.course_number ? null : course.course_number // toggles between expanding and collapsing course details
+                        expandedCourse === course.section_listings ? null : course.section_listings // toggles between expanding and collapsing course details
                       )
                     }
                   >
                     {/* display the course number and title */}
-                    <strong>{course.course_number}:</strong> {course.course_title}
+                    <strong>{course.section_listings}:</strong> {course.course_title}
                   </div>
-                  {expandedCourse === course.course_number && ( // show course details only if `expandedCourse` matches the current course number
+                  {expandedCourse === course.section_listings && ( // show course details only if `expandedCourse` matches the current course number
                     <div 
                     className="course-details"
                     onClick={() =>
                       setExpandedCourse(
-                        expandedCourse === course.course_number ? null : course.course_number // toggles between expanding and collapsing course details
+                        expandedCourse === course.section_listings ? null : course.section_listings // toggles between expanding and collapsing course details
                       )
                     }
                     >
@@ -174,15 +217,9 @@ function Calendar({ setShowNavbar }, props) {
           dayHeaderFormat={{ weekday: 'long' }}
           weekends={false}
           slotMinTime="08:00:00"
-          slotMaxTime="18:00:00"
+          slotMaxTime="17:00:00"
           allDaySlot={false}
-
           headerToolbar={false}
-          // headerToolbar={{
-          //   start: 'title', 
-          //   center: '',
-          //   end: 'today prev,next' 
-          // }}
           
           events={calendarEvents}
         />
