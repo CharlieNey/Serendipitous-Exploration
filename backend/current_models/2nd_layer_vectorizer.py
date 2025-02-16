@@ -6,14 +6,16 @@ from sklearn.metrics.pairwise import cosine_similarity
 import nltk
 from nltk.corpus import stopwords
 
+#outdated now
+
 # Load Word2Vec model
+
 wv = api.load('word2vec-google-news-300')
 
 # Download NLTK stopwords if not already available
 nltk.download('stopwords')
 
 # File paths
-common_word_data = "../data/course_data/stop_words_handpicked.csv"
 input_file = "../data/graph_data/graph_connections.csv"
 output_file = "../data/graph_data/current_graph_data.csv"
 
@@ -21,6 +23,7 @@ output_file = "../data/graph_data/current_graph_data.csv"
 df = pd.read_csv(input_file)
 
 # Load custom stop words from CSV
+common_word_data = "../data/course_data/stop_words_handpicked.csv"
 stopwords_df = pd.read_csv(common_word_data)
 custom_stopwords = set(stopwords_df["Word"].dropna().str.lower().tolist())
 
@@ -52,7 +55,7 @@ def find_most_similar_word(desc1, desc2):
     # Find most similar word pair
     word1_idx, word2_idx = np.unravel_index(similarity_matrix.argmax(), similarity_matrix.shape)
 
-    return words2[word2_idx]
+    return (wv.most_similar(positive=[word2_idx, word1_idx], topn=1))
 
 # Apply function to each row
 df["most_similar_word"] = df.apply(lambda row: find_most_similar_word(row["desc1"], row["desc2"]), axis=1)
