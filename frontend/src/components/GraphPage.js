@@ -83,6 +83,7 @@ const GraphPage = ({ setShowNavbar }) => {
     const svg = d3.select("#simulation-svg");
 
     setNodeSelections([node.id, node.id]);
+    //////THIS BREAKS SOMETIMES
     setMetadata(allCourses.find(c => c.section_listings.split('-')[0] === node.id)); 
 
     const transform = d3.zoomIdentity
