@@ -291,6 +291,51 @@ const GraphPage = ({ setShowNavbar }) => {
     return { meetingDay, time };
   }
 
+  function formatLiberalArtsRequirements(courseTags) {
+    if (!courseTags) return 'None';
+  
+    // all possible LARs
+    const larMap = {
+      'HI': 'Humanistic Inquiry',
+      'IDS': 'Intercultural Domestic Studies',
+      'WR2': 'Writing Requirement 2',
+      'ARP': 'Arts Practice',
+      'FSR': 'Formal or Statistical Reasoning',
+      'LA': 'Literary/Artistic Analysis',
+      'LS': 'Science with Lab',
+      'SI': 'Social Inquiry',
+      'IS': 'International Studies',
+      'QRE': 'Quantitative Reasoning Encounter'
+    };
+  
+    // Extract all LAR tags
+    const larTags = courseTags
+      .split('\n\n') 
+      .flatMap(tag => {
+        const larParts = tag.split('LAR:').slice(1); 
+        return larParts.map(part => part.trim()); 
+      })
+      .flatMap(tag => tag.split(',')) 
+      .map(tag => tag.trim()) 
+      .filter(tag => {
+        const abbreviation = tag.split(' ')[0];
+        return Object.keys(larMap).includes(abbreviation);
+      });
+  
+    if (larTags.length === 0) return 'None';
+  
+    const formattedLARs = larTags
+      .map(tag => {
+        const abbreviation = tag.split(' ')[0]; 
+        const fullName = larMap[abbreviation];
+        return fullName ? `${fullName} (${abbreviation})` : null; 
+      })
+      .filter(tag => tag !== null) 
+      .join(', ');
+  
+    return formattedLARs;
+  }
+
   return (
     <div className="GraphPage">
       {/* <div className="calendar-button">
@@ -415,7 +460,7 @@ const GraphPage = ({ setShowNavbar }) => {
                 {metadata.section_listings.split('-')[0]}: {metadata.section_listings.split(' - ')[1]}
               </h4> 
               <p><strong>Description:</strong> {metadata.description}</p>
-              <p><strong>Liberal Arts Requirements:</strong> {metadata.course_tags}</p>
+              <p><strong>Liberal Arts Requirements:</strong> {formatLiberalArtsRequirements(metadata.course_tags)}</p>
               {formatMeetingTimes(metadata.day_start_end).meetingDay && (
                 <>
                   <p><strong>Meeting Day:</strong> {formatMeetingTimes(metadata.day_start_end).meetingDay}</p>
