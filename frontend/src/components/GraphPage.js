@@ -195,7 +195,7 @@ const GraphPage = ({ setShowNavbar }) => {
       .data((d) => [d])
       .join("text")
       .classed("line-text", true)
-      .text((d) => "<--" + d.word + "-->")
+      .text((d) => "<--" + d.target.id + ": " + d.word + "-->")
       .attr("width", 3)
       .attr("dy", -5) // proximity to line
       .on('click', function(e, d) {
