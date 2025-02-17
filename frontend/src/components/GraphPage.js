@@ -15,7 +15,7 @@ const GraphPage = ({ setShowNavbar }) => {
   const { selectedNode, nodes, links, connectedNodes, minval, setSelectedNode } = useContext(GraphContext);
   const [nodeSelections, setNodeSelections] = useState(["", ""]);
   const zoomRef = useRef(null);
-  const [nodePositions, setNodePositions] = useState({}); 
+  // const [nodePositions, setNodePositions] = useState({}); // I THINK WE DON'T NEED THIS
   const [metadata, setMetadata] = useState(null);
 
   function getTextOpacity(link) {
@@ -224,11 +224,12 @@ const GraphPage = ({ setShowNavbar }) => {
 
       nodeGroup
         .attr("transform", (d) => {
-          // store positions for tooltip
-          setNodePositions(prev => ({
-            ...prev,
-            [d.id]: { x: d.x, y: d.y }
-          }));
+          // CAN WE MUTE THIS?
+          // // store positions for tooltip
+          // setNodePositions(prev => ({
+          //   ...prev,
+          //   [d.id]: { x: d.x, y: d.y }
+          // }));
           return `translate(${d.x},${d.y})`;
         });
     });
