@@ -10,3 +10,6 @@
 9. Open another terminal, cd into frontend, run **npm start**
 10. See the graph by clicking the _Graph!_ button from the home page!
 11. If you don't have the courses table:  run **psql -U _your_username_ -d courses < courseTable.sql**
+12. TO ACCESS PSQL IN THE SERVER: psql --username serendipity --host localhost --dbname serendipity (Password is on Meeting Notes)
+13. psql -U serendipity --host localhost -d serendipity < courseTable.sql
+

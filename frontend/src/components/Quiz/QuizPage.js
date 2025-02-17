@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Quizzes } from './QuizInfo.js'
+import { QuizInfo } from './QuizInfo.js'
 import './Quiz.css'
 import { SearchContext } from '../SearchContext.js';
 import { GraphContext } from '../GraphContext.js';
@@ -16,14 +16,15 @@ import { SavedCoursesContext } from '../SavedCoursesContext.js';
 
 const QuizPage = ({ setShowNavbar }) => {
   const [isQuizSelected, setIsQuizSelected] = useState(false)
-  const [selectedQuiz, setSelectedQuiz] = useState(Quizzes[0])
   const { allCourses } = useContext(SearchContext);
   const [activeQuestion, setActiveQuestion] = useState(0)
   const [showResult, setShowResult] = useState(false)
   const [selectedAnswerIndex, setSelectedAnswerIndex] = useState([])
   const [result, setResult] = useState([])
-  const { selectedNode, setSelectedNode } = useContext(GraphContext);
+  const { setSelectedNode } = useContext(GraphContext);
   const { savedCourses, setSavedCourses } = useContext(SavedCoursesContext);
+  const Quizzes = QuizInfo()
+  const [selectedQuiz, setSelectedQuiz] = useState(Quizzes[0])
 
   useEffect(() => {
     setShowNavbar(true);

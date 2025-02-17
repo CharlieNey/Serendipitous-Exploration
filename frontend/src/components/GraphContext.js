@@ -8,6 +8,23 @@ export const GraphProvider = ({ children }) => {
     const [selectedNode, setSelectedNode] = useState("")
     const[connectedNodes, setConnectedNodes] = useState([]);
     const [minval, setMinval] = useState(0);
+    const [departmentRecommendations, setDepartmentRecommendations] = useState([])
+
+    const fetchDepartmentRecommendations = async () => {
+        try {
+            const response = await fetch("http://localhost:3001/api/department-recommendations");
+            const response_array = await response.json();
+            
+            const depRecs = [];
+            for (let i in response_array) {
+                depRecs.push({department : response_array[i]["department"], recommendations : response_array[i]["top_5_recommended"].split(",")}) // grabs what will be course names
+            }
+            setDepartmentRecommendations(depRecs)
+
+        } catch (error) {
+            console.error('Error fetching nodes:', error);
+        }
+    };
 
     const fetchNodes = async () => {
         try {
@@ -79,6 +96,7 @@ export const GraphProvider = ({ children }) => {
     useEffect(() => {
         fetchNodes();
         fetchNodesConnections();
+        fetchDepartmentRecommendations();
     }, []);
 
     return (
@@ -89,6 +107,7 @@ export const GraphProvider = ({ children }) => {
                 links,
                 connectedNodes,
                 minval,
+                departmentRecommendations,
                 setSelectedNode,
                 fetchNodes,
                 fetchNodesConnections,
