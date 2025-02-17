@@ -15,3 +15,11 @@ CREATE TABLE courses (
 );
 
 \copy courses(course_subject, academic_period, section_listings, description, credits, capacity, reserved_seats, reserved_capacity_line, notes, day_start_end, course_tags, section_status) FROM './data/course_data/filtered_classes.csv' DELIMITER ',' CSV HEADER;
+
+DROP TABLE IF EXISTS depRecs;
+CREATE TABLE depRecs (
+    Department TEXT,
+    Top_5_Recommended TEXT
+);
+
+\copy depRecs (Department, Top_5_Recommended) FROM 'data/graph_data/recommended_departments.csv' DELIMITER  ',' CSV HEADER;
