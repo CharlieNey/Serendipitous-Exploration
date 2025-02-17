@@ -3,6 +3,7 @@
 import React from 'react';
 import './Navbar.css';
 import { Link } from 'react-router-dom';
+import shopping_cart_logo from '../images/shopping_cart_logo.png';
 
 const Navbar = () => {
     return (
@@ -23,16 +24,18 @@ const Navbar = () => {
                     <Link to="/quiz">
                         <li>Quiz</li>
                     </Link>
-                    <Link to="/calendar">
-                        <li>Calendar</li>
+                    <Link to="/email">
+                        <li>Email</li>
                     </Link>
                     <Link to="/about">
                         <li>About</li>
                     </Link>
-                    <Link to="/email">
-                        <li>Email</li>
-                    </Link>
                 </ul>
+                <div className="calendar-button">
+                    <Link to="/calendar">
+                    <img src={shopping_cart_logo} alt="Go to Calendar" />
+                    </Link>
+                </div>
             </div>
             <div className="navbar-right"></div>
         </nav>

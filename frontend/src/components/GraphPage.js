@@ -293,11 +293,11 @@ const GraphPage = ({ setShowNavbar }) => {
 
   return (
     <div className="GraphPage">
-      <div className="calendar-button">
+      {/* <div className="calendar-button">
         <Link to="/calendar">
           <img src={shopping_cart_logo} alt="Go to Calendar" />
         </Link>
-      </div>
+      </div> */}
 
       <div className="content-container">
         <div className="scroll-sidebar">
