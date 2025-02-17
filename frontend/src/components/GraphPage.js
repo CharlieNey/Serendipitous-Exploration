@@ -15,7 +15,7 @@ const GraphPage = ({ setShowNavbar }) => {
   const { selectedNode, nodes, links, connectedNodes, minval, setSelectedNode } = useContext(GraphContext);
   const [nodeSelections, setNodeSelections] = useState(["", ""]);
   const zoomRef = useRef(null);
-  const [nodePositions, setNodePositions] = useState({}); 
+  // const [nodePositions, setNodePositions] = useState({}); // I THINK WE DON'T NEED THIS
   const [metadata, setMetadata] = useState(null);
 
   function getTextOpacity(link) {
@@ -224,11 +224,12 @@ const GraphPage = ({ setShowNavbar }) => {
 
       nodeGroup
         .attr("transform", (d) => {
-          // store positions for tooltip
-          setNodePositions(prev => ({
-            ...prev,
-            [d.id]: { x: d.x, y: d.y }
-          }));
+          // CAN WE MUTE THIS?
+          // // store positions for tooltip
+          // setNodePositions(prev => ({
+          //   ...prev,
+          //   [d.id]: { x: d.x, y: d.y }
+          // }));
           return `translate(${d.x},${d.y})`;
         });
     });
@@ -367,7 +368,35 @@ const GraphPage = ({ setShowNavbar }) => {
         <div className="metadata-section">
           {metadata ? (
             <div className="metadata-content">
-              <h4>{metadata.section_listings.split('-')[0]}: {metadata.section_listings.split(' - ')[1]}</h4>
+              <h4>
+                <button
+                  onClick={() => {
+                    setSavedCourses((savedCourse) => {
+                      console.log('Clicked course:', metadata);
+                      // check if the course is already in the savedCourses
+                      if (savedCourse.some(saved => saved.section_listings === metadata.section_listings)) {
+                        // if course is already saved, remove it
+                        const updatedCourses = savedCourse.filter(savedCourse => savedCourse.section_listings !== metadata.section_listings);
+                        console.log('Updated courses after removal:', updatedCourses);
+                        return updatedCourses;
+                      } else { // if not saved, add it
+                        const updatedCourses = [...savedCourse, metadata];
+                        console.log('Updated courses after addition:', updatedCourses);
+                        return updatedCourses;
+                      }
+                    });
+                  }}
+                  className="add-to-calendar-button"
+                >
+                  <img 
+                  src={shopping_cart_logo}
+                  alt="Add to Calendar"
+                  // if course is already saved, make the cart logo grey
+                  className={savedCourses.some(saved => saved.section_listings === metadata.section_listings) ? "grey-cart-button" : ""}
+                  />
+                </button>
+                {metadata.section_listings.split('-')[0]}: {metadata.section_listings.split(' - ')[1]}
+              </h4> 
               <p><strong>Credits:</strong> {metadata.credits}</p>
               <p><strong>Description:</strong> {metadata.description}</p>
               <p><strong>Liberal Arts Requirements:</strong> {metadata.course_tags}</p>

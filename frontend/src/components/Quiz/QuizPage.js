@@ -2,6 +2,10 @@ import React, { useState, useEffect, useContext } from "react";
 import { Quizzes } from './QuizInfo.js'
 import './Quiz.css'
 import { SearchContext } from '../SearchContext.js';
+import { GraphContext } from '../GraphContext.js';
+import { Link } from 'react-router-dom';
+import shopping_cart_logo from '../../images/shopping_cart_logo.png';
+import { SavedCoursesContext } from '../SavedCoursesContext.js';
 
 // FROM: https://www.codevertiser.com/quiz-app-using-reactjs/#understand-the-logic-behind-the-quiz-app
 
@@ -18,6 +22,8 @@ const QuizPage = ({ setShowNavbar }) => {
   const [showResult, setShowResult] = useState(false)
   const [selectedAnswerIndex, setSelectedAnswerIndex] = useState([])
   const [result, setResult] = useState([])
+  const { selectedNode, setSelectedNode } = useContext(GraphContext);
+  const { savedCourses, setSavedCourses } = useContext(SavedCoursesContext);
 
   useEffect(() => {
     setShowNavbar(true);
@@ -27,6 +33,15 @@ const QuizPage = ({ setShowNavbar }) => {
   const { title, description, questions } = selectedQuiz
   const { question, choices, type, filters } = questions[activeQuestion]
 
+  function getCourseByName(name) {
+    for(var i in allCourses) {
+      if (allCourses[i].section_listings.split('-')[0] === name) {
+        return allCourses[i]
+      }
+    }
+    return "COURSE NOT FOUND"
+  }
+
   function applyQuestionFilter(courses, matchesAnswer) {
     var output_courses = []
 
@@ -35,35 +50,47 @@ const QuizPage = ({ setShowNavbar }) => {
           output_courses.push(courses[i])
       }
     }
-  
     return output_courses
   }
 
-  function getFinalCourse() {
-    if (result.length === 0) {
-      return "No course"
-    }
-    return result[Math.floor(Math.random() * result.length)].section_listings.split('-')[0]
-  }
-  
-  const onClickNext = () => {
+  const getNextResult = () => {
+    var nextResult = "Zero selected"
     if (selectedAnswerIndex.length === 1) {
-      setResult((prev) =>
-        applyQuestionFilter(prev, filters[selectedAnswerIndex[0]])
-      )
+      nextResult = applyQuestionFilter(result, filters[selectedAnswerIndex[0]])
     } else if (selectedAnswerIndex.length >= 1){
-      console.log("More than one selected")
-    } else {
-      console.log("Zero selected")
+      nextResult = "More than one selected"
     }
 
     setSelectedAnswerIndex([])
+    return nextResult
+  }
+
+  const setFinalResult  = (nextResult) => {
+    if (nextResult.length === 0) {
+      setResult("No Course")
+      setSelectedNode([-1, ""])
+    } else{
+      const randIndex = Math.floor(Math.random() * nextResult.length)
+      const resultName = nextResult[randIndex].section_listings.split('-')[0]
+      setResult(resultName)
+      setSelectedNode([-1, resultName])
+    }
+  }
+
+  const incrementQuestion = (nextResult) => {
     if (activeQuestion !== questions.length - 1) {
+      setResult(nextResult)
       setActiveQuestion((prev) => prev + 1)
     } else {
+      setFinalResult(nextResult)
       setActiveQuestion(0)
       setShowResult(true)
     }
+  }
+
+  const onClickNext = () => {
+    const nextResult = getNextResult()
+    incrementQuestion(nextResult)
   }
 
   const startQuiz = (quiz) => {
@@ -115,10 +142,6 @@ const QuizPage = ({ setShowNavbar }) => {
 
   const addLeadingZero = (number) => (number > 9 ? number : `0${number}`)
 
-  // useEffect(() => {
-  //   console.log(selectedAnswerIndex)
-  // }, [selectedAnswerIndex]);
-
   return (
     <div className="quiz-body">
       <div className="quiz-container">
@@ -152,9 +175,46 @@ const QuizPage = ({ setShowNavbar }) => {
             <p>{description}</p>
             <h3>Result</h3>
             <p>
-              Your course: <span>{getFinalCourse()}</span>
+              Your course: <span>{result}</span>
             </p>
             <button onClick={() => setIsQuizSelected(false)}>Do Another Quiz</button>
+
+            <Link to="/graph">
+              <button >See In Graph</button>
+            </Link>
+
+            <button onClick={() => setIsQuizSelected(false)}>Save to Calendar</button>
+
+            <button
+              onClick={() => {
+                // set saved courses
+                var course = getCourseByName(result)
+                if (result !== "No Course") {
+                  setSavedCourses((savedCourse) => {
+                    console.log('Clicked course:', course);
+                    // check if the course is already in the savedCourses
+                    if (savedCourse.some(saved => saved.section_listings === course.section_listings)) {
+                      // if course is already saved, remove it
+                      const updatedCourses = savedCourse.filter(savedCourse => savedCourse.section_listings !== course.section_listings);
+                      console.log('Updated courses after removal:', updatedCourses);
+                      return updatedCourses;
+                    } else { // if not saved, add it
+                      const updatedCourses = [...savedCourse, course];
+                      console.log('Updated courses after addition:', updatedCourses);
+                      return updatedCourses;
+                    }
+                  })
+                };
+              }}
+              className="add-to-calendar-button"
+            >
+              <img 
+              src={shopping_cart_logo}
+              alt="Add to Calendar"
+              // if course is already saved, make the cart logo grey
+              className={((result === "No Course") || savedCourses.some(saved => saved.section_listings === getCourseByName(result).section_listings)) ? "grey-cart-button" : ""}
+              />
+            </button>
           </div>
         )}
       </div>
