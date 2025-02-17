@@ -15,7 +15,6 @@ const GraphPage = ({ setShowNavbar }) => {
   const { selectedNode, nodes, links, connectedNodes, minval, setSelectedNode } = useContext(GraphContext);
   const [nodeSelections, setNodeSelections] = useState(["", ""]);
   const zoomRef = useRef(null);
-  // const [nodePositions, setNodePositions] = useState({}); // I THINK WE DON'T NEED THIS
   const [metadata, setMetadata] = useState(null);
 
   function getTextOpacity(link) {
@@ -83,7 +82,6 @@ const GraphPage = ({ setShowNavbar }) => {
     const svg = d3.select("#simulation-svg");
 
     setNodeSelections([node.id, node.id]);
-    //////THIS BREAKS SOMETIMES
     setMetadata(allCourses.find(c => c.section_listings.split('-')[0] === node.id)); 
 
     const transform = d3.zoomIdentity
@@ -192,16 +190,17 @@ const GraphPage = ({ setShowNavbar }) => {
 
     linksGroup
       .selectAll("text.line-text")
-      .data((d) => [d])
+      .data((d) => [d]) 
       .join("text")
       .classed("line-text", true)
-      .text((d) => "<--" + d.target.id + ": " + d.word + "-->")
+      .text((d) => "<—" + d.target.id + ": " + d.word + "—>")
       .attr("width", 3)
-      .attr("dy", -5) // proximity to line
+      .attr("dy", -5) 
+      .attr('cursor', 'pointer') 
       .on('click', function(e, d) {
         setSelectedNode([-2, d]);
       });
-
+    
     refreshGraph();
 
     simulation.on("tick", () => {
@@ -224,12 +223,6 @@ const GraphPage = ({ setShowNavbar }) => {
 
       nodeGroup
         .attr("transform", (d) => {
-          // CAN WE MUTE THIS?
-          // // store positions for tooltip
-          // setNodePositions(prev => ({
-          //   ...prev,
-          //   [d.id]: { x: d.x, y: d.y }
-          // }));
           return `translate(${d.x},${d.y})`;
         });
     });
@@ -421,7 +414,6 @@ const GraphPage = ({ setShowNavbar }) => {
                 </button>
                 {metadata.section_listings.split('-')[0]}: {metadata.section_listings.split(' - ')[1]}
               </h4> 
-              <p><strong>Credits:</strong> {metadata.credits}</p>
               <p><strong>Description:</strong> {metadata.description}</p>
               <p><strong>Liberal Arts Requirements:</strong> {metadata.course_tags}</p>
               {formatMeetingTimes(metadata.day_start_end).meetingDay && (

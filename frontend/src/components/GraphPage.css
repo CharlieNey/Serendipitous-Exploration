@@ -126,6 +126,7 @@ rectangle {
   align-items: center;   
   float: right;
   margin-left: 10px;
+  cursor: pointer;
 }
 
 .add-to-calendar-button img {
