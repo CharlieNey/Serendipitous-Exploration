@@ -31,7 +31,7 @@ for department, group in df.groupby('source node'):
     common_titles = most_common_titles(group, top_n=5)
     metadata_rows.append({
         "Department": department,
-        "Top_5_Recommended": ', '.join(common_titles),
+        "Top_5_Recommended": ','.join(common_titles),
     })
 
 # Convert metadata rows into a DataFrame

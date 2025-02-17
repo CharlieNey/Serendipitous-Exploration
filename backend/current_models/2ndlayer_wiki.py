@@ -15,13 +15,11 @@ import gensim.downloader
 model = gensim.downloader.load('glove-wiki-gigaword-300')
 # model = api.load('word2vec-google-news-300')
 
-
 # preprocessing function
 def preprocess_text(text):
     text = text.lower()
     text = text.translate(str.maketrans('', '', string.punctuation))
     words = word_tokenize(text)
-    
     # remove stopwords
     common_word_data = "../data/course_data/stop_words_handpicked.csv"
     stopwords_df = pd.read_csv(common_word_data)
@@ -59,18 +57,23 @@ def find_highest_similarity(desc1, desc2, model):
     # print(most_similar_word)
     return most_similar_word
 
-df = pd.read_csv('../data/graph_data/graph_connections.csv')  # Replace with your new CSV file path
+df = pd.read_csv('../data/graph_data/graph_connections.csv')
 
 # list to store the most similar words
 most_similar_words = []
+highlight_words = []
 
 # loop over each row in the dataframe
 for index, row in df.iterrows():
     desc1 = row['desc1']
     desc2 = row['desc2']
-    result = find_highest_similarity(desc1, desc2, model)
-    most_similar_words.append(result)
 
-print(most_similar_words)
+    connect_word = find_highest_similarity(desc1, desc2, model)
+    highlights = find_highlights(desc1, desc2, model)
+
+    most_similar_words.append(connect_word)
+    highlight_words.append(highlights)
+
 df['most_similar_word'] = most_similar_words
+
 df.to_csv('../data/graph_data/current_graph_data.csv', index=False)
