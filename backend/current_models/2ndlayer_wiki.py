@@ -57,6 +57,37 @@ def find_highest_similarity(desc1, desc2, model):
     # print(most_similar_word)
     return most_similar_word
 
+# function to find the highest similarity word
+def find_highlights(desc1, desc2, model, threshold):
+    # switch to 
+    target_words = preprocess_text(desc2)
+    source_words = preprocess_text(desc1)
+    
+    if len(target_words) == 0 or len(source_words) == 0:
+        return None  # if either description is empty after preprocessing, return None
+    
+    similarity_scores = []
+    
+    # compare each word in desc2 to each word in desc1
+    for word1 in target_words:
+        if word1 in model:  # check if the word is in the model's vocabulary
+            ave_similarity = 0
+            count = 0
+            for word2 in source_words:
+                if word2 in model:
+                    ave_similarity += model.similarity(word1, word2)
+                    count += 1
+            if count > 0:  # avoid division by zero
+                ave_similarity /= count
+                if ave_similarity >= threshold:
+                    similarity_scores.append((ave_similarity, word1))
+
+    # sort the similarity results in descending order based on similarity score
+    similarity_scores.sort(reverse=True, key=lambda x: x[0])
+    top_5_words = [word for _, word in similarity_scores[:5]]
+    print(top_5_words)
+    return top_5_words
+
 df = pd.read_csv('../data/graph_data/graph_connections.csv')
 
 # list to store the most similar words
@@ -69,11 +100,12 @@ for index, row in df.iterrows():
     desc2 = row['desc2']
 
     connect_word = find_highest_similarity(desc1, desc2, model)
-    highlights = find_highlights(desc1, desc2, model)
+    highlights = find_highlights(desc1, desc2, model, 0.1)
 
     most_similar_words.append(connect_word)
     highlight_words.append(highlights)
 
 df['most_similar_word'] = most_similar_words
+df['highlight_words'] = highlight_words
 
 df.to_csv('../data/graph_data/current_graph_data.csv', index=False)
