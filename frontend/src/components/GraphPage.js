@@ -274,6 +274,30 @@ const GraphPage = ({ setShowNavbar }) => {
     refreshGraph();
   }, [nodeSelections]);
 
+  function formatMeetingTimes(dayStartEnd) {
+    if (!dayStartEnd) return { meetingDay: '', time: '' };
+  
+    const parts = dayStartEnd.split('\n\n').map(part => part.trim());
+    let meetingDay = '';
+    let time = '';
+  
+    const mwTime = parts.find(part => part.startsWith('MW'));
+    const tthTime = parts.find(part => part.startsWith('TTH'));
+    const fTime = parts.find(part => part.startsWith('F'));
+  
+    const times = [];
+    if (mwTime) times.push(`MW: ${mwTime.split('|')[1].trim()}`);
+    if (tthTime) times.push(`TTH: ${tthTime.split('|')[1].trim()}`);
+    if (fTime) times.push(`F: ${fTime.split('|')[1].trim()}`);
+  
+    if (times.length > 0) {
+      meetingDay = times.map(t => t.split(':')[0]).join(', ');
+      time = times.join(' & ');
+    }
+  
+    return { meetingDay, time };
+  }
+
   return (
     <div className="GraphPage">
       <div className="calendar-button">
@@ -400,8 +424,12 @@ const GraphPage = ({ setShowNavbar }) => {
               <p><strong>Credits:</strong> {metadata.credits}</p>
               <p><strong>Description:</strong> {metadata.description}</p>
               <p><strong>Liberal Arts Requirements:</strong> {metadata.course_tags}</p>
-              <p><strong>Meeting Day:</strong> {metadata.day_start_end.split('|')[0]}</p>
-              <p><strong>Time:</strong> {metadata.day_start_end.split('|')[1]}</p>
+              {formatMeetingTimes(metadata.day_start_end).meetingDay && (
+                <>
+                  <p><strong>Meeting Day:</strong> {formatMeetingTimes(metadata.day_start_end).meetingDay}</p>
+                  <p><strong>Time:</strong> {formatMeetingTimes(metadata.day_start_end).time}</p>
+                </>
+              )}
             </div>
           ) : (
             <h4>Select a node to view its info!</h4>
