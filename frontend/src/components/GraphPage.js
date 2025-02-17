@@ -83,6 +83,7 @@ const GraphPage = ({ setShowNavbar }) => {
     const svg = d3.select("#simulation-svg");
 
     setNodeSelections([node.id, node.id]);
+    //////THIS BREAKS SOMETIMES
     setMetadata(allCourses.find(c => c.section_listings.split('-')[0] === node.id)); 
 
     const transform = d3.zoomIdentity
@@ -312,9 +313,9 @@ const GraphPage = ({ setShowNavbar }) => {
                         setSavedCourses((savedCourse) => {
                           console.log('Clicked course:', course);
                           // check if the course is already in the savedCourses
-                          if (savedCourse.some(saved => saved.course_number === course.course_number)) {
+                          if (savedCourse.some(saved => saved.section_listings === course.section_listings)) {
                             // if course is already saved, remove it
-                            const updatedCourses = savedCourse.filter(savedCourse => savedCourse.course_number !== course.course_number);
+                            const updatedCourses = savedCourse.filter(savedCourse => savedCourse.section_listings !== course.section_listings);
                             console.log('Updated courses after removal:', updatedCourses);
                             return updatedCourses;
                           } else { // if not saved, add it
@@ -330,7 +331,7 @@ const GraphPage = ({ setShowNavbar }) => {
                       src={shopping_cart_logo}
                       alt="Add to Calendar"
                       // if course is already saved, make the cart logo grey
-                      className={savedCourses.some(saved => saved.course_number === course.course_number) ? "grey-cart-button" : ""}
+                      className={savedCourses.some(saved => saved.section_listings === course.section_listings) ? "grey-cart-button" : ""}
                       />
                     </button>
 

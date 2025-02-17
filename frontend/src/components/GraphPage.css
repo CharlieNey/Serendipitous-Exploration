@@ -176,9 +176,9 @@ rectangle {
 
 /* CSS inspired from https://getcssscan.com/css-buttons-examples*/
 .randomizer {
-  position: fixed;
+  position: absolute;
   bottom: 20px;
-  right: 330px;
+  right: 20px;
   background-color: #fbeee0;
   border: 2px solid #422800;
   border-radius: 30px;
