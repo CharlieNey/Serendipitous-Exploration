@@ -141,7 +141,7 @@ export const QuizInfo = () => {
             question: 'DISTINCT QUESTIONAIRRE',
             choices: ['STEM', 'HUMANITIES', 'ART'],
             type: 'DropDown',
-            filters: [isStem, isHum, isArt]
+            filters: [isStem, isHum, isArt] 
           },
           {
             question: 'Choose a Quest Difficulty',

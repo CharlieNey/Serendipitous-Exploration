@@ -171,52 +171,73 @@ const QuizPage = ({ setShowNavbar }) => {
             {getQuestionHTML()}
           </div>
         ) : (
+
           <div className="result">
             <h1>{title}</h1>
             <p>{description}</p>
             <h3>Result</h3>
-            <p>
-              Your course: <span>{result}</span>
-            </p>
-            <button onClick={() => setIsQuizSelected(false)}>Do Another Quiz</button>
+            <p>Your course: <span>{result}</span></p>
+            <div className="button-row">
+              <button onClick={() => setIsQuizSelected(false)}>Do Another Quiz</button>
 
-            <Link to="/graph">
-              <button >See In Graph</button>
-            </Link>
+              <Link
+                to="/graph"
+                onClick={() => {
+                  if (result !== "No Course") {
+                    setSelectedNode([-1, result]);
+                  }
+                }}
+              >
+                <button>See In Graph</button>
+              </Link>
 
-            <button onClick={() => setIsQuizSelected(false)}>Save to Calendar</button>
 
-            <button
-              onClick={() => {
-                // set saved courses
-                var course = getCourseByName(result)
-                if (result !== "No Course") {
-                  setSavedCourses((savedCourse) => {
-                    console.log('Clicked course:', course);
-                    // check if the course is already in the savedCourses
-                    if (savedCourse.some(saved => saved.section_listings === course.section_listings)) {
-                      // if course is already saved, remove it
-                      const updatedCourses = savedCourse.filter(savedCourse => savedCourse.section_listings !== course.section_listings);
-                      console.log('Updated courses after removal:', updatedCourses);
-                      return updatedCourses;
-                    } else { // if not saved, add it
-                      const updatedCourses = [...savedCourse, course];
-                      console.log('Updated courses after addition:', updatedCourses);
-                      return updatedCourses;
-                    }
-                  })
-                };
-              }}
-              className="add-to-calendar-button"
-            >
-              <img 
-              src={shopping_cart_logo}
-              alt="Add to Calendar"
-              // if course is already saved, make the cart logo grey
-              className={((result === "No Course") || savedCourses.some(saved => saved.section_listings === getCourseByName(result).section_listings)) ? "grey-cart-button" : ""}
-              />
-            </button>
+              {/* <button onClick={() => setIsQuizSelected(false)}>Save to Calendar</button> */}
+            </div>
+
+            <div className="cart-button-row">
+              <button
+                onClick={() => {
+                  if (result !== "No Course") {
+                    const course = getCourseByName(result);
+                    setSavedCourses((savedCourse) => {
+                      console.log('Clicked course:', course);
+                      // check if the course is already in the savedCourses
+                      if (savedCourse.some(saved => saved.section_listings === course.section_listings)) {
+                        // if course is already saved, remove it
+                        const updatedCourses = savedCourse.filter(
+                          savedCourse => savedCourse.section_listings !== course.section_listings
+                        );
+                        console.log('Updated courses after removal:', updatedCourses);
+                        return updatedCourses;
+                      } else {
+                        // if not saved, add it
+                        const updatedCourses = [...savedCourse, course];
+                        console.log('Updated courses after addition:', updatedCourses);
+                        return updatedCourses;
+                      }
+                    });
+                  }
+                }}
+                className="add-to-calendar-button"
+              >
+                <img 
+                  src={shopping_cart_logo}
+                  alt="Add to Calendar"
+                  className={
+                    (result === "No Course" ||
+                    savedCourses.some(saved => saved.section_listings === getCourseByName(result).section_listings)
+                    )
+                    ? "grey-cart-button"
+                    : ""
+                  }
+                />
+              </button>
+            </div>
+
           </div>
+
+
         )}
       </div>
     </div>
