@@ -102,13 +102,16 @@ const GraphPage = ({ setShowNavbar }) => {
     setNodeSelections([node.id, node.id]);
     setMetadata(allCourses.find(c => c.section_listings.split('-')[0] === node.id)); 
 
+    const scale = 1.25; 
     const transform = d3.zoomIdentity
-      .translate(width / 2 - node.x * 2, height / 2 - node.y * 2)
-      .scale(2);
+      .translate(width / 2, height / 2) 
+      .scale(scale)                    
+      .translate(-node.x, -node.y);   
+
 
     if (zoomRef.current) {
       svg.transition()
-        .duration(750)
+        .duration(500)
         .call(zoomRef.current.transform, transform);
     }
   }
@@ -159,9 +162,16 @@ const GraphPage = ({ setShowNavbar }) => {
 
     const simulation = d3
     .forceSimulation(nodes)
-    .force("charge", d3.forceManyBody().strength(-200))
+    .force("charge", d3.forceManyBody().strength(-400))
     .force("center", d3.forceCenter(width / 2, height / 2))
-    .force("link", d3.forceLink(links).id(d => d.id).distance((d) => d.score ** 2 * 100));
+    .force("link", d3.forceLink(links)
+      .id(d => d.id)
+      .distance(d => d.score ** 2 * 300)
+    )
+    .force("collide", d3.forceCollide()
+      .radius(40)    // ~ circle radius + padding
+      .strength(1)   // how firmly to push apart
+    )
 
     // Links
     const linksGroup = d3.select(".links")
@@ -170,10 +180,31 @@ const GraphPage = ({ setShowNavbar }) => {
       .join("g")
 
     // Nodes: each node is a <g>
+    // Create one <g> per node and add a "node" class
     const nodeGroup = d3.select(".nodes")
       .selectAll("g")
       .data(nodes)
       .join("g");
+
+    // Append circle
+    nodeGroup.append("circle")
+      .attr("r", 40) 
+      .style("fill", (d) => getNodeColor(d.id)) 
+      .style("stroke", "black")
+      .style("stroke-width", 0.5)
+      .on('mouseenter', (e, d) => setSelectedNode(d.id))
+      .on('mouseout', (e, d) => setSelectedNode(""))
+      .on('click', (e, d) => {
+        e.stopPropagation();
+        setSelectedNode([-1, d.id]);
+      });
+
+    nodeGroup.append("text")
+      .attr("text-anchor", "middle")
+      .attr("dominant-baseline", "middle")
+      .style("font-size", "6px")    
+      .style("pointer-events", "none")
+      .text(d => d.id);
 
     linksGroup
       .selectAll("line")
@@ -187,7 +218,7 @@ const GraphPage = ({ setShowNavbar }) => {
       .selectAll("circle")
       .data((d) => [d])
       .join("circle")
-      .style("r", 30)
+      .style("r", 15)
       .style("stroke-width", 0.5)
       .style("stroke", "black")
       .on('mouseenter', function(e, d) {
@@ -214,12 +245,14 @@ const GraphPage = ({ setShowNavbar }) => {
       .join("text")
       .classed("line-text", true)
       .text((d) => "<—" + d.target.id + ": " + d.word + "—>")
-      .attr("width", 3)
-      .attr("dy", -5) 
-      .attr('cursor', 'pointer') 
-      .on('click', function(e, d) {
+      .attr("text-anchor", "middle")
+      .attr("dominant-baseline", "middle")
+      .attr("dy", -5)
+      .attr("cursor", "pointer")
+      .on("click", function (e, d) {
         setSelectedNode([-2, d]);
       });
+    
     
     refreshGraph();
 
@@ -234,13 +267,21 @@ const GraphPage = ({ setShowNavbar }) => {
       linksGroup
         .selectAll("text.line-text")
         .attr("transform", (d) => {
-          var angle = Math.atan((d.source.y - d.target.y)/(d.source.x - d.target.x)) * 180 / Math.PI
-          // if (isNaN(angle)) { //DO WE NEED THIS?
-          //   angle = 0
-          // }
-          return `translate(${(d.source.x * 5 + d.target.x)/6},${(d.source.y * 5 + d.target.y)/6})rotate(${angle})`
-        })
-
+          const xCenter = (d.source.x + d.target.x) / 2;
+          const yCenter = (d.source.y + d.target.y) / 2;
+      
+          const dx = d.target.x - d.source.x;
+          const dy = d.target.y - d.source.y;
+          let angle = Math.atan2(dy, dx) * (180 / Math.PI);
+      
+          // Flip text if upside down
+          if (angle > 90 || angle < -90) {
+            angle += 180;
+          }
+      
+          // Translate to midpoint and rotate
+          return `translate(${xCenter}, ${yCenter}) rotate(${angle})`;
+        });
       nodeGroup
         .attr("transform", (d) => {
           return `translate(${d.x},${d.y})`;
@@ -279,7 +320,7 @@ const GraphPage = ({ setShowNavbar }) => {
         clickNewNode(node)
       }
     } else if (nodeSelections[0] === "") {
-      setNodeSelections(["", selectedNode]); // For hover-based selection 
+      setNodeSelections(["", selectedNode]);
     }
   }, [selectedNode]);
 

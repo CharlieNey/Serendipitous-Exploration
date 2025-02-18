@@ -177,7 +177,7 @@ rectangle {
 
 /* CSS inspired from https://getcssscan.com/css-buttons-examples*/
 .randomizer {
-  position: fixed;
+  position: absolute;
   z-index: 1000;
   bottom: 20px;
   right: 20px;
