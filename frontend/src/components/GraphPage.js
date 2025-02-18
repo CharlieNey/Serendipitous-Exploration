@@ -137,7 +137,7 @@ const GraphPage = ({ setShowNavbar }) => {
 
     if (!zoomRef.current) {
       zoomRef.current = d3.zoom()
-        .scaleExtent([0.3, 3])
+        .scaleExtent([0.1, 3])
         .on("zoom", (event) => {
           d3.select("#zoom-group").attr("transform", event.transform);
         });
@@ -293,6 +293,75 @@ const GraphPage = ({ setShowNavbar }) => {
     refreshGraph();
   }, [nodeSelections]);
 
+  function formatMeetingTimes(dayStartEnd) {
+    if (!dayStartEnd) return { meetingDay: '', time: '' };
+  
+    const parts = dayStartEnd.split('\n\n').map(part => part.trim());
+    let meetingDay = '';
+    let time = '';
+  
+    const mwTime = parts.find(part => part.startsWith('MW'));
+    const tthTime = parts.find(part => part.startsWith('TTH'));
+    const fTime = parts.find(part => part.startsWith('F'));
+  
+    const times = [];
+    if (mwTime) times.push(`MW: ${mwTime.split('|')[1].trim()}`);
+    if (tthTime) times.push(`TTH: ${tthTime.split('|')[1].trim()}`);
+    if (fTime) times.push(`F: ${fTime.split('|')[1].trim()}`);
+  
+    if (times.length > 0) {
+      meetingDay = times.map(t => t.split(':')[0]).join(', ');
+      time = times.join(' & ');
+    }
+  
+    return { meetingDay, time };
+  }
+
+  function formatLiberalArtsRequirements(courseTags) {
+    if (!courseTags) return 'None';
+  
+    // all possible LARs
+    const larMap = {
+      'HI': 'Humanistic Inquiry',
+      'IDS': 'Intercultural Domestic Studies',
+      'WR2': 'Writing Requirement 2',
+      'ARP': 'Arts Practice',
+      'FSR': 'Formal or Statistical Reasoning',
+      'LA': 'Literary/Artistic Analysis',
+      'LS': 'Science with Lab',
+      'SI': 'Social Inquiry',
+      'IS': 'International Studies',
+      'QRE': 'Quantitative Reasoning Encounter'
+    };
+  
+    // Extract all LAR tags
+    const larTags = courseTags
+      .split('\n\n') 
+      .flatMap(tag => {
+        const larParts = tag.split('LAR:').slice(1); 
+        return larParts.map(part => part.trim()); 
+      })
+      .flatMap(tag => tag.split(',')) 
+      .map(tag => tag.trim()) 
+      .filter(tag => {
+        const abbreviation = tag.split(' ')[0];
+        return Object.keys(larMap).includes(abbreviation);
+      });
+  
+    if (larTags.length === 0) return 'None';
+  
+    const formattedLARs = larTags
+      .map(tag => {
+        const abbreviation = tag.split(' ')[0]; 
+        const fullName = larMap[abbreviation];
+        return fullName ? `${fullName} (${abbreviation})` : null; 
+      })
+      .filter(tag => tag !== null) 
+      .join(', ');
+  
+    return formattedLARs;
+  }
+
   return (
     <div className="GraphPage">
       <div className="calendar-button">
@@ -387,12 +456,43 @@ const GraphPage = ({ setShowNavbar }) => {
         <div className="metadata-section">
           {metadata ? (
             <div className="metadata-content">
-              <h4>{metadata.section_listings.split('-')[0]}: {metadata.section_listings.split(' - ')[1]}</h4>
-              <p><strong>Credits:</strong> {metadata.credits}</p>
+              <h4>
+                <button
+                  onClick={() => {
+                    setSavedCourses((savedCourse) => {
+                      console.log('Clicked course:', metadata);
+                      // check if the course is already in the savedCourses
+                      if (savedCourse.some(saved => saved.section_listings === metadata.section_listings)) {
+                        // if course is already saved, remove it
+                        const updatedCourses = savedCourse.filter(savedCourse => savedCourse.section_listings !== metadata.section_listings);
+                        console.log('Updated courses after removal:', updatedCourses);
+                        return updatedCourses;
+                      } else { // if not saved, add it
+                        const updatedCourses = [...savedCourse, metadata];
+                        console.log('Updated courses after addition:', updatedCourses);
+                        return updatedCourses;
+                      }
+                    });
+                  }}
+                  className="add-to-calendar-button"
+                >
+                  <img 
+                  src={shopping_cart_logo}
+                  alt="Add to Calendar"
+                  // if course is already saved, make the cart logo grey
+                  className={savedCourses.some(saved => saved.section_listings === metadata.section_listings) ? "grey-cart-button" : ""}
+                  />
+                </button>
+                {metadata.section_listings.split('-')[0]}: {metadata.section_listings.split(' - ')[1]}
+              </h4> 
               <p><strong>Description:</strong> {metadata.description}</p>
-              <p><strong>Liberal Arts Requirements:</strong> {metadata.course_tags}</p>
-              <p><strong>Meeting Day:</strong> {metadata.day_start_end.split('|')[0]}</p>
-              <p><strong>Time:</strong> {metadata.day_start_end.split('|')[1]}</p>
+              <p><strong>Liberal Arts Requirements:</strong> {formatLiberalArtsRequirements(metadata.course_tags)}</p>
+              {formatMeetingTimes(metadata.day_start_end).meetingDay && (
+                <>
+                  <p><strong>Meeting Day:</strong> {formatMeetingTimes(metadata.day_start_end).meetingDay}</p>
+                  <p><strong>Time:</strong> {formatMeetingTimes(metadata.day_start_end).time}</p>
+                </>
+              )}
             </div>
           ) : (
             <h4>Select a node to view its info!</h4>
