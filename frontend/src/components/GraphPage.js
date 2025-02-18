@@ -15,7 +15,6 @@ const GraphPage = ({ setShowNavbar }) => {
   const { selectedNode, nodes, links, connectedNodes, minval, setSelectedNode } = useContext(GraphContext);
   const [nodeSelections, setNodeSelections] = useState(["", ""]);
   const zoomRef = useRef(null);
-  const [nodePositions, setNodePositions] = useState({}); 
   const [metadata, setMetadata] = useState(null);
 
   useEffect(() => {
@@ -211,16 +210,17 @@ const GraphPage = ({ setShowNavbar }) => {
 
     linksGroup
       .selectAll("text.line-text")
-      .data((d) => [d])
+      .data((d) => [d]) 
       .join("text")
       .classed("line-text", true)
-      .text((d) => "<--" + d.word + "-->")
+      .text((d) => "<—" + d.target.id + ": " + d.word + "—>")
       .attr("width", 3)
-      .attr("dy", -5) // proximity to line
+      .attr("dy", -5) 
+      .attr('cursor', 'pointer') 
       .on('click', function(e, d) {
         setSelectedNode([-2, d]);
       });
-
+    
     refreshGraph();
 
     simulation.on("tick", () => {
@@ -243,11 +243,6 @@ const GraphPage = ({ setShowNavbar }) => {
 
       nodeGroup
         .attr("transform", (d) => {
-          // store positions for tooltip
-          setNodePositions(prev => ({
-            ...prev,
-            [d.id]: { x: d.x, y: d.y }
-          }));
           return `translate(${d.x},${d.y})`;
         });
     });
@@ -364,11 +359,11 @@ const GraphPage = ({ setShowNavbar }) => {
 
   return (
     <div className="GraphPage">
-      <div className="calendar-button">
+      {/* <div className="calendar-button">
         <Link to="/calendar">
           <img src={shopping_cart_logo} alt="Go to Calendar" />
         </Link>
-      </div>
+      </div> */}
 
       <div className="content-container">
         <div className="scroll-sidebar">

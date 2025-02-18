@@ -17,6 +17,10 @@
     height: 100%;
 }
 
+.fc-event {
+    cursor: pointer;
+}
+
 .Calendar {
     display: flex;
     font-family: Arial, sans-serif;
@@ -100,4 +104,4 @@
     height: 1px;
     background-color: #ccc;
     margin: 20px 0;
-}  
+}
