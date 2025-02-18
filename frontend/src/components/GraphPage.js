@@ -8,8 +8,8 @@ import { SearchContext } from './SearchContext.js';
 import { GraphContext } from './GraphContext.js';
 
 const GraphPage = ({ setShowNavbar }) => {
-  const graphWidth = 1100; // TODO: Make this more dynamic for different screen sizes
-  const graphHeight = 1100;
+  const containerRef = useRef(null);
+  const [containerDimensions, setContainerDimensions] = useState({ width: 0, height: 0 });
   const { savedCourses, setSavedCourses } = useContext(SavedCoursesContext);
   const { allCourses, courseList, searchTerm, isLoading, setSearchTerm, fetchCourses } = useContext(SearchContext);
   const { selectedNode, nodes, links, connectedNodes, minval, setSelectedNode } = useContext(GraphContext);
@@ -17,6 +17,23 @@ const GraphPage = ({ setShowNavbar }) => {
   const zoomRef = useRef(null);
   const [nodePositions, setNodePositions] = useState({}); 
   const [metadata, setMetadata] = useState(null);
+
+  useEffect(() => {
+    const updateDimensions = () => {
+      if (containerRef.current) {
+        const { width, height } = containerRef.current.getBoundingClientRect();
+        setContainerDimensions({ width, height });
+      }
+    };
+
+    const observer = new ResizeObserver(updateDimensions);
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+      updateDimensions();
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   function getTextOpacity(link) {
     if (link.source.id === nodeSelections[0]) {
@@ -33,7 +50,7 @@ const GraphPage = ({ setShowNavbar }) => {
   }
 
   function getNodeColor(node) {
-    if (nodeSelections[1] === "" || connectedNodes[nodeSelections[1]] === undefined) {
+    if (nodeSelections[1] === "" || !connectedNodes[nodeSelections[1]]) {
       return "pink";
     }
   
@@ -72,22 +89,22 @@ const GraphPage = ({ setShowNavbar }) => {
     const svg = d3.select("#simulation-svg");
 
     setNodeSelections(["", ""]);
-    setMetadata(null); // Clear metadata when unselecting a node
+    setMetadata(null); 
 
     svg.transition()
       .duration(750)
-      .call(zoomRef.current.transform, d3.zoomIdentity); // zooms out
+      .call(zoomRef.current.transform, d3.zoomIdentity); 
   }
 
   function clickNewNode(node) {
     const svg = d3.select("#simulation-svg");
+    const { width, height } = containerDimensions;
 
     setNodeSelections([node.id, node.id]);
-    //////THIS BREAKS SOMETIMES
     setMetadata(allCourses.find(c => c.section_listings.split('-')[0] === node.id)); 
 
     const transform = d3.zoomIdentity
-      .translate(graphWidth / 2 - node.x * 2, graphHeight / 2 - node.y * 2)
+      .translate(width / 2 - node.x * 2, height / 2 - node.y * 2)
       .scale(2);
 
     if (zoomRef.current) {
@@ -110,11 +127,13 @@ const GraphPage = ({ setShowNavbar }) => {
   // Build the graph
   useEffect(() => {
     if (nodes.length === 0 || links.length === 0 || connectedNodes.length === 0) return;
-
+    if (containerDimensions.width === 0 || containerDimensions.height === 0) return;
+  
+    const { width, height } = containerDimensions;
     const svg = d3
       .select("#simulation-svg")
-      .attr("width", graphWidth)
-      .attr("height", graphHeight);
+      .attr("width", width)
+      .attr("height", height);
 
     if (!zoomRef.current) {
       zoomRef.current = d3.zoom()
@@ -140,10 +159,10 @@ const GraphPage = ({ setShowNavbar }) => {
     svg.select("#zoom-group").append("g").attr("class", "nodes");
 
     const simulation = d3
-      .forceSimulation(nodes)
-      .force("charge", d3.forceManyBody().strength(-200))
-      .force("center", d3.forceCenter(graphWidth / 2, graphHeight / 2))
-      .force("link", d3.forceLink(links).id(d => d.id).distance((d) => d.score ** 2 * 100));
+    .forceSimulation(nodes)
+    .force("charge", d3.forceManyBody().strength(-200))
+    .force("center", d3.forceCenter(width / 2, height / 2))
+    .force("link", d3.forceLink(links).id(d => d.id).distance((d) => d.score ** 2 * 100));
 
     // Links
     const linksGroup = d3.select(".links")
@@ -169,7 +188,7 @@ const GraphPage = ({ setShowNavbar }) => {
       .selectAll("circle")
       .data((d) => [d])
       .join("circle")
-      .style("r", 12)
+      .style("r", 30)
       .style("stroke-width", 0.5)
       .style("stroke", "black")
       .on('mouseenter', function(e, d) {
@@ -239,7 +258,8 @@ const GraphPage = ({ setShowNavbar }) => {
       svg.selectAll(".nodes").remove();
       svg.selectAll(".zoom-group").remove();
     };
-  }, [links, nodes, connectedNodes]);
+
+  }, [links, nodes, connectedNodes, containerDimensions]);
 
   // Once we have a "clicked" event => zoom in or out
   useEffect(() => {
@@ -345,7 +365,7 @@ const GraphPage = ({ setShowNavbar }) => {
           </div>
         </div>
 
-        <div className="simulation-container">
+        <div className="simulation-container" ref={containerRef}>
           <svg id="simulation-svg">
             <g id="zoom-group">
               <g className="links"></g>
