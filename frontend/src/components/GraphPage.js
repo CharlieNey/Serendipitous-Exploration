@@ -301,28 +301,28 @@ const GraphPage = ({ setShowNavbar }) => {
   useEffect(() => {
     if (selectedNode[0] === -1) {
       const node = nodes.find(n => n.id === selectedNode[1]);
-      if (!node) {
-        return;
-      }
-
+      if (!node) return;
       if (nodeSelections[0] === selectedNode[1]) {
-        doubleClickNode()
+        doubleClickNode();
       } else {
-        clickNewNode(node)
+        clickNewNode(node);
       }
     } else if (selectedNode[0] === -2) {
-      if (nodeSelections[0] === selectedNode[1].source.id) {
-        const node = nodes.find(n => n.id === selectedNode[1].target.id);
-        if (!node) {
-          return;
-        }
-  
-        clickNewNode(node)
+      const link = selectedNode[1];
+      if (nodeSelections[0] === link.source.id) {
+          const targetNode = nodes.find(n => n.id === link.target.id);
+        if (!targetNode) return;
+          clickNewNode(targetNode);
+      } else {
+        const sourceNode = nodes.find(n => n.id === link.source.id);
+        if (!sourceNode) return;
+        clickNewNode(sourceNode);
       }
     } else if (nodeSelections[0] === "") {
-      setNodeSelections(["", selectedNode]);
+      setNodeSelections(["", selectedNode]); // For hover-based selection if needed.
     }
   }, [selectedNode]);
+  
 
   // Redraw if hovered/clicked nodes
   useEffect(() => {
