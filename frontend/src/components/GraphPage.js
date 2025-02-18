@@ -8,8 +8,8 @@ import { SearchContext } from './SearchContext.js';
 import { GraphContext } from './GraphContext.js';
 
 const GraphPage = ({ setShowNavbar }) => {
-  const [graphWidth, setGraphWidth] = useState(window.innerWidth * 0.5);
-  const [graphHeight, setGraphHeight] = useState(window.innerHeight);
+  const graphWidth = 1100; // TODO: Make this more dynamic for different screen sizes
+  const graphHeight = 1100;
   const { savedCourses, setSavedCourses } = useContext(SavedCoursesContext);
   const { allCourses, courseList, searchTerm, isLoading, setSearchTerm, fetchCourses } = useContext(SearchContext);
   const { selectedNode, nodes, links, connectedNodes, minval, setSelectedNode } = useContext(GraphContext);
@@ -17,16 +17,6 @@ const GraphPage = ({ setShowNavbar }) => {
   const zoomRef = useRef(null);
   const [nodePositions, setNodePositions] = useState({}); 
   const [metadata, setMetadata] = useState(null);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setGraphWidth(window.innerWidth * 0.5);
-      setGraphHeight(window.innerHeight);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   function getTextOpacity(link) {
     if (link.source.id === nodeSelections[0]) {
@@ -384,7 +374,8 @@ const GraphPage = ({ setShowNavbar }) => {
               <p><strong>Meeting Day:</strong> {metadata.day_start_end.split('|')[0]}</p>
               <p><strong>Time:</strong> {metadata.day_start_end.split('|')[1]}</p>
             </div>
-          ) : ( <h4>Select a node to view its info!</h4>
+          ) : (
+            <h4>Select a node to view its info!</h4>
           )}
         </div>
       </div>
