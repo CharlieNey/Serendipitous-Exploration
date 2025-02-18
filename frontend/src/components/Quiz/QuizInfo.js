@@ -104,7 +104,7 @@ export const QuizInfo = () => {
 
   const Quiz_1 = {
       title: "Choose your adventurer",
-      description: "Quiz 1 description",
+      // description: "Quiz 1 description",
       questions: [
         // {
         //   question: 'What style of adventurer are you?',
@@ -135,7 +135,7 @@ export const QuizInfo = () => {
 
   const Quiz_2 = {
       title: "Just testing",
-      description: "Quiz 2 description",
+      // description: "Quiz 2 description",
         questions: [
           {
             question: 'DISTINCT QUESTIONAIRRE',
