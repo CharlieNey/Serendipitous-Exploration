@@ -135,13 +135,13 @@ export const QuizInfo = () => {
 
   const Quiz_2 = {
       title: "Just testing",
-      description: "Quiz 2 description",
+      // description: "Quiz 2 description",
         questions: [
           {
             question: 'DISTINCT QUESTIONAIRRE',
             choices: ['STEM', 'HUMANITIES', 'ART'],
             type: 'DropDown',
-            filters: [isStem, isHum, isArt]
+            filters: [isStem, isHum, isArt] 
           },
           {
             question: 'Choose a Quest Difficulty',

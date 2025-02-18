@@ -1,14 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Anek+Malayalam:wght@100;200;300;400;500;600;700;800&display=swap');
 
-/* .quiz-body {
-  font-family: 'Anek Malayalam', sans-serif;
-  background: linear-gradient(90.04deg, #800080 0.03%, #ffc0cb 99.96%);
-  color: #11052c;
+.quiz-body {
   display: flex;
-  justify-content: center;
+  justify-content: center; 
+  align-items: center;     
+  min-height: 100vh;     
   margin: 0;
-  padding: 0 30px;
-} */
+  padding: 0;
+  background: linear-gradient(90.04deg, #800080 0.03%, #ffc0cb 99.96%);
+  font-family: 'Anek Malayalam', sans-serif;
+  color: #11052c;
+}
+
 
 .quiz-container {
   max-width: 500px;
@@ -88,6 +91,10 @@
   justify-content: flex-end;
 }
 
+.result {
+  text-align: center;
+}
+
 .result h3 {
   font-size: 24px;
   letter-spacing: 1.4px;
@@ -102,4 +109,17 @@
 .result p span {
   color: #800080;
   font-size: 22px;
+}
+
+.button-row {
+  display: flex;
+  justify-content: center; 
+  gap: 1rem;              
+  margin-top: 1rem;
+}
+
+.cart-button-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
 }
