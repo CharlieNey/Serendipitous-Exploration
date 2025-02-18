@@ -103,8 +103,8 @@ export const QuizInfo = () => {
   }
 
   const Quiz_1 = {
-      title: "Choose your adventurer",
-      description: "Quiz 1 description",
+      title: "Find Your Quest",
+      description: "Obtain a Spring 2025 Carleton course based on your past experience and personal preferences",
       questions: [
         // {
         //   question: 'What style of adventurer are you?',
@@ -113,13 +113,13 @@ export const QuizInfo = () => {
         //   filters: [isStem, isHum, isArt]
         // },
         {
-          question: 'DEPARTMENT CHOICE MARKUS EDIT?',
+          question: 'Where have you had past experience?',
           choices: getAllDepartments(),
           type: 'DropDown',
           filters: getAllDepartmentRecommendationFunctions()
         },
         {
-          question: 'Choose a Quest Difficulty',
+          question: 'Choose a Difficulty and Reward',
           choices: ['EASY REWARD: $1000', 'MODERATE REWARD: $2000', 'HARD REWARD: $3000'],
           type: 'MCQs',
           filters: [isEasy, isMedium, isHard]

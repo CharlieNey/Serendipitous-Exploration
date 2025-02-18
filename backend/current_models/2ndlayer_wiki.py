@@ -80,13 +80,15 @@ def find_highlights(desc1, desc2, model, threshold):
             if count > 0:  # avoid division by zero
                 ave_similarity /= count
                 if ave_similarity >= threshold:
-                    similarity_scores.append((ave_similarity, word1))
+                    similarity_scores.append((ave_similarity, word1, word2))
+                    # print(ave_similarity, word1, word2)
 
     # sort the similarity results in descending order based on similarity score
     similarity_scores.sort(reverse=True, key=lambda x: x[0])
-    top_5_words = [word for _, word in similarity_scores[:5]]
-    print(top_5_words)
-    return top_5_words
+
+    top_5_words_with_similarity = similarity_scores[:5]
+    # top_5_words = [word for _, word in similarity_scores[:5]]
+    return top_5_words_with_similarity
 
 df = pd.read_csv('../data/graph_data/graph_connections.csv')
 
@@ -99,13 +101,18 @@ for index, row in df.iterrows():
     desc1 = row['desc1']
     desc2 = row['desc2']
 
-    connect_word = find_highest_similarity(desc1, desc2, model)
-    highlights = find_highlights(desc1, desc2, model, 0.1)
+    # connect_word = find_highest_similarity(desc1, desc2, model)
+    highlights = find_highlights(desc1, desc2, model, 0.2)
 
-    most_similar_words.append(connect_word)
+    # most_similar_words.append(connect_word)
     highlight_words.append(highlights)
+    print("Top 5 words with their average similarity scores:")
+    for word, score in highlight_words:
+        print(f"Word: {word}, Similarity Score: {score}")
 
-df['most_similar_word'] = most_similar_words
-df['highlight_words'] = highlight_words
+# df['most_similar_word'] = most_similar_words
+# df['highlight_words'] = highlight_words
 
-df.to_csv('../data/graph_data/current_graph_data.csv', index=False)
+
+
+# df.to_csv('../data/graph_data/current_graph_data.csv', index=False)
