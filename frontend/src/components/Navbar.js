@@ -24,11 +24,11 @@ const Navbar = () => {
                     <Link to="/quiz">
                         <li>Quiz</li>
                     </Link>
-                    <Link to="/email">
-                        <li>Email</li>
-                    </Link>
                     <Link to="/about">
                         <li>About</li>
+                    </Link>
+                    <Link to="/email">
+                        <li>Email</li>
                     </Link>
                 </ul>
                 <div className="calendar-button">

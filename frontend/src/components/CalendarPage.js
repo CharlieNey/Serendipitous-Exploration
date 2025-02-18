@@ -1,15 +1,32 @@
-import React, { useState, useContext, useEffect, startTransition, useRef } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import "./CalendarPage.css";
-import { useParams } from "react-router-dom";
 import { SavedCoursesContext } from './SavedCoursesContext.js';
 import shopping_cart_logo from '../images/shopping_cart_logo.png'; 
 import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
+import html2canvas from 'html2canvas';
 
 function Calendar({ setShowNavbar }, props) {
   const {savedCourses, setSavedCourses} = useContext(SavedCoursesContext);
   const [expandedCourse, setExpandedCourse] = useState(null); // stores the course number of the currently expanded course (null by default)
   const courseRefs = useRef({}); //ref to track each course
+
+  const downloadCalendarImage = async () => {
+    const calendarElement = document.querySelector('.calendar-section'); // Adjust selector if needed
+    if (!calendarElement) return;
+  
+    const canvas = await html2canvas(calendarElement);
+    const image = canvas.toDataURL();
+    // return image
+  
+    // Create a temporary link element to trigger download
+    const link = document.createElement('a');
+    link.href = image;
+    link.download = 'calendar.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   console.log("React version:");
   console.log(React.version);
@@ -132,7 +149,6 @@ function Calendar({ setShowNavbar }, props) {
   console.log("calendar events created:")
   console.log(calendarEvents);
   
-
   return (
     
     <div className="CalendarPage">
@@ -246,7 +262,7 @@ function Calendar({ setShowNavbar }, props) {
             
           />
         </div>
-
+        <button onClick={downloadCalendarImage}>Download Calendar as Image</button>
       </div>
 
     </div>
