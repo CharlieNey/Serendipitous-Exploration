@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext, useRef } from "react";
 import * as d3 from "d3";
 import { Link } from 'react-router-dom';
 import "./GraphPage.css";
-import shopping_cart_logo from '../images/shopping_cart_logo.png';
+import add_icon from '../images/add.png';
 import { SavedCoursesContext } from './SavedCoursesContext.js';
 import { SearchContext } from './SearchContext.js';
 import { GraphContext } from './GraphContext.js';
@@ -50,15 +50,15 @@ const GraphPage = ({ setShowNavbar }) => {
 
   function getNodeColor(node) {
     if (nodeSelections[1] === "" || !connectedNodes[nodeSelections[1]]) {
-      return "pink";
+      return "#FFC20A";
     }
   
     if (node === nodeSelections[1]) {
-      return "red";
+      return "#1B8AEA";
     } else if (connectedNodes[nodeSelections[1]].includes(node)){
-      return "green";
+      return "#FFF502";
     }
-    return "pink";
+    return "#FFC20A";
   }
 
   function getNodeOpacity(node) {
@@ -453,7 +453,7 @@ const GraphPage = ({ setShowNavbar }) => {
                       className="add-to-calendar-button"
                     >
                       <img 
-                      src={shopping_cart_logo}
+                      src={add_icon}
                       alt="Add to Calendar"
                       // if course is already saved, make the cart logo grey
                       className={savedCourses.some(saved => saved.section_listings === course.section_listings) ? "grey-cart-button" : ""}
@@ -513,7 +513,7 @@ const GraphPage = ({ setShowNavbar }) => {
                   className="add-to-calendar-button"
                 >
                   <img 
-                  src={shopping_cart_logo}
+                  src={add_icon}
                   alt="Add to Calendar"
                   // if course is already saved, make the cart logo grey
                   className={savedCourses.some(saved => saved.section_listings === metadata.section_listings) ? "grey-cart-button" : ""}
