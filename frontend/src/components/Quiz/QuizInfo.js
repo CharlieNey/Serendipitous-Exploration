@@ -126,7 +126,7 @@ export const QuizInfo = () => {
         },
         {
           question: 'Choose a Companion',
-          choices: ['Brilliant Bird', 'Watchful Whale', 'Resiliant Racoon'],
+          choices: ['Brilliant Bird', 'Watchful Whale', 'Resilient Raccoon'],
           type: 'MCQs',
           filters: [isMorning, isAfternoon, isLateAfternoon]
         },
