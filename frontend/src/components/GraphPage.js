@@ -253,7 +253,7 @@ const GraphPage = ({ setShowNavbar }) => {
       .data((d) => [d]) 
       .join("text")
       .classed("line-text", true)
-      .text((d) => d.target.id + ": " + d.word)
+      .text((d) => d.target.id + ": \"" + d.word + "\"")
       .attr("text-anchor", "middle")
       .attr("dominant-baseline", "middle")
       .attr("dy", -5)
