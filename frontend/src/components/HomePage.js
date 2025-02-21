@@ -1,10 +1,15 @@
-import React from 'react';
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { Link } from 'react-router-dom';
 // import carleton_logo from '../images/carleton_logo.png';
 import carleton_logo from '../images/home_pic.png';
 import './HomePage.css';
 
-const HomePage = () => {
+const HomePage = ({ setShowNavbar }) => {
+
+  useEffect(() => {
+    setShowNavbar(false);
+  }, []);
+
   return (
     <div className="homepage-container">
       <header className="homepage-header">
