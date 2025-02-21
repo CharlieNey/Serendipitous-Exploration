@@ -32,7 +32,7 @@
 circle {
   fill: rgb(123, 165, 199); 
   stroke: #fff; 
-  stroke-width: 2px;
+  stroke-width: 4px;
   transition: transform 0.2s ease; 
   cursor: pointer;
 }
@@ -45,22 +45,19 @@ text {
   text-anchor: middle;
   font-family: "Helvetica Neue", Helvetica, sans-serif;
   fill: rgb(0, 0, 0);
-  font-size: 4px;
-}
-
-rectangle {
-  fill: rgb(123, 165, 199); 
-  stroke: #fff; 
-  stroke-width: 2px;
-  transition: transform 0.2s ease; 
-  cursor: pointer;
+  font-size: 10px;
 }
 
 .line-text {
   text-anchor: middle;
-  font-family: "Helvetica Neue", Helvetica, sans-serif;
-  fill: rgb(14, 6, 166);
-  font-size: 6px;
+  font-family: "Helvetica Neue Medium", Helvetica, sans-serif;
+  font-size: 10px;
+  fill: rgb(13, 9, 89);
+
+}
+
+.line-text:hover {
+  fill: rgb(255, 163, 42);
 }
 
 .calendar-button {
@@ -73,6 +70,10 @@ rectangle {
   width: 6vh;
   height: 6vh;
   object-fit: contain;
+}
+
+.calendar-button:hover {
+  transform: scale(1.20)
 }
 
 .scroll-sidebar {
@@ -132,6 +133,11 @@ rectangle {
 .add-to-calendar-button img {
   width: 20px;
   height: 20px;
+}
+
+.add-to-calendar-button:hover {
+  transform: scale(1.25);
+  background-color: red;
 }
 
 .divider {
@@ -219,7 +225,7 @@ rectangle {
   overflow-x: hidden;
   overflow-y: scroll;
 }
-
+/* 
 text {
   text-anchor: middle;
   fill: rgb(0, 0, 0);
@@ -230,4 +236,4 @@ text {
   text-anchor: middle;
   fill: rgb(14, 6, 166);
   font-size: 10px;
-}
+} */

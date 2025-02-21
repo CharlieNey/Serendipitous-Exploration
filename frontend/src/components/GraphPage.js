@@ -90,9 +90,12 @@ const GraphPage = ({ setShowNavbar }) => {
     setNodeSelections(["", ""]);
     setMetadata(null); 
 
+    const initialView = 0.15
+    const { width, height } = containerDimensions;
+
     svg.transition()
       .duration(750)
-      .call(zoomRef.current.transform, d3.zoomIdentity); 
+      .call(zoomRef.current.transform, d3.zoomIdentity.translate(width / 2, height / 2.5).scale(initialView)); 
   }
 
   function clickNewNode(node) {
@@ -106,8 +109,7 @@ const GraphPage = ({ setShowNavbar }) => {
     const transform = d3.zoomIdentity
       .translate(width / 2, height / 2) 
       .scale(scale)                    
-      .translate(-node.x, -node.y);   
-
+      .translate(-node.x, -node.y); 
 
     if (zoomRef.current) {
       svg.transition()
@@ -143,7 +145,14 @@ const GraphPage = ({ setShowNavbar }) => {
         .on("zoom", (event) => {
           d3.select("#zoom-group").attr("transform", event.transform);
         });
+        
+      const initialView = 0.15;
+      const initialTransform = d3.zoomIdentity
+        .translate(width / 2, height / 2.3) 
+        .scale(initialView); 
+
       svg.call(zoomRef.current);
+      svg.call(zoomRef.current.transform, initialTransform);
     } else {
       svg.call(zoomRef.current);
     }
@@ -191,7 +200,7 @@ const GraphPage = ({ setShowNavbar }) => {
       .attr("r", 40) 
       .style("fill", (d) => getNodeColor(d.id)) 
       .style("stroke", "black")
-      .style("stroke-width", 0.5)
+      .style("stroke-width", "10px")
       .on('mouseenter', (e, d) => setSelectedNode(d.id))
       .on('mouseout', (e, d) => setSelectedNode(""))
       .on('click', (e, d) => {
@@ -202,7 +211,7 @@ const GraphPage = ({ setShowNavbar }) => {
     nodeGroup.append("text")
       .attr("text-anchor", "middle")
       .attr("dominant-baseline", "middle")
-      .style("font-size", "6px")    
+      .style("font-size", "10px")    
       .style("pointer-events", "none")
       .text(d => d.id);
 
@@ -218,7 +227,7 @@ const GraphPage = ({ setShowNavbar }) => {
       .selectAll("circle")
       .data((d) => [d])
       .join("circle")
-      .style("r", 15)
+      .style("r", 30)
       .style("stroke-width", 0.5)
       .style("stroke", "black")
       .on('mouseenter', function(e, d) {
@@ -244,7 +253,7 @@ const GraphPage = ({ setShowNavbar }) => {
       .data((d) => [d]) 
       .join("text")
       .classed("line-text", true)
-      .text((d) => "<—" + d.target.id + ": " + d.word + "—>")
+      .text((d) => d.target.id + ": " + d.word)
       .attr("text-anchor", "middle")
       .attr("dominant-baseline", "middle")
       .attr("dy", -5)
@@ -450,8 +459,7 @@ const GraphPage = ({ setShowNavbar }) => {
                           }
                         });
                       }}
-                      className="add-to-calendar-button"
-                    >
+                      className="add-to-calendar-button">
                       <img 
                       src={shopping_cart_logo}
                       alt="Add to Calendar"
