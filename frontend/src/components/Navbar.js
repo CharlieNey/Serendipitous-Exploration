@@ -30,6 +30,9 @@ const Navbar = () => {
                     <Link to="/email">
                         <li>Email</li>
                     </Link>
+                    <Link to="https://docs.google.com/forms/d/e/1FAIpQLSduMonrUDplipblEWFjew5RhLfaCO3CzCmzmtxk7ynqgQn1yw/viewform?usp=sharing">
+                        <li>Feedback</li>
+                    </Link>
                 </ul>
                 <div className="calendar-button">
                     <Link to="/calendar">
