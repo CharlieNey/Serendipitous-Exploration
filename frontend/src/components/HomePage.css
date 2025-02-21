@@ -6,6 +6,7 @@
     justify-content: center;
     align-items: center;
     background-color: rgb(139, 153, 181);
+    /* background: linear-gradient(to right, #003069, rgb(139, 153, 181), #003069); */
   }
   
   .homepage-header {
@@ -16,23 +17,24 @@
   }
   
   .homepage-logo {
-    height: 40vmin;
+    height: 45vmin;
     pointer-events: none;
-    margin-bottom: 30px;
+    /* margin-bottom: 30px; */
     animation: homepage-logo-spin infinite 0.5s linear;
   }
 
-  @keyframes homepage-logo-spin {
+  /* @keyframes homepage-logo-spin {
     0% {
       transform: rotate(0deg);
     }
     100% {
       transform: rotate(360deg);
     }
-  }
+  } */
   
   .homepage-button {
     padding: 10px 20px;
+    margin: 2px;
     font-size: 16px;
     background-color: #003069;
     color: white;
@@ -41,20 +43,10 @@
     cursor: pointer;
     text-decoration: none;
   }
-
-  /* .graphpage-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #1ead38;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    text-decoration: none;
-  } */
   
   .homepage-button:hover {
     background-color: #FFD24F;
+    color: #003069
   }
 
   .learn-more-link {

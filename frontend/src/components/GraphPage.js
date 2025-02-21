@@ -458,6 +458,7 @@ const GraphPage = ({ setShowNavbar }) => {
                             return updatedCourses;
                           }
                         });
+                        alert("You just saved a course!\nSee it in your shopping cart.");
                       }}
                       className="add-to-calendar-button">
                       <img 
@@ -517,6 +518,7 @@ const GraphPage = ({ setShowNavbar }) => {
                         return updatedCourses;
                       }
                     });
+                    alert("You just saved a course!\nSee it in your shopping cart.");
                   }}
                   className="add-to-calendar-button"
                 >
