@@ -3,17 +3,15 @@
 .quiz-body {
   display: flex;
   justify-content: center; 
-  align-items: center;     
-  min-height: 100vh;     
+  align-items: center;         
   margin: 0;
   padding: 0;
-  background: linear-gradient(90.04deg, #800080 0.03%, #ffc0cb 99.96%);
-  font-family: 'Anek Malayalam', sans-serif;
   color: #11052c;
 }
 
 
 .quiz-container {
+  position: relative;
   max-width: 500px;
   min-width: 250px;
   background: #ffffff;
