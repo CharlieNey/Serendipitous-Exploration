@@ -79,20 +79,22 @@ const ContactUs = ({ setShowNavbar }) => {
 
   return (
     <div>
+      <h3>Save your saved courses!</h3>
+      <p>Done using our webapp for the day but don't want to remember the courses you've saved to your cart?
+        No problem! You can send a code to your email corresponding to your saved courses. You can then enter this code
+        to the encoding box to automatically add your saved courses to your cart!
+      </p>
       <div>
+      <h3>Export saved courses code:</h3>
         <form id="emailForm" ref={form} onSubmit={sendEmail}>
         <div>
-          <label>Name</label>
+          <label>Name:</label>
           <input type="text" name="to_name" id="to_name" />
         </div>
         <div>
-          <label>Email</label>
+          <label>Email:</label>
           <input type="email" name="to_email" id="to_email"/>
         </div>
-        {/* <div>
-          <label>Message</label>
-          <textarea name="message" />
-        </div> */}
         <div>
           <input type="submit" value="Send"/>
         </div>
@@ -100,18 +102,12 @@ const ContactUs = ({ setShowNavbar }) => {
     </div>
 
     <div>
-      <label>Encoding</label>
+      <h3>Import saved courses code:</h3>
+      <label>Encoding:</label>
       <textarea name="encoding" id="encoding" />
     </div>
     <div>
       <button onClick={setCoursesFromEncoding}>Submit</button>
-    </div>
-
-    <div>
-      <form id = "encoding-form" onSubmit={setCoursesFromEncoding}>
-
-
-      </form>
     </div>
   </div>
   );

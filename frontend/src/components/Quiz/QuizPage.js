@@ -4,7 +4,7 @@ import './Quiz.css'
 import { SearchContext } from '../SearchContext.js';
 import { GraphContext } from '../GraphContext.js';
 import { Link } from 'react-router-dom';
-import shopping_cart_logo from '../../images/shopping_cart_logo.png';
+import add_icon from '../../images/add.png';
 import { SavedCoursesContext } from '../SavedCoursesContext.js';
 
 // FROM: https://www.codevertiser.com/quiz-app-using-reactjs/#understand-the-logic-behind-the-quiz-app
@@ -222,7 +222,7 @@ const QuizPage = ({ setShowNavbar }) => {
                 className="add-to-calendar-button"
               >
                 <img 
-                  src={shopping_cart_logo}
+                  src={add_icon}
                   alt="Add to Calendar"
                   className={
                     (result === "No Course" ||
