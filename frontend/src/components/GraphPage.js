@@ -494,7 +494,7 @@ const GraphPage = ({ setShowNavbar }) => {
               setSelectedNode([-1, nodes[randomCourse].id]);
             }}
           >
-            Randomizer
+            Random Course Finder
           </button>
         </div>
         
