@@ -2,7 +2,7 @@ import csv
 
 def filter_courses(input_file, output_file):
     count = 0
-    good_sections = ["-00", "-01"]
+    good_sections = ["-00", "-01", "-51", "-52", "-53", "-54", "-55", "-56", "-57", "-58", "-59",]
     # Open the input CSV file for reading
     with open(input_file, mode='r', newline='', encoding='utf-8') as infile:
         reader = csv.DictReader(infile)

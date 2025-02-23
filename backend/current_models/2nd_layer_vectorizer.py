@@ -13,9 +13,9 @@ wv = api.load('word2vec-google-news-300')
 nltk.download('stopwords')
 
 # File paths
-common_word_data = "../data/course_data/stop_words_handpicked.csv"
-input_file = "../data/graph_data/charlie_graph.csv"
-output_file = "../data/graph_data/current_graph_data.csv"
+common_word_data = "data/course_data/stop_words_handpicked.csv"
+input_file = "data/graph_data/charlie_graph.csv"
+output_file = "data/graph_data/current_graph_data.csv"
 
 # Load input data
 df = pd.read_csv(input_file)

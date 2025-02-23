@@ -34,7 +34,6 @@ const About = ({ setShowNavbar }) => {
 
             <h3>Meet the Team</h3>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "20px", marginTop: "20px" }}>
-                {/* Team Member 1 */}
                 <div style={{ textAlign: "center" }}>
                     <img
                         src="https://via.placeholder.com/150" // Replace with actual photo URL
@@ -45,10 +44,9 @@ const About = ({ setShowNavbar }) => {
                     <p>Fun Fact: [Fun Fact]</p>
                 </div>
 
-                {/* Team Member 2 */}
                 <div style={{ textAlign: "center" }}>
                     <img
-                        src="https://via.placeholder.com/150" // Replace with actual photo URL
+                        src="images/markus.png" 
                         alt="Team Member 2"
                         style={{ width: "100%", borderRadius: "50%" }}
                     />
@@ -56,7 +54,6 @@ const About = ({ setShowNavbar }) => {
                     <p>Fun Fact: [Fun Fact]</p>
                 </div>
 
-                {/* Team Member 3 */}
                 <div style={{ textAlign: "center" }}>
                     <img
                         src="https://via.placeholder.com/150" // Replace with actual photo URL
@@ -67,7 +64,6 @@ const About = ({ setShowNavbar }) => {
                     <p>Fun Fact: [Fun Fact]</p>
                 </div>
 
-                {/* Team Member 4 */}
                 <div style={{ textAlign: "center" }}>
                     <img
                         src="https://via.placeholder.com/150" // Replace with actual photo URL
@@ -78,10 +74,9 @@ const About = ({ setShowNavbar }) => {
                     <p>Fun Fact: [Fun Fact]</p>
                 </div>
 
-                {/* Team Member 5 */}
                 <div style={{ textAlign: "center" }}>
                     <img
-                        src="https://via.placeholder.com/150" // Replace with actual photo URL
+                        src="https://via.placeholder.com/150" 
                         alt="Team Member 5"
                         style={{ width: "100%", borderRadius: "50%" }}
                     />
@@ -89,10 +84,9 @@ const About = ({ setShowNavbar }) => {
                     <p>Fun Fact: [Fun Fact]</p>
                 </div>
 
-                {/* Team Member 6 */}
                 <div style={{ textAlign: "center" }}>
                     <img
-                        src="https://via.placeholder.com/150" // Replace with actual photo URL
+                        src="https://via.placeholder.com/150" 
                         alt="Team Member 6"
                         style={{ width: "100%", borderRadius: "50%" }}
                     />

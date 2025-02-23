@@ -7,7 +7,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.metrics.pairwise import cosine_similarity
 
 # load trained model
-model = Doc2Vec.load("current_models/saved_models/doc2vec.model")
+model = Doc2Vec.load("current_models/saved_models/trained_doc2vec.model")
 
 # load human-categorized data
 # Load the two CSV files
