@@ -179,7 +179,7 @@ const GraphPage = ({ setShowNavbar }) => {
     )
     .force("collide", d3.forceCollide()
       .radius(40)    // ~ circle radius + padding
-      .strength(1)   // how firmly to push apart
+      .strength(2)   // how firmly to push apart
     )
 
     // Links
@@ -276,20 +276,25 @@ const GraphPage = ({ setShowNavbar }) => {
       linksGroup
         .selectAll("text.line-text")
         .attr("transform", (d) => {
-          const xCenter = (d.source.x + d.target.x) / 2;
-          const yCenter = (d.source.y + d.target.y) / 2;
-      
+          const distanceAway = 100; 
           const dx = d.target.x - d.source.x;
           const dy = d.target.y - d.source.y;
+          const connectionLength = Math.sqrt(dx ** 2 + dy ** 2); // distance between source and target
+      
+          const nx = dx / connectionLength;  // normalization of distance to keep distance constant from source
+          const ny = dy / connectionLength;
+      
+          const xPos = d.source.x + nx * distanceAway;
+          const yPos = d.source.y + ny * distanceAway;
+          
           let angle = Math.atan2(dy, dx) * (180 / Math.PI);
       
-          // Flip text if upside down
+          // flip text if upside down
           if (angle > 90 || angle < -90) {
             angle += 180;
           }
-      
-          // Translate to midpoint and rotate
-          return `translate(${xCenter}, ${yCenter}) rotate(${angle})`;
+
+          return `translate(${xPos}, ${yPos}) rotate(${angle})`;
         });
       nodeGroup
         .attr("transform", (d) => {

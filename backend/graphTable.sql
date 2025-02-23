@@ -8,10 +8,11 @@ CREATE TABLE Similarities (
   similarity_score float,
   desc1 text,
   desc2 text, 
-  similarity_word text
+  similarity_word text,
+  highlight_word text
 );
 
-\COPY similarities (source, target, similarity_score, desc1, desc2, similarity_word) FROM 'data/graph_data/current_graph_data.csv' DELIMITER  ',' CSV HEADER;
+\COPY similarities (source, target, similarity_score, desc1, desc2, similarity_word, highlight_word) FROM 'data/graph_data/current_graph_data.csv' DELIMITER  ',' CSV HEADER;
 
 CREATE TABLE Nodes (
     id text
