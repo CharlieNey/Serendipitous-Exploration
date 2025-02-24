@@ -75,7 +75,8 @@ def find_highlights(desc1, desc2, model):
     if len(target_words) == 0 or len(source_words) == 0:
         return None  # if either description is empty after preprocessing, return None
     
-    similarity_scores = []
+    similarity_scores_word1 = []
+    similarity_scores_word2 = []
     
     # compare each word in desc2 to each word in desc1
     for word1 in target_words:
@@ -89,17 +90,37 @@ def find_highlights(desc1, desc2, model):
             if count > 0:
                 ave_similarity /= count
                 # if ave_similarity >= threshold:
-                if ((not (word1 in similarity_scores)) & (not (word2 in similarity_scores))):
-                    similarity_scores.append((word2, word1))
+                if ((not (word1 in similarity_scores_word1)) & (not (word1 in similarity_scores_word2))):
+                    similarity_scores_word1.append(word1)
                 # similarity_scores.append((word1, word2))
                 # print(ave_similarity, word1, word2)
 
-    similarity_scores.sort(reverse=True, key=lambda x: x[0])
+    for word2 in target_words:
+        if word2 in model:
+            ave_similarity = 0
+            count = 0
+            for word1 in source_words:
+                if word1 in model:
+                    ave_similarity += model.similarity(word2, word1)
+                    count = count + 1
+            if count > 0:
+                ave_similarity /= count
+                # if ave_similarity >= threshold:
+                if ((not (word2 in similarity_scores_word1)) & (not (word1 in similarity_scores_word2))):
+                    similarity_scores_word2.append(word2)
+                # similarity_scores.append((word1, word2))
+                # print(ave_similarity, word1, word2)
+
+    similarity_scores_word1.sort(reverse=True, key=lambda x: x[0])
+    similarity_scores_word1.sort(reverse=True, key=lambda x: x[0])
 
     # top_2_words_with_similarity = similarity_scores[:2]
-    
-    top_2_words = [words for words in similarity_scores[:2]]
-    return top_2_words
+    top_2_word1 = [words for words in similarity_scores_word1[:2]]
+    top_2_word2 = [words for words in similarity_scores_word2[:2]]
+
+    top_words = top_2_word1 + top_2_word2
+
+    return top_words
 
 df = pd.read_csv('../data/graph_data/graph_connections.csv')
 
