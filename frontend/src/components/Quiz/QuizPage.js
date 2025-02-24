@@ -31,6 +31,10 @@ const QuizPage = ({ setShowNavbar }) => {
     setResult(allCourses)
   }, [allCourses]);
 
+  useEffect(() => {
+    console.log(result)
+  }, [result]);
+
   const { title, description, questions } = selectedQuiz
   const { question, choices, type, filters } = questions[activeQuestion]
 
