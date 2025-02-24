@@ -40,4 +40,4 @@ output_df = pd.DataFrame(graph_edges, columns=['source node', 'target node', 'si
 # Save to a new CSV file
 output_df.to_csv('data/graph_data/graph_connections.csv', index=False)
 
-print("Graph data saved to 'data/graph_data/charlie_graph.csv'")
+print("Graph data saved to data/graph_data/graph_connections.csv.csv'")
