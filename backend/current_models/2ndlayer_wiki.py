@@ -8,6 +8,7 @@ import os
 import numpy as np
 import gensim.downloader
 from sklearn.metrics.pairwise import cosine_similarity
+from gensim.models import Word2Vec
 import re
 
 # model_path = os.path.join(os.getcwd(), 'connection_model')
@@ -66,7 +67,7 @@ def find_highest_similarity(desc1, desc2, model):
     return most_similar_word
 
 # function to find the highest similarity word
-def find_highlights(desc1, desc2, model, threshold):
+def find_highlights(desc1, desc2, model):
     # switch to 
     target_words = preprocess_text(desc2)
     source_words = preprocess_text(desc1)
@@ -88,10 +89,8 @@ def find_highlights(desc1, desc2, model, threshold):
             if count > 0:
                 ave_similarity /= count
                 # if ave_similarity >= threshold:
-                if (not (word1 in similarity_scores)):
-                    similarity_scores.append(word1)
-                if (not (word2 in similarity_scores)):
-                    similarity_scores.append(word2)
+                if ((not (word1 in similarity_scores)) & (not (word2 in similarity_scores))):
+                    similarity_scores.append((word2, word1))
                 # similarity_scores.append((word1, word2))
                 # print(ave_similarity, word1, word2)
 
@@ -99,8 +98,8 @@ def find_highlights(desc1, desc2, model, threshold):
 
     # top_2_words_with_similarity = similarity_scores[:2]
     
-    top_4_words = [words for words in similarity_scores[:4]]
-    return top_4_words
+    top_2_words = [words for words in similarity_scores[:2]]
+    return top_2_words
 
 df = pd.read_csv('../data/graph_data/graph_connections.csv')
 
@@ -114,7 +113,7 @@ for index, row in df.iterrows():
     desc2 = row['desc2']
 
     # connect_word = find_highest_similarity(desc1, desc2, model)
-    highlights = find_highlights(desc1, desc2, model, 0.1)
+    highlights = find_highlights(desc1, desc2, model)
     # most_similar_words.append(connect_word)
     highlight_words.append(highlights)
 
@@ -124,6 +123,14 @@ for index, row in df.iterrows():
 
 # df['most_similar_word'] = most_similar_words
 df['highlight_words'] = highlight_words
+
+# output_words = []
+# for index, row in df.iterrows():
+#     top_4_words = row['highlight_words']
+#     output = model.most_similar(positive=top_4_words)
+#     output_words.append(output)
+
+# df['prediction'] = output_words
 
 df.to_csv('../data/graph_data/current_graph_data.csv', index=False)
 print("success!")
