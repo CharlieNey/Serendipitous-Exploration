@@ -5,6 +5,7 @@ import carleton_logo from '../images/home_pic.png';
 import './HomePage.css';
 
 const HomePage = ({ setShowNavbar }) => {
+  const [picIsHovered, setPicIsHovered] = useState(false);
 
   useEffect(() => {
     setShowNavbar(false);
@@ -18,13 +19,19 @@ const HomePage = ({ setShowNavbar }) => {
          Serendipitous Curriculum Exploration
         </h1>
         <Link to="/graph">
-          <button style={{ backgroundColor: 'rgb(139, 153, 181)', border: 'none', cursor: 'pointer'}}>
+          <button
+            style={{ backgroundColor: 'rgb(139, 153, 181)', border: 'none', cursor: 'pointer'}}
+            onMouseEnter={() => setPicIsHovered(true)}
+            onMouseLeave={() => setPicIsHovered(false)}
+          >
             <img src={carleton_logo} className="homepage-logo" alt="Carleton Logo" />
           </button>
         </Link>
         <br />
         <Link to="/graph">
-          <button className="homepage-button">Explore Course Connections</button>
+          <button className="homepage-button" style={{backgroundColor: picIsHovered ? '#FFD24F' : '',}}>
+            Explore Course Connections
+          </button>
         </Link>
         <br />
         <Link to="/quiz">

@@ -3,6 +3,7 @@ import * as d3 from "d3";
 import { Link } from 'react-router-dom';
 import "./GraphPage.css";
 import add_icon from '../images/add.png';
+import help_icon from '../images/quiz.png';
 import { SavedCoursesContext } from './SavedCoursesContext.js';
 import { SearchContext } from './SearchContext.js';
 import { GraphContext } from './GraphContext.js';
@@ -16,6 +17,9 @@ const GraphPage = ({ setShowNavbar }) => {
   const [nodeSelections, setNodeSelections] = useState(["", ""]);
   const zoomRef = useRef(null);
   const [metadata, setMetadata] = useState(null);
+  const [savedAlertShown, setSavedAlertShown] = useState(false);
+  const [searchAlertShown, setSearchAlertShown] = useState(false);
+
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -425,6 +429,23 @@ const GraphPage = ({ setShowNavbar }) => {
               placeholder="Search by course name, description, or number"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              onFocus={() => {
+                if (!searchAlertShown) {
+                  alert(
+                    `What can I search for?\n` +
+                    `This website currently only shows Spring 2025 courses that are:\n` +
+                    `• 6-credits\n` +
+                    `• Lab courses\n` +
+                    `*Only one section is displayed for courses with multiple sections (e.g., 100.01, 100.02)\n\n` +
+                    `What’s not included:\n` +
+                    `• PE\n` +
+                    `• Private music lessons\n` +
+                    `• Comps\n` +
+                    `• Any other non 6-credit courses (except labs)`
+                  );
+                  setSearchAlertShown(true);
+                }
+              }}
               className="search-input"
             />
 
@@ -460,7 +481,10 @@ const GraphPage = ({ setShowNavbar }) => {
                             return updatedCourses;
                           }
                         });
-                        alert("You just saved a course!\nSee it in your shopping cart.");
+                        if (!savedAlertShown) {
+                          alert("You just saved a course!\nSee it in your shopping cart.");
+                          setSavedAlertShown(true);
+                        }
                       }}
                       className="add-to-calendar-button">
                       <img 
@@ -489,8 +513,29 @@ const GraphPage = ({ setShowNavbar }) => {
             </g>
           </svg>
 
+          <img 
+            src={help_icon}
+            className="buttons-on-graph help-button"
+            onClick={() => alert(
+              `What am I looking at?\n` +
+              `• Related courses are connected by a line.\n` +
+              `• Word(s) on the line explain why they are related.\n` +
+              `• What does "related" mean? Read our info page to learn more!\n\n` +
+              `What courses are included?\n` +
+              `Our website currently only shows Spring 2025 courses that are:\n` +
+              `• 6-credits\n` +
+              `• Lab courses\n` +
+              `*Only one section is displayed for courses with multiple sections (e.g., 100.01, 100.02)\n\n` +
+              `What’s not included:\n` +
+              `• PE\n` +
+              `• Private music lessons\n` +
+              `• Comps\n` +
+              `• Any other non 6-credit courses (except labs)`
+            )}
+          />
+
           <button 
-            className="randomizer" 
+            className="buttons-on-graph randomizer" 
             onClick={() => {
               const randomCourse = Math.floor(Math.random() * nodes.length);
               setSelectedNode([-1, nodes[randomCourse].id]);
@@ -520,7 +565,10 @@ const GraphPage = ({ setShowNavbar }) => {
                         return updatedCourses;
                       }
                     });
-                    alert("You just saved a course!\nSee it in your shopping cart.");
+                    if (!savedAlertShown) {
+                      alert("You just saved a course!\nSee it in your shopping cart.");
+                      setSavedAlertShown(true);
+                    }
                   }}
                   className="add-to-calendar-button"
                 >

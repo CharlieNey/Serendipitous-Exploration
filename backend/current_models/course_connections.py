@@ -24,7 +24,7 @@ for course, group in df.groupby('Course_1'):
     sorted_group = group.sort_values('Similarity', ascending=False)
     
     # Select the top 3 most similar courses
-    top_3 = sorted_group.head(3)
+    top_3 = sorted_group.head(2)
     for _, row in top_3.iterrows():
         add_edge(row['Course_1'], row['Course_2'], row['Similarity'], row['Description_1'], row['Description_2'])
     
@@ -40,4 +40,4 @@ output_df = pd.DataFrame(graph_edges, columns=['source node', 'target node', 'si
 # Save to a new CSV file
 output_df.to_csv('data/graph_data/graph_connections.csv', index=False)
 
-print("Graph data saved to 'data/graph_data/charlie_graph.csv'")
+print("Graph data saved to data/graph_data/graph_connections.csv'")
