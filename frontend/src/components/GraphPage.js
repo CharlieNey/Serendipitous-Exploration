@@ -176,16 +176,17 @@ const GraphPage = ({ setShowNavbar }) => {
 
     const simulation = d3
     .forceSimulation(nodes)
-    .force("charge", d3.forceManyBody().strength(-400))
-    .force("center", d3.forceCenter(width / 2, height / 2))
+    // .force("center", d3.forceCenter(width / 2, height / 2))
+    .force("charge", d3.forceManyBody().strength(-1000))
     .force("link", d3.forceLink(links)
       .id(d => d.id)
-      .distance(d => d.score ** 2 * 300)
+      .distance(d => d.score ** -2 * 1000)
     )
     .force("collide", d3.forceCollide()
       .radius(40)    // ~ circle radius + padding
       .strength(2)   // how firmly to push apart
     )
+    // .force("radial", d3.forceRadial(1000, width / 2, height / 2))
 
     // Links
     const linksGroup = d3.select(".links")
