@@ -2,6 +2,7 @@ import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.decomposition import LatentDirichletAllocation
 import numpy as np
+import re
 
 # Load the CSV file (replace 'your_file.csv' with your actual file path)
 df = pd.read_csv('../data/graph_data/charlie_graph.csv')
