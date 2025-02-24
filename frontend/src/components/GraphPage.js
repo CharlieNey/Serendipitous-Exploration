@@ -122,6 +122,7 @@ const GraphPage = ({ setShowNavbar }) => {
     }
   }
 
+  // if it's of node selected's children, 
   useEffect(() => {
     setShowNavbar(true);
   }, []);
@@ -257,7 +258,7 @@ const GraphPage = ({ setShowNavbar }) => {
       .data((d) => [d]) 
       .join("text")
       .classed("line-text", true)
-      .text((d) => d.target.id + ": \"" + d.word + "\"")
+      .text((d) => d.target.id + ": " + d.word.slice(1,-1) )
       .attr("text-anchor", "middle")
       .attr("dominant-baseline", "middle")
       .attr("dy", -5)
@@ -280,7 +281,7 @@ const GraphPage = ({ setShowNavbar }) => {
       linksGroup
         .selectAll("text.line-text")
         .attr("transform", (d) => {
-          const distanceAway = 100; 
+          const distanceAway = 125; 
           const dx = d.target.x - d.source.x;
           const dy = d.target.y - d.source.y;
           const connectionLength = Math.sqrt(dx ** 2 + dy ** 2); // distance between source and target

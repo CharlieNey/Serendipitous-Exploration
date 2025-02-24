@@ -59,7 +59,7 @@ export const GraphProvider = ({ children }) => {
 
             const links = []; 
             for (let i in response_links) { 
-                links.push({source : response_links[i]["source"].split('-')[0], target : response_links[i]["target"].split('-')[0], score : response_links[i]["similarity_score"], desc1 : response_links[i]["desc1"], desc2 : response_links[i]["desc2"], word : response_links[i]["similarity_word"]})
+                links.push({source : response_links[i]["source"].split('-')[0], target : response_links[i]["target"].split('-')[0], score : response_links[i]["similarity_score"], desc1 : response_links[i]["desc1"], desc2 : response_links[i]["desc2"], word : response_links[i]["highlight_words"]})
             }
             
             setMinval(getMinVal(links))
