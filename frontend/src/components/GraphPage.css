@@ -4,27 +4,25 @@
   display: flex;
   flex-direction: column;
   font-family: Gotham;
-  height: 100vh;
-  /* overflow: hidden; */
+  height: 92vh;
 }
-
 .content-container {
   display: flex; 
   flex: 1;
   width: 100%;
-  height: 100vh;
+  height: 92vh;
 }
-
 .simulation-container{
-  width: 100%; 
-  height: 100vh; 
+  flex: 1;
+  height: 92vh; 
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: rgb(255, 255, 255);
-  overflow:auto;
   position: relative;
+  overflow: hidden;
  }
+
 /* set in javascript */
  .simulation-svg{
   width: 100%;
@@ -34,7 +32,7 @@
 circle {
   fill: rgb(123, 165, 199); 
   stroke: #fff; 
-  stroke-width: 2px;
+  stroke-width: 4px;
   transition: transform 0.2s ease; 
   cursor: pointer;
 }
@@ -47,14 +45,19 @@ text {
   text-anchor: middle;
   font-family: "Helvetica Neue", Helvetica, sans-serif;
   fill: rgb(0, 0, 0);
-  font-size: 4px;
+  font-size: 10px;
 }
 
 .line-text {
   text-anchor: middle;
-  font-family: "Helvetica Neue", Helvetica, sans-serif;
-  fill: rgb(14, 6, 166);
-  font-size: 6px;
+  font-family: "Helvetica Neue Medium", Helvetica, sans-serif;
+  font-size: 10px;
+  fill: rgb(13, 9, 89);
+
+}
+
+.line-text:hover {
+  fill: rgb(255, 163, 42);
 }
 
 .calendar-button {
@@ -69,19 +72,25 @@ text {
   object-fit: contain;
 }
 
+.calendar-button:hover {
+  transform: scale(1.20)
+}
+
 .scroll-sidebar {
-  width: 25%;
+  width: 20%;
+  min-width: 250px;
   padding-left: 20px;
   padding-right: 20px;
   background-color: #f4f4f4;
   border-right: 1px solid #ddd;
-  height: 100vh;
+  height: 92vh;
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow-x:hidden;
+  overflow-x: hidden;
   overflow-y: scroll;
 }
+
 
 .search-section {
   padding: 10px;
@@ -118,11 +127,17 @@ text {
   align-items: center;   
   float: right;
   margin-left: 10px;
+  cursor: pointer;
 }
 
 .add-to-calendar-button img {
   width: 20px;
   height: 20px;
+}
+
+.add-to-calendar-button:hover {
+  transform: scale(1.25);
+  background-color: red;
 }
 
 .divider {
@@ -140,7 +155,8 @@ text {
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
-  max-width: 300px;
+  max-width: 600px;
+  max-height: fit-content;
 }
 
 .tooltip-close {
@@ -167,10 +183,11 @@ text {
 
 /* CSS inspired from https://getcssscan.com/css-buttons-examples*/
 .randomizer {
-  position: fixed;
-  bottom: 20px;
-  right: 330px;
-  background-color: #fbeee0;
+  position: absolute;
+  z-index: 1000;
+  bottom: 10px;
+  right: 20px;
+  background-color: #5185ff;
   border: 2px solid #422800;
   border-radius: 30px;
   box-shadow: #422800 4px 4px 0 0;
@@ -186,7 +203,7 @@ text {
 }
 
 .randomizer:hover {
-  background-color: rgba(255, 224, 224, 0.723);
+  background-color: rgba(255, 237, 135, 0.723);
 }
 
 .randomizer:active {
@@ -195,15 +212,28 @@ text {
 }
 
 .metadata-section {
-  width: 30%;
+  width: 20%; 
+  min-width: 250px;
   padding-left: 20px;
   padding-right: 20px;
   background-color: #f4f4f4;
-  border-right: 1px solid #ddd;
-  height: 100vh;
+  border-left: 1px solid #ddd;
+  height: 92vh;
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow-x:hidden;
+  overflow-x: hidden;
   overflow-y: scroll;
 }
+/* 
+text {
+  text-anchor: middle;
+  fill: rgb(0, 0, 0);
+  font-size: 12px;
+}
+
+.line-text {
+  text-anchor: middle;
+  fill: rgb(14, 6, 166);
+  font-size: 10px;
+} */

@@ -6,6 +6,8 @@
     color: #fff;
     padding: 1rem;
     font-family: Gotham;
+    height: 4vh; 
+
   }
   
   .navbar-left .logo {

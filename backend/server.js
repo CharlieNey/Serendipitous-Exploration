@@ -64,6 +64,17 @@ app.get('/api/similarities', async (req, res) => {
     }
 });
 
+// defining the /api/department-recommendations api route
+app.get('/api/department-recommendations', async (req, res) => { 
+    try {
+        const result = await pool.query("SELECT * FROM depRecs");
+        res.json(result.rows); 
+    } catch (err) {
+        console.error("Error fetching courses:", err.message);
+        res.status(500).send("Server Error");
+    }
+});
+
 // defining the /api/:search api route - something is NOT working...
 router.get('/:search', async (req, res) => { 
     try {

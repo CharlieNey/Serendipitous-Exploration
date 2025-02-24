@@ -1,124 +1,160 @@
+import { useContext } from "react";
+import { GraphContext } from '../GraphContext.js';
+
 // Question Types
-// 1. MCQs | Multiple Choice | single
-var humList = ['AFST', 'AMST', 'ARBC', 'ASLN', 
-  'ASST', 'CHIN', 'CLAS', 'ECON', 'EDUC', 'CCST',
-  'ENGL', 'FREN', 'GERM', 'GRK ', 'GWSS', 'HEBR', 'HIST', 'JAPN', 
-  'LATN', 'LTAM', 'MELA', 'POSC', 'RELG', 'RUSS', 'SOAN', 'SPAN']
+// 1. MCQs | DropDown | Multiple Choice | single
 
-var stemList = ['BIOC', 'BIOL', 'CGSC', 'CHEM', 'GEOL', 'STAT', 'NEUR',
-  'PHIL', 'PSYC', 'PHYS', 'MATH', 'LING', 'ASTR', 'CS']
+export const QuizInfo = () => {
+  const { departmentRecommendations } = useContext(GraphContext);
 
-var artList = ['THEA', 'DANC','ARTH', 'ARTS', 'ARCN', 'CAMS', 'MUSC']
+  var humList = ['AFST', 'AMST', 'ARBC', 'ASLN', 
+    'ASST', 'CHIN', 'CLAS', 'ECON', 'EDUC', 'CCST',
+    'ENGL', 'FREN', 'GERM', 'GRK ', 'GWSS', 'HEBR', 'HIST', 'JAPN', 
+    'LATN', 'LTAM', 'MELA', 'POSC', 'RELG', 'RUSS', 'SOAN', 'SPAN']
 
-// course.course_number.substring... is now course.section_listings.split('-')[0].substring(...) because of how the new csv is.
-function isStem(course) {
-  var subject_code = course.section_listings.split('-')[0].split(' ')[0]
-  return stemList.includes(subject_code)
-}
+  var stemList = ['BIOC', 'BIOL', 'CGSC', 'CHEM', 'GEOL', 'STAT', 'NEUR',
+    'PHIL', 'PSYC', 'PHYS', 'MATH', 'LING', 'ASTR', 'CS']
 
-function isHum(course) {
-  var subject_code = course.section_listings.split('-')[0].split(' ')[0]
-  return humList.includes(subject_code)
-}
+  var artList = ['THEA', 'DANC','ARTH', 'ARTS', 'ARCN', 'CAMS', 'MUSC']
 
-function isArt(course) {
-  var subject_code = course.section_listings.split('-')[0].split(' ')[0]
-  return artList.includes(subject_code)
-}
-
-function isEasy(course) {
-  var subject_code = course.section_listings.split('-')[0].substring((course.section_listings.split('-')[0].indexOf(" ") + 1), (course.section_listings.split('-')[0].indexOf(" ") + 2))
-  return "1" === subject_code
-}
-
-function isMedium(course) {
-  var subject_code = course.section_listings.split('-')[0].substring((course.section_listings.split('-')[0].indexOf(" ") + 1), (course.section_listings.split('-')[0].indexOf(" ") + 2))
-  return "2" === subject_code
-}
-
-function isHard(course) {
-  var subject_code = course.section_listings.split('-')[0].substring((course.section_listings.split('-')[0].indexOf(" ") + 1), (course.section_listings.split('-')[0].indexOf(" ") + 2))
-  return "3" === subject_code
-}
-
-function isChem(course) {
-  var subject_code = course.section_listings.split('-')[0].substring(0, course.section_listings.split('-')[0].indexOf(" "))
-  return "CHEM" === subject_code
-}
-
-function isNotChem(course) {
-  var subject_code = course.section_listings.split('-')[0].substring(0, course.section_listings.split('-')[0].indexOf(" "))
-  return "CHEM" !== subject_code
-}
-function timeCheck(course) {
-  var subject_code = course.day_start_end.split('|')[1].substring(0, course.day_start_end.split('|')[1].indexOf(":"))
-  var midday = course.day_start_end.split('|')[1].substring((course.day_start_end.split('|')[1].indexOf(":") + 3), (course.day_start_end.split('|')[1].indexOf(":") + 5))
-
-  if (((subject_code === "8") || (subject_code === "9") || (subject_code === "10")) && (midday === "am")) 
-    {
-    return subject_code;
+  function getAllDepartments() {
+    var depList = []
+    for (var i in departmentRecommendations) {
+      depList.push(departmentRecommendations[i].department)
     }
-
-  else if ((((subject_code === "11")) && (midday === "am")) ||
-   (((subject_code === 12) || (subject_code === 1)) && (midday === "pm"))) 
-    {
-    return subject_code;
-    }
-
-  else if (((subject_code === "2") || (subject_code === "3") || (subject_code === "4") || (subject_code === "5")) 
-    && (midday === "pm")) 
-    {
-    return subject_code;
-    }
-
-  else 
-    {
-    return "time outside of bounds";
-    }
+    return depList
   }
 
-const Quiz_1 = {
-    title: "Choose your adventurer",
-    description: "Quiz 1 description",
-    questions: [
-      {
-        question: 'What style of adventurer are you?',
-        choices: ['Alchemist', 'Scribe', 'Craftsmen'],
-        type: 'MCQs',
-        filters: [isStem, isHum, isArt]
-      },
-      {
-        question: 'Choose a Quest Difficulty',
-        choices: ['EASY REWARD: $1000', 'MODERATE REWARD: $2000', 'HARD REWARD: $3000'],
-        type: 'MCQs',
-        filters: [isEasy, isMedium, isHard]
-      },
-      {
-        question: 'Choose a Companion',
-        choices: ['Brilliant Bird', 'Watchful Whale', 'Resiliant Racoon'],
-        type: 'MCQs',
-        filters: [timeCheck, timeCheck, timeCheck]
-      },
-    ],
+  function getAllDepartmentRecommendationFunctions() {
+    var depRecFuncs = []
+    for (var i in departmentRecommendations) {
+      const currentRecs = departmentRecommendations[i].recommendations
+      depRecFuncs.push(
+        function isInDepartments(course) {
+          var subject_code = course.section_listings.substring(0, course.section_listings.indexOf(" "))
+          return currentRecs.includes(subject_code)
+        }
+      )
+    }
+    return depRecFuncs
   }
 
-const Quiz_2 = {
-    title: "Just testing",
-    description: "Quiz 2 description",
+  function isInDepartments (course, departments) {
+    var subject_code = course.section_listings.substring(0, course.section_listings.indexOf(" "))
+    return departments.includes(subject_code)
+  }
+
+  function isStem(course) {
+    var subject_code = course.section_listings.substring(0, course.section_listings.indexOf(" "))
+    return stemList.includes(subject_code)
+  }
+
+  function isHum(course) {
+    var subject_code = course.section_listings.substring(0, course.section_listings.indexOf(" "))
+    return humList.includes(subject_code)
+  }
+
+  function isArt(course) {
+    var subject_code = course.section_listings.substring(0, course.section_listings.indexOf(" "))
+    return artList.includes(subject_code)
+  }
+
+  function isEasy(course) {
+    var level_code = course.section_listings.substring(course.section_listings.indexOf(" ") + 1, course.section_listings.indexOf(" ") + 2)
+    return "1" === level_code
+  }
+
+  function isMedium(course) {
+    var level_code = course.section_listings.substring(course.section_listings.indexOf(" ") + 1, course.section_listings.indexOf(" ") + 2)
+    return "2" === level_code
+  }
+
+  function isHard(course) {
+    var level_code = course.section_listings.substring(course.section_listings.indexOf(" ") + 1, course.section_listings.indexOf(" ") + 2)
+    return "3" === level_code
+  }
+
+  function isChem(course) {
+    return isInDepartments(course, ["CHEM"])
+  }
+
+  function isNotChem(course) {
+    return !isInDepartments(course, ["CHEM"])
+  }
+
+  function isMorning(course) {
+    var hour_code = course.day_start_end.split('|')[1].substring(1, course.day_start_end.split('|')[1].indexOf(":"))
+    var midday = course.day_start_end.split('|')[1].substring((course.day_start_end.split('|')[1].indexOf(":") + 3) + 1, (course.day_start_end.split('|')[1].indexOf(":") + 5))
+
+    return (((hour_code === "8") || (hour_code === "9") || (hour_code === "10")) && (midday === "A"))
+  }
+
+  function isAfternoon(course) {
+    var hour_code = course.day_start_end.split('|')[1].substring(1, course.day_start_end.split('|')[1].indexOf(":"))
+    var midday = course.day_start_end.split('|')[1].substring((course.day_start_end.split('|')[1].indexOf(":") + 3) + 1, (course.day_start_end.split('|')[1].indexOf(":") + 5))
+    
+    return ((((hour_code === "11")) && (midday === "A")) || (((hour_code === "12") || (hour_code === "1")) && (midday === "P")))
+  }
+
+  function isLateAfternoon(course) {
+    var hour_code = course.day_start_end.split('|')[1].substring(1, course.day_start_end.split('|')[1].indexOf(":"))
+    var midday = course.day_start_end.split('|')[1].substring((course.day_start_end.split('|')[1].indexOf(":") + 3) + 1, (course.day_start_end.split('|')[1].indexOf(":") + 5))
+    return (((hour_code === "2") || (hour_code === "3") || (hour_code === "4") || (hour_code === "5")) && (midday === "P"))
+  }
+
+  const Quiz_1 = {
+      title: "Find Your Quest",
+      description: "Obtain a Spring 2025 Carleton course based on your past experience and personal preferences",
       questions: [
+        // {
+        //   question: 'What style of adventurer are you?',
+        //   choices: ['Alchemist', 'Scribe', 'Craftsmen'],
+        //   type: 'MCQs',
+        //   filters: [isStem, isHum, isArt]
+        // },
         {
-          question: 'DISTINCT QUESTIONAIRRE',
-          choices: ['STEM', 'HUMANITIES', 'ART'],
-          type: 'MCQs',
-          filters: [isStem, isHum, isArt]
+          question: 'Where have you had past experience?',
+          choices: getAllDepartments(),
+          type: 'DropDown',
+          filters: getAllDepartmentRecommendationFunctions()
         },
         {
-          question: 'Choose a Quest Difficulty',
-          choices: ['CHEM', 'NOT CHEM'],
+          question: 'Choose a Difficulty and Reward',
+          choices: ['EASY REWARD: $1000', 'MODERATE REWARD: $2000', 'HARD REWARD: $3000'],
           type: 'MCQs',
-          filters: [isChem, isNotChem]
+          filters: [isEasy, isMedium, isHard]
+        },
+        {
+          question: 'Choose a Companion',
+          choices: ['Brilliant Bird', 'Watchful Whale', 'Resilient Raccoon'],
+          type: 'MCQs',
+          filters: [isMorning, isAfternoon, isLateAfternoon]
         },
       ],
-    }
+  }
 
-export const Quizzes = [Quiz_1, Quiz_2];
+  const Quiz_2 = {
+      title: "Just testing",
+      // description: "Quiz 2 description",
+        questions: [
+          {
+            question: 'DISTINCT QUESTIONAIRRE',
+            choices: ['STEM', 'HUMANITIES', 'ART'],
+            type: 'DropDown',
+            filters: [isStem, isHum, isArt] 
+          },
+          {
+            question: 'Choose a Quest Difficulty',
+            choices: ['CHEM', 'NOT CHEM'],
+            type: 'MCQs',
+            filters: [isChem, isNotChem]
+          },
+        ],
+  }
+  
+  return [Quiz_1, Quiz_2]
+}
+
+// export const QuizInfo;
+
+// export const Quizzes = [QuizInfo.Quiz_1, QuizInfo.Quiz_2];

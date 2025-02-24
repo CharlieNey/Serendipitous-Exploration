@@ -2,3 +2,4 @@ node_modules
 psqlConfig.js
 node_modules
 backend/current_models/.env
+.DS_Store
