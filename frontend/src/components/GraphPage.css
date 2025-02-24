@@ -51,7 +51,7 @@ text {
 .line-text {
   text-anchor: middle;
   font-family: "Helvetica Neue Medium", Helvetica, sans-serif;
-  font-size: 10px;
+  font-size: 12px;
   fill: rgb(13, 9, 89);
 
 }
@@ -110,7 +110,7 @@ text {
 }
 
 .course-item {
-  padding: 6px;
+  padding: 8px;
   margin-bottom: 5px;
   background-color: #fff;
   border: 1px solid #ddd;
@@ -127,12 +127,13 @@ text {
   align-items: center;   
   float: right;
   margin-left: 10px;
+  margin-top: 5px;
   cursor: pointer;
 }
 
-.add-to-calendar-button img {
-  width: 20px;
-  height: 20px;
+.add-to-calendar-button:hover {
+  transform: scale(1.25);
+  background-color: red;
 }
 
 .add-to-calendar-button:hover {
@@ -187,7 +188,7 @@ text {
   z-index: 1000;
   bottom: 10px;
   right: 20px;
-  background-color: #5185ff;
+  background-color: #b7caf6;
   border: 2px solid #422800;
   border-radius: 30px;
   box-shadow: #422800 4px 4px 0 0;
