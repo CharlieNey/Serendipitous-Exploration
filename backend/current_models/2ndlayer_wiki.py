@@ -8,6 +8,7 @@ import os
 import numpy as np
 import gensim.downloader
 from sklearn.metrics.pairwise import cosine_similarity
+import re
 
 # model_path = os.path.join(os.getcwd(), 'connection_model')
 # model = gensim.models.Word2Vec.load(model_path)
@@ -18,6 +19,10 @@ model = gensim.downloader.load('glove-wiki-gigaword-300')
 def preprocess_text(text):
     text = text.lower()
     text = text.translate(str.maketrans('', '', string.punctuation))
+    # Remove special characters and numbers
+    text = re.sub(r'[^a-zA-Z\s]', '', text)
+    text = re.sub(r'\d+', '', text)
+
     words = word_tokenize(text)
     # remove stopwords
     common_word_data = "../data/course_data/stop_words_handpicked.csv"
@@ -82,18 +87,20 @@ def find_highlights(desc1, desc2, model, threshold):
                     count = count + 1
             if count > 0:
                 ave_similarity /= count
-                if ave_similarity >= threshold:
-                    similarity_scores.append((ave_similarity, word1, word2))
-                    # similarity_scores.append((word1, word2))
-                    # print(ave_similarity, word1, word2)
+                # if ave_similarity >= threshold:
+                if (not (word1 in similarity_scores)):
+                    similarity_scores.append(word1)
+                if (not (word2 in similarity_scores)):
+                    similarity_scores.append(word2)
+                # similarity_scores.append((word1, word2))
+                # print(ave_similarity, word1, word2)
 
-    # sort the similarity results in descending order based on similarity score
     similarity_scores.sort(reverse=True, key=lambda x: x[0])
 
-    top_5_words_with_similarity = similarity_scores[:5]
+    # top_2_words_with_similarity = similarity_scores[:2]
     
-    # top_5_words = [pair for pair in similarity_scores[:5]]
-    return top_5_words_with_similarity
+    top_4_words = [words for words in similarity_scores[:4]]
+    return top_4_words
 
 df = pd.read_csv('../data/graph_data/graph_connections.csv')
 
@@ -116,8 +123,7 @@ for index, row in df.iterrows():
         # print(f"Pair: {pair}, Similarity Score: {score}")
 
 # df['most_similar_word'] = most_similar_words
-# df['highlight_words'] = highlight_words
+df['highlight_words'] = highlight_words
 
-
-
-# df.to_csv('../data/graph_data/current_graph_data.csv', index=False)
+df.to_csv('../data/graph_data/current_graph_data.csv', index=False)
+print("success!")
