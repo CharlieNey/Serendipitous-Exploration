@@ -23,6 +23,7 @@ def preprocess_text(text):
     # Remove special characters and numbers
     text = re.sub(r'[^a-zA-Z\s]', '', text)
     text = re.sub(r'\d+', '', text)
+    text = re.sub(r'[^\w\s]', '', text)
 
     words = word_tokenize(text)
     # remove stopwords
@@ -32,7 +33,6 @@ def preprocess_text(text):
         custom_stopwords = set(stopwords_df["Word"].dropna().str.lower().tolist())
     except FileNotFoundError:
         custom_stopwords = set()
-    
     stop_words = set(stopwords.words("english")).union(custom_stopwords)
     words = [word for word in words if word not in stop_words]
     # print(words[2])
@@ -75,23 +75,29 @@ def find_highlights(desc1, desc2, model):
     if len(target_words) == 0 or len(source_words) == 0:
         return None  # if either description is empty after preprocessing, return None
     
-    similarity_scores_word1 = []
-    similarity_scores_word2 = []
+    # similarity_scores_word1 = []
+    # similarity_scores_word2 = []
+    highest_word1 = ""
+    highest_ave1 = 0
+    highest_word2 = ""
+    highest_ave2 = 0
     
     # compare each word in desc2 to each word in desc1
-    for word1 in target_words:
+    for word1 in source_words:
         if word1 in model:
             ave_similarity = 0
             count = 0
-            for word2 in source_words:
+            for word2 in target_words:
                 if word2 in model:
                     ave_similarity += model.similarity(word1, word2)
                     count = count + 1
-            if count > 0:
-                ave_similarity /= count
+            if ave_similarity > highest_ave1:
+                # ave_similarity /= count
+                highest_ave1 = ave_similarity
+                highest_word1 = word1
                 # if ave_similarity >= threshold:
-                if ((not (word1 in similarity_scores_word1)) & (not (word1 in similarity_scores_word2))):
-                    similarity_scores_word1.append(word1)
+                # if ((not (word1 in similarity_scores_word1)) & (not (word1 in similarity_scores_word2))):
+                # similarity_scores_word1.append(word1)
                 # similarity_scores.append((word1, word2))
                 # print(ave_similarity, word1, word2)
 
@@ -103,22 +109,26 @@ def find_highlights(desc1, desc2, model):
                 if word1 in model:
                     ave_similarity += model.similarity(word2, word1)
                     count = count + 1
-            if count > 0:
-                ave_similarity /= count
+            if ave_similarity > highest_ave2:
+                highest_ave2 = ave_similarity
+                highest_word2 = word2
+                # ave_similarity /= count
                 # if ave_similarity >= threshold:
-                if ((not (word2 in similarity_scores_word1)) & (not (word1 in similarity_scores_word2))):
-                    similarity_scores_word2.append(word2)
+                # if ((not (word2 in similarity_scores_word1)) & (not (word1 in similarity_scores_word2))):
+                # similarity_scores_word2.append(word2)
                 # similarity_scores.append((word1, word2))
                 # print(ave_similarity, word1, word2)
 
-    similarity_scores_word1.sort(reverse=True, key=lambda x: x[0])
-    similarity_scores_word1.sort(reverse=True, key=lambda x: x[0])
+    # similarity_scores_word1.sort(reverse=True, key=lambda x: x[0])
+    # similarity_scores_word1.sort(reverse=True, key=lambda x: x[0])
 
     # top_2_words_with_similarity = similarity_scores[:2]
-    top_2_word1 = [words for words in similarity_scores_word1[:2]]
-    top_2_word2 = [words for words in similarity_scores_word2[:2]]
+    # top_2_word1 = [words for words in similarity_scores_word1[:1]]
+    # top_2_word2 = [words for words in similarity_scores_word2[:1]]
+    if highest_word2 == highest_word1: 
+        return highest_word1
 
-    top_words = top_2_word1 + top_2_word2
+    top_words = highest_word2 + " " + highest_word1
 
     return top_words
 
