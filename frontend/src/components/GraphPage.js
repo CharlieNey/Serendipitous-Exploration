@@ -630,14 +630,14 @@ const GraphPage = ({ setShowNavbar }) => {
                   className={savedCourses.some(saved => saved.section_listings === metadata.section_listings) ? "grey-cart-button" : ""}
                   />
                 </button>
-                {metadata.section_listings.split('-')[0]}: {metadata.section_listings.split(' - ')[1]}
+                <p>{metadata.section_listings.split('-')[0]}: {metadata.section_listings.split(' - ')[1]}</p>
               </h4> 
               <p><strong>Description:</strong></p>
-              <div
+              <p><div
                 dangerouslySetInnerHTML={{
                   __html: getHighlightedDescription(),
                 }}
-              />
+              /></p>
               <p><strong>Liberal Arts Requirements:</strong> {formatLiberalArtsRequirements(metadata.course_tags)}</p>
               {formatMeetingTimes(metadata.day_start_end).meetingDay && (
                 <>
