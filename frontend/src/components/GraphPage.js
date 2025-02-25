@@ -19,6 +19,7 @@ const GraphPage = ({ setShowNavbar }) => {
   const [metadata, setMetadata] = useState(null);
   const [savedAlertShown, setSavedAlertShown] = useState(false);
   const [searchAlertShown, setSearchAlertShown] = useState(false);
+  const [hoveredLink, setHoveredLink] = useState(null);
 
 
   useEffect(() => {
@@ -256,19 +257,25 @@ const GraphPage = ({ setShowNavbar }) => {
 
     linksGroup
       .selectAll("text.line-text")
-      .data((d) => [d]) 
+      .data((d) => [d])
       .join("text")
       .classed("line-text", true)
-      .text((d) => d.target.id + ": " + d.word.slice(1,-1) )
+      .text((d) => d.target.id + ": " + formatHighlightWords(d.word))
       .attr("text-anchor", "middle")
       .attr("dominant-baseline", "middle")
       .attr("dy", -5)
       .attr("cursor", "pointer")
       .on("click", function (e, d) {
         setSelectedNode([-2, d]);
+      })
+      .on("mouseover", function (e, d) {
+        setHoveredLink(d);
+      })
+      .on("mouseout", function () {
+        setHoveredLink(null);
       });
     
-    
+  
     refreshGraph();
 
     simulation.on("tick", () => {
@@ -417,6 +424,49 @@ const GraphPage = ({ setShowNavbar }) => {
   
     return formattedLARs;
   }
+  function formatHighlightWords(wordString) {
+    if (!wordString) return "";
+    let trimmed = wordString.trim();
+    const words = trimmed.split(/\s+/);
+    return words.map(w => `"${w}"`).join(", ");
+  }
+
+  function parseLinkWords(rawWordString) {
+    if (!rawWordString) return [];
+    const cleaned = rawWordString.replace(/"/g, "");
+    return cleaned.split(/\s+/).filter(Boolean);
+  }  
+
+  function getHighlightedDescription() {
+    if (!metadata) return "";
+    if (!hoveredLink) return metadata.description;
+    
+    const currentCourseId = metadata.section_listings.split('-')[0];
+    const sourceId = hoveredLink.source.id;
+    const targetId = hoveredLink.target.id;
+  
+    
+    if (currentCourseId !== sourceId && currentCourseId !== targetId) {
+      return metadata.description;
+    }
+  
+   
+    const wordsArray = parseLinkWords(hoveredLink.word);
+    if (wordsArray.length === 0) return metadata.description;
+
+    let highlighted = metadata.description;
+    wordsArray.forEach((word) => {
+      const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const regex = new RegExp(`\\b(${escaped})\\b`, "gi");
+      highlighted = highlighted.replace(
+        regex,
+        `<span class="highlight">$1</span>`
+      );
+    });
+  
+    return highlighted;
+  }
+  
 
   return (
     <div className="GraphPage">
@@ -582,7 +632,12 @@ const GraphPage = ({ setShowNavbar }) => {
                 </button>
                 {metadata.section_listings.split('-')[0]}: {metadata.section_listings.split(' - ')[1]}
               </h4> 
-              <p><strong>Description:</strong> {metadata.description}</p>
+              <p><strong>Description:</strong></p>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: getHighlightedDescription(),
+                }}
+              />
               <p><strong>Liberal Arts Requirements:</strong> {formatLiberalArtsRequirements(metadata.course_tags)}</p>
               {formatMeetingTimes(metadata.day_start_end).meetingDay && (
                 <>

@@ -240,6 +240,13 @@ text {
   overflow-x: hidden;
   overflow-y: scroll;
 }
+
+.highlight {
+  background-color: yellow;
+  font-weight: bold;
+  padding: 2px;
+}
+
 /* 
 text {
   text-anchor: middle;
