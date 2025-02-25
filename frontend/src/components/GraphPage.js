@@ -122,6 +122,7 @@ const GraphPage = ({ setShowNavbar }) => {
     }
   }
 
+  // if it's of node selected's children, 
   useEffect(() => {
     setShowNavbar(true);
   }, []);
@@ -175,16 +176,17 @@ const GraphPage = ({ setShowNavbar }) => {
 
     const simulation = d3
     .forceSimulation(nodes)
-    .force("charge", d3.forceManyBody().strength(-400))
-    .force("center", d3.forceCenter(width / 2, height / 2))
+    // .force("center", d3.forceCenter(width / 2, height / 2))
+    .force("charge", d3.forceManyBody().strength(-1000))
     .force("link", d3.forceLink(links)
       .id(d => d.id)
-      .distance(d => d.score ** 2 * 300)
+      .distance(d => d.score ** -2 * 1000)
     )
     .force("collide", d3.forceCollide()
       .radius(40)    // ~ circle radius + padding
       .strength(2)   // how firmly to push apart
     )
+    // .force("radial", d3.forceRadial(1000, width / 2, height / 2))
 
     // Links
     const linksGroup = d3.select(".links")
@@ -257,7 +259,7 @@ const GraphPage = ({ setShowNavbar }) => {
       .data((d) => [d]) 
       .join("text")
       .classed("line-text", true)
-      .text((d) => d.target.id + ": \"" + d.word + "\"")
+      .text((d) => d.target.id + ": " + d.word.slice(1,-1) )
       .attr("text-anchor", "middle")
       .attr("dominant-baseline", "middle")
       .attr("dy", -5)
@@ -280,7 +282,7 @@ const GraphPage = ({ setShowNavbar }) => {
       linksGroup
         .selectAll("text.line-text")
         .attr("transform", (d) => {
-          const distanceAway = 100; 
+          const distanceAway = 125; 
           const dx = d.target.x - d.source.x;
           const dy = d.target.y - d.source.y;
           const connectionLength = Math.sqrt(dx ** 2 + dy ** 2); // distance between source and target

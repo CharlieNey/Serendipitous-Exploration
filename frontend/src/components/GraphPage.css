@@ -185,7 +185,6 @@ text {
 /* CSS inspired from https://getcssscan.com/css-buttons-examples*/
 .buttons-on-graph {
   z-index: 1000;
-  background-color: #b7caf6;
   border: 2px solid #422800;
   border-radius: 30px;
   box-shadow: #422800 4px 4px 0 0;
@@ -200,7 +199,7 @@ text {
 }
 
 .buttons-on-graph:hover {
-  background-color: rgba(255, 237, 135, 0.723);
+  background-color: rgb(255, 242, 176);
 }
 
 .buttons-on-graph:active {
@@ -209,6 +208,7 @@ text {
 }
 
 .help-button {
+  background-color: #104559;
   position: absolute;
   top: 10px;
   left: 10px;
@@ -217,10 +217,13 @@ text {
 }
 
 .randomizer {
+  background-color: #b7caf6;
   position: absolute;
-  bottom: 10px;
-  right: 20px;
-  padding: 0 18px;
+  bottom: 5px;
+  right: 10px;
+  /* height: 35px;
+  width:  35px; */
+  /* padding: 0 18px; */
 }
 
 .metadata-section {
