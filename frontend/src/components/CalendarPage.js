@@ -5,6 +5,7 @@ import shopping_cart_logo from '../images/shopping_cart_logo.png';
 import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import html2canvas from 'html2canvas';
+import add_icon from '../images/add.png';
 
 function Calendar({ setShowNavbar }, props) {
   const {savedCourses, setSavedCourses} = useContext(SavedCoursesContext);
@@ -183,7 +184,7 @@ function Calendar({ setShowNavbar }, props) {
                       className="add-to-calendar-button"
                     >
                       <img 
-                        src={shopping_cart_logo}
+                        src={add_icon}
                         alt="Add to Calendar"
                         // if course is already saved, make the cart logo grey
                         className={savedCourses.some(saved => saved.section_listings === course.section_listings) ? "grey-cart-button" : ""}
