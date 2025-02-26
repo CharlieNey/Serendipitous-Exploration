@@ -13,3 +13,8 @@
 12. TO ACCESS PSQL IN THE SERVER: psql --username serendipity --host localhost --dbname serendipity (Password is on Meeting Notes)
 13. psql -U serendipity --host localhost -d serendipity < courseTable.sql
 
+**To update data**
+1. psql -U _your_username_ -d courses < courseTable.sql
+2. psql -U _your_username_ -d courses < graphTable.sql
+
+
