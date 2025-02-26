@@ -3,7 +3,7 @@ import * as d3 from "d3";
 import { Link } from 'react-router-dom';
 import "./GraphPage.css";
 import add_icon from '../images/add.png';
-import help_icon from '../images/quiz.png';
+import help_icon from '../images/help.png';
 import back_icon from '../images/back.png';
 import { SavedCoursesContext } from './SavedCoursesContext.js';
 import { SearchContext } from './SearchContext.js';
@@ -621,6 +621,12 @@ const GraphPage = ({ setShowNavbar }) => {
             )}
           />
 
+          <img 
+            src={back_icon} 
+            alt="Go back" 
+            className="buttons-on-graph back-button"
+            onClick={() => {getPreviousClicked()}} />
+
           <button 
             className="buttons-on-graph randomizer" 
             onClick={() => {
@@ -633,11 +639,6 @@ const GraphPage = ({ setShowNavbar }) => {
         </div>
         
         <div className="metadata-section">
-          <div className="icon">
-            <button onClick={() => {getPreviousClicked()}}>
-              <img src={back_icon} alt="Go back" />
-            </button>
-          </div>
           {metadata ? (
             <div className="metadata-content">
               <h4>
