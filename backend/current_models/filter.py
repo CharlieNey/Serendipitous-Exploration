@@ -18,11 +18,12 @@ def filter_courses(input_file, output_file):
             for row in reader:
                 # Check if "OCS" is not in the "Notes" column and "Descriptions" column is not empty
                 if "OCS" not in row['Notes'] and row['Description'].strip():
-                    for num in good_sections:
-                        if num  in row["Section Listings"]:
-                    # Write the row to the output CSV
-                            writer.writerow(row)
-                            count += 1
+                    if "GEOL 230-51" not in row['Section Listings']:
+                        for num in good_sections:
+                            if num  in row["Section Listings"]:
+                        # Write the row to the output CSV
+                                writer.writerow(row)
+                                count += 1
     print (count)
 # Specify the input and output file paths
 input_csv = 'data/course_data/classes.csv'

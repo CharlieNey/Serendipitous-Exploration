@@ -77,12 +77,101 @@ app.get('/api/department-recommendations', async (req, res) => {
 
 // defining the /api/:search api route - something is NOT working...
 router.get('/:search', async (req, res) => { 
+    const departmentMap = { // if lower search term LIKE departmentMap.value, then find class...
+        'AFST': 'African Studies',
+        'AMST': 'American Studies',
+        'ARBC': 'Arabic',
+        'ARCN': 'Archaelogy',
+        'ARTH': 'Art History',
+        'ASLN': 'Asian Languages and Literatures',
+        'ASST': 'Asian Studies',
+        'ASTR': 'Astronomy',
+        'BIOC': 'Biochemistry',
+        'BIOL': 'Biology',
+        'CHEM': 'Chemistry',
+        'CHIN': 'Chinese',
+        'CAMS': 'Cinema and Media Studies',
+        'CLAS': 'Classics',
+        'CGSC': 'Cognitive Science',
+        'CS': 'Computer Science',
+        'CCST': 'Cross-Culural Studies',
+        'DANC': 'Dance',
+        'DGAH': 'Digital Arts and Humanities',
+        'ECON': 'Economics',
+        'EDUC': 'Educational Studies',
+        'ENGL': 'English',
+        'ENTS': 'Environmental Studies',
+        'EUST': 'European Studies',
+        'FREN': 'French and Francophone Studies',
+        'GWSS': 'Gender, Women\'s and Sextuality Studies',
+        'GEOL': 'Geology',
+        'GERM': 'German',
+        'GRK': 'Greek',
+        'HEBR': 'Hebrew',
+        'HIST': 'History',
+        'IDSC': 'Interdisciplinary Studies',
+        'JAPN': 'Japanese',
+        'LATN': 'Latin',
+        'LTAM': 'Latin American Studies',
+        'LING': 'Linguistics',
+        'MATH': 'Mathetmatics',
+        'STAT': 'Statistics',
+        'MEST': 'Middle East Studies',
+        'MELA': 'Middle Eastern Languages',
+        'NEUR': 'Neuroscience',
+        'PHIL': 'Philosophy',
+        'PHYS': 'Physics',
+        'POSC': 'Political Science',
+        'PSYC': 'Psychology',
+        'RELF': 'Religion',
+        'RUSS': 'Russian',
+        'SOAN': 'Sociology and Anthropology',
+        'ARTS': 'Studio Arts',
+        'SPAN': 'Spanish',
+        'THEA': 'Theater and Dance',
+      };
+    
     try {
-        const search = req.params.search;
-        const query1 = "SELECT * FROM courses WHERE LOWER(SUBSTRING_INDEX(section_listings, '-', 0)) LIKE '%" + search + "%' OR LOWER(SUBSTRING_INDEX(section_listings, '-', 1)) LIKE '" + search + "%' OR LOWER(SUBSTRING_INDEX(section_listings, '-', 1)) LIKE '%" + search +"'";
-        const query2 = " OR LOWER(SUBSTRING_INDEX(section_listings, '-', 1)) LIKE '%" + search + "%' OR LOWER(SUBSTRING_INDEX(section_listings, '-', 1)) LIKE '" + search + "%' OR LOWER(SUBSTRING_INDEX(section_listings, '-', 1)) LIKE '%" + search +"'";
-        const query3 = " OR LOWER(description) LIKE '%" + search + "%' OR LOWER(description) LIKE '" + search + "%' OR LOWER(description) LIKE '%" + search +"'";
-        const result = await pool.query(query1 + query2 + query3);
+        //const search = req.params.search;
+        // // let searchTerms = [search];
+
+        // // for (const [acronym, fullName] of Object.entries(departmentMap)) {
+        // //     if (acronym.toLowerCase() === search) {
+        // //         searchTerms.push(fullName.toLowerCase());
+        // //     }
+        // //     if (fullName.toLowerCase() === search) {
+        // //         searchTerms.push(acronym.toLowerCase());
+        // //     }
+        // // }
+        // const departmentSearch = Object.keys(departmentMap).find(
+        //     key => departmentMap[key].toLowerCase().includes(search.toLowerCase())
+        // );
+
+        // const query1 = "SELECT * FROM courses WHERE LOWER(SUBSTRING_INDEX(section_listings, '-', 0)) LIKE '%" + search + "%' OR LOWER(SUBSTRING_INDEX(section_listings, '-', 1)) LIKE '" + search + "%' OR LOWER(SUBSTRING_INDEX(section_listings, '-', 1)) LIKE '%" + search +"'";
+        // const query2 = " OR LOWER(SUBSTRING_INDEX(section_listings, '-', 1)) LIKE '%" + search + "%' OR LOWER(SUBSTRING_INDEX(section_listings, '-', 1)) LIKE '" + search + "%' OR LOWER(SUBSTRING_INDEX(section_listings, '-', 1)) LIKE '%" + search +"'";
+        // const query3 = " OR LOWER(description) LIKE '%" + search + "%' OR LOWER(description) LIKE '" + search + "%' OR LOWER(description) LIKE '%" + search +"'";
+        // const query4 = departmentSearch ? ` OR LOWER(SUBSTRING_INDEX(section_listings, '-', 0)) LIKE '${departmentSearch}%'`: "";
+        // const result = await pool.query(query1 + query2 + query3 + query4);
+
+            const search = req.params.search.toLowerCase();
+            const searchTerms = [];
+
+            for (const [acronym, fullName] of Object.entries(departmentMap)) {
+                if (acronym.toLowerCase().includes(search)) {
+                    searchTerms.push(`%${acronym.toLowerCase()}%`);
+                }
+                if (fullName.toLowerCase().includes(search)) {
+                    searchTerms.push(`%${fullName.toLowerCase()}%`);
+                }
+            }
+    
+            const query = `
+                SELECT * FROM courses 
+                WHERE 
+                    LOWER(section_listings) LIKE ANY($1) OR
+                    LOWER(description) LIKE ANY($1)`;
+
+            const result = await pool.query(query, [searchTerms]);
 
         res.json(result.rows);
     } catch (err) {

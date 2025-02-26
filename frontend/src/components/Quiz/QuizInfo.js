@@ -83,6 +83,9 @@ export const QuizInfo = () => {
   }
 
   function isMorning(course) {
+    if (course.day_start_end === null) {
+      return false;
+    }
     var hour_code = course.day_start_end.split('|')[1].substring(1, course.day_start_end.split('|')[1].indexOf(":"))
     var midday = course.day_start_end.split('|')[1].substring((course.day_start_end.split('|')[1].indexOf(":") + 3) + 1, (course.day_start_end.split('|')[1].indexOf(":") + 5))
 
@@ -90,6 +93,9 @@ export const QuizInfo = () => {
   }
 
   function isAfternoon(course) {
+    if (course.day_start_end === null) {
+      return false;
+    }
     var hour_code = course.day_start_end.split('|')[1].substring(1, course.day_start_end.split('|')[1].indexOf(":"))
     var midday = course.day_start_end.split('|')[1].substring((course.day_start_end.split('|')[1].indexOf(":") + 3) + 1, (course.day_start_end.split('|')[1].indexOf(":") + 5))
     
@@ -97,6 +103,9 @@ export const QuizInfo = () => {
   }
 
   function isLateAfternoon(course) {
+    if (course.day_start_end === null) {
+      return false;
+    }
     var hour_code = course.day_start_end.split('|')[1].substring(1, course.day_start_end.split('|')[1].indexOf(":"))
     var midday = course.day_start_end.split('|')[1].substring((course.day_start_end.split('|')[1].indexOf(":") + 3) + 1, (course.day_start_end.split('|')[1].indexOf(":") + 5))
     return (((hour_code === "2") || (hour_code === "3") || (hour_code === "4") || (hour_code === "5")) && (midday === "P"))
@@ -134,18 +143,12 @@ export const QuizInfo = () => {
   }
 
   const Quiz_2 = {
-      title: "Just testing",
+      title: "Chemistry Courses",
       // description: "Quiz 2 description",
         questions: [
           {
-            question: 'DISTINCT QUESTIONAIRRE',
-            choices: ['STEM', 'HUMANITIES', 'ART'],
-            type: 'DropDown',
-            filters: [isStem, isHum, isArt] 
-          },
-          {
-            question: 'Choose a Quest Difficulty',
-            choices: ['CHEM', 'NOT CHEM'],
+            question: 'Do you want to take a chemistry class?',
+            choices: ['Yes', 'No'],
             type: 'MCQs',
             filters: [isChem, isNotChem]
           },

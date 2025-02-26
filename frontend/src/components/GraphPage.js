@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import "./GraphPage.css";
 import add_icon from '../images/add.png';
 import help_icon from '../images/quiz.png';
+import back_icon from '../images/back.png';
 import { SavedCoursesContext } from './SavedCoursesContext.js';
 import { SearchContext } from './SearchContext.js';
 import { GraphContext } from './GraphContext.js';
@@ -13,12 +14,13 @@ const GraphPage = ({ setShowNavbar }) => {
   const [containerDimensions, setContainerDimensions] = useState({ width: 0, height: 0 });
   const { savedCourses, setSavedCourses } = useContext(SavedCoursesContext);
   const { allCourses, courseList, searchTerm, isLoading, setSearchTerm, fetchCourses } = useContext(SearchContext);
-  const { selectedNode, nodes, links, connectedNodes, minval, setSelectedNode } = useContext(GraphContext);
-  const [nodeSelections, setNodeSelections] = useState(["", ""]);
+  const { selectedNode, nodes, links, connectedNodes, minval, clickedQueue, setSelectedNode, setClickedQueue } = useContext(GraphContext);
+  const [ nodeSelections, setNodeSelections] = useState(["", ""]);
   const zoomRef = useRef(null);
   const [metadata, setMetadata] = useState(null);
   const [savedAlertShown, setSavedAlertShown] = useState(false);
   const [searchAlertShown, setSearchAlertShown] = useState(false);
+  const [hoveredLink, setHoveredLink] = useState(null);
   const [nodeAlertShown, setNodeAlertShown] = useState(false);
 
 
@@ -89,8 +91,20 @@ const GraphPage = ({ setShowNavbar }) => {
       .style("opacity", (d) => getTextOpacity(d))
   }
 
+  async function getPreviousClicked() {
+    if (clickedQueue.length !== 0) {
+      setClickedQueue(prev => prev.slice(0, prev.length - 1))
+      const nextCourse = await clickedQueue[clickedQueue.length - 1]
+      setSelectedNode([-3, nextCourse])
+    }
+  }
+
   function doubleClickNode() {
     const svg = d3.select("#simulation-svg");
+
+    if(nodeSelections[0] !== "") {
+      setClickedQueue(prev => prev.concat([nodeSelections[0]]))
+    }
 
     setNodeSelections(["", ""]);
     setMetadata(null); 
@@ -100,12 +114,16 @@ const GraphPage = ({ setShowNavbar }) => {
 
     svg.transition()
       .duration(750)
-      .call(zoomRef.current.transform, d3.zoomIdentity.translate(width / 2, height / 2.5).scale(initialView)); 
+      .call(zoomRef.current.transform, d3.zoomIdentity.translate(width / 2, height / 2.5).scale(initialView));
   }
 
-  function clickNewNode(node) {
+  function clickNewNode(node, isBack = 0) {
     const svg = d3.select("#simulation-svg");
     const { width, height } = containerDimensions;
+
+    if(isBack !== 1 && nodeSelections[0] !== "") {
+      setClickedQueue(prev => prev.concat([nodeSelections[0]]))
+    }
 
     setNodeSelections([node.id, node.id]);
     setMetadata(allCourses.find(c => c.section_listings.split('-')[0] === node.id)); 
@@ -121,7 +139,7 @@ const GraphPage = ({ setShowNavbar }) => {
         .duration(500)
         .call(zoomRef.current.transform, transform);
     }
-
+    
     if (!nodeAlertShown) {
       setTimeout(() => {
         alert(
@@ -134,9 +152,9 @@ const GraphPage = ({ setShowNavbar }) => {
         setNodeAlertShown(true);
       }, 650); // 650ms delay
     }
-    
   }
 
+  // if it's of node selected's children, 
   useEffect(() => {
     setShowNavbar(true);
   }, []);
@@ -190,16 +208,17 @@ const GraphPage = ({ setShowNavbar }) => {
 
     const simulation = d3
     .forceSimulation(nodes)
-    .force("charge", d3.forceManyBody().strength(-400))
-    .force("center", d3.forceCenter(width / 2, height / 2))
+    // .force("center", d3.forceCenter(width / 2, height / 2))
+    .force("charge", d3.forceManyBody().strength(-1000))
     .force("link", d3.forceLink(links)
       .id(d => d.id)
-      .distance(d => d.score ** 2 * 300)
+      .distance(d => d.score ** -2 * 1000)
     )
     .force("collide", d3.forceCollide()
       .radius(40)    // ~ circle radius + padding
       .strength(2)   // how firmly to push apart
     )
+    // .force("radial", d3.forceRadial(1000, width / 2, height / 2))
 
     // Links
     const linksGroup = d3.select(".links")
@@ -269,19 +288,25 @@ const GraphPage = ({ setShowNavbar }) => {
 
     linksGroup
       .selectAll("text.line-text")
-      .data((d) => [d]) 
+      .data((d) => [d])
       .join("text")
       .classed("line-text", true)
-      .text((d) => d.target.id + ": \"" + d.word + "\"")
+      .text((d) => d.target.id + ": " + formatHighlightWords(d.word))
       .attr("text-anchor", "middle")
       .attr("dominant-baseline", "middle")
       .attr("dy", -5)
       .attr("cursor", "pointer")
       .on("click", function (e, d) {
         setSelectedNode([-2, d]);
+      })
+      .on("mouseover", function (e, d) {
+        setHoveredLink(d);
+      })
+      .on("mouseout", function () {
+        setHoveredLink(null);
       });
     
-    
+  
     refreshGraph();
 
     simulation.on("tick", () => {
@@ -295,7 +320,7 @@ const GraphPage = ({ setShowNavbar }) => {
       linksGroup
         .selectAll("text.line-text")
         .attr("transform", (d) => {
-          const distanceAway = 100; 
+          const distanceAway = 150; 
           const dx = d.target.x - d.source.x;
           const dy = d.target.y - d.source.y;
           const connectionLength = Math.sqrt(dx ** 2 + dy ** 2); // distance between source and target
@@ -331,6 +356,7 @@ const GraphPage = ({ setShowNavbar }) => {
   }, [links, nodes, connectedNodes, containerDimensions]);
 
   // Once we have a "clicked" event => zoom in or out
+  // OVERHERE
   useEffect(() => {
     if (selectedNode[0] === -1) {
       const node = nodes.find(n => n.id === selectedNode[1]);
@@ -351,7 +377,11 @@ const GraphPage = ({ setShowNavbar }) => {
         if (!sourceNode) return;
         clickNewNode(sourceNode);
       }
-    } else if (nodeSelections[0] === "") {
+    } else if(selectedNode[0] === -3) {
+      const node = nodes.find(n => n.id === selectedNode[1]);
+      if (!node) return;
+      clickNewNode(node, 1);
+    }else if (nodeSelections[0] === "") {
       setNodeSelections(["", selectedNode]); // For hover-based selection if needed.
     }
   }, [selectedNode]);
@@ -430,6 +460,49 @@ const GraphPage = ({ setShowNavbar }) => {
   
     return formattedLARs;
   }
+  function formatHighlightWords(wordString) {
+    if (!wordString) return "";
+    let trimmed = wordString.trim();
+    const words = trimmed.split(/\s+/);
+    return words.map(w => `"${w}"`).join(", ");
+  }
+
+  function parseLinkWords(rawWordString) {
+    if (!rawWordString) return [];
+    const cleaned = rawWordString.replace(/"/g, "");
+    return cleaned.split(/\s+/).filter(Boolean);
+  }  
+
+  function getHighlightedDescription() {
+    if (!metadata) return "";
+    if (!hoveredLink) return metadata.description;
+    
+    const currentCourseId = metadata.section_listings.split('-')[0];
+    const sourceId = hoveredLink.source.id;
+    const targetId = hoveredLink.target.id;
+  
+    
+    if (currentCourseId !== sourceId && currentCourseId !== targetId) {
+      return metadata.description;
+    }
+  
+   
+    const wordsArray = parseLinkWords(hoveredLink.word);
+    if (wordsArray.length === 0) return metadata.description;
+
+    let highlighted = metadata.description;
+    wordsArray.forEach((word) => {
+      const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const regex = new RegExp(`\\b(${escaped})\\b`, "gi");
+      highlighted = highlighted.replace(
+        regex,
+        `<span class="highlight">$1</span>`
+      );
+    });
+  
+    return highlighted;
+  }
+  
 
   return (
     <div className="GraphPage">
@@ -560,6 +633,11 @@ const GraphPage = ({ setShowNavbar }) => {
         </div>
         
         <div className="metadata-section">
+          <div className="icon">
+            <button onClick={() => {getPreviousClicked()}}>
+              <img src={back_icon} alt="Go back" />
+            </button>
+          </div>
           {metadata ? (
             <div className="metadata-content">
               <h4>
@@ -593,9 +671,14 @@ const GraphPage = ({ setShowNavbar }) => {
                   className={savedCourses.some(saved => saved.section_listings === metadata.section_listings) ? "grey-cart-button" : ""}
                   />
                 </button>
-                {metadata.section_listings.split('-')[0]}: {metadata.section_listings.split(' - ')[1]}
+                <p>{metadata.section_listings.split('-')[0]}: {metadata.section_listings.split(' - ')[1]}</p>
               </h4> 
-              <p><strong>Description:</strong> {metadata.description}</p>
+              <p><strong>Description:</strong></p>
+              <p><div
+                dangerouslySetInnerHTML={{
+                  __html: getHighlightedDescription(),
+                }}
+              /></p>
               <p><strong>Liberal Arts Requirements:</strong> {formatLiberalArtsRequirements(metadata.course_tags)}</p>
               {formatMeetingTimes(metadata.day_start_end).meetingDay && (
                 <>

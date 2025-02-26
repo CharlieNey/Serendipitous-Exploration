@@ -10,6 +10,7 @@ import quiz_icon from '../images/quiz.png';
 import calendar_icon from '../images/calendar.png';
 import about_icon from '../images/about.png';
 import email_icon from '../images/email.png';
+import feedback_icon from '../images/feedback.png';
 
 const Navbar = () => {
     return (
@@ -63,9 +64,13 @@ const Navbar = () => {
                             </Link>
                         </div>
                     </li>
-                    <Link to="https://docs.google.com/forms/d/e/1FAIpQLSduMonrUDplipblEWFjew5RhLfaCO3CzCmzmtxk7ynqgQn1yw/viewform?usp=sharing">
-                        <li>Feedback</li>
-                    </Link>
+                    <li>
+                        <div className="icon">
+                            <Link to="https://docs.google.com/forms/d/e/1FAIpQLSduMonrUDplipblEWFjew5RhLfaCO3CzCmzmtxk7ynqgQn1yw/viewform?usp=sharing">
+                                <img src={feedback_icon} alt="Go to Feedback" />
+                            </Link>
+                        </div>
+                    </li>
                 </ul>
             </div>
             <div className="navbar-right"></div>
