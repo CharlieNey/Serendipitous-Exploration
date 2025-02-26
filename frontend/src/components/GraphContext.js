@@ -9,6 +9,7 @@ export const GraphProvider = ({ children }) => {
     const[connectedNodes, setConnectedNodes] = useState([]);
     const [minval, setMinval] = useState(0);
     const [departmentRecommendations, setDepartmentRecommendations] = useState([])
+    const [clickedQueue, setClickedQueue] = useState([])
 
     const fetchDepartmentRecommendations = async () => {
         try {
@@ -108,9 +109,11 @@ export const GraphProvider = ({ children }) => {
                 connectedNodes,
                 minval,
                 departmentRecommendations,
+                clickedQueue,
                 setSelectedNode,
                 fetchNodes,
                 fetchNodesConnections,
+                setClickedQueue,
             }}
         >
             {children}

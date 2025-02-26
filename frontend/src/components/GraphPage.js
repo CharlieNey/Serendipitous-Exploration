@@ -13,8 +13,8 @@ const GraphPage = ({ setShowNavbar }) => {
   const [containerDimensions, setContainerDimensions] = useState({ width: 0, height: 0 });
   const { savedCourses, setSavedCourses } = useContext(SavedCoursesContext);
   const { allCourses, courseList, searchTerm, isLoading, setSearchTerm, fetchCourses } = useContext(SearchContext);
-  const { selectedNode, nodes, links, connectedNodes, minval, setSelectedNode } = useContext(GraphContext);
-  const [nodeSelections, setNodeSelections] = useState(["", ""]);
+  const { selectedNode, nodes, links, connectedNodes, minval, clickedQueue, setSelectedNode, setClickedQueue } = useContext(GraphContext);
+  const [ nodeSelections, setNodeSelections] = useState(["", ""]);
   const zoomRef = useRef(null);
   const [metadata, setMetadata] = useState(null);
   const [savedAlertShown, setSavedAlertShown] = useState(false);
@@ -89,8 +89,20 @@ const GraphPage = ({ setShowNavbar }) => {
       .style("opacity", (d) => getTextOpacity(d))
   }
 
+  async function getPreviousClicked() {
+    if (clickedQueue.length !== 0) {
+      setClickedQueue(prev => prev.slice(0, prev.length - 1))
+      const nextCourse = await clickedQueue[clickedQueue.length - 1]
+      setSelectedNode([-3, nextCourse])
+    }
+  }
+
   function doubleClickNode() {
     const svg = d3.select("#simulation-svg");
+
+    if(nodeSelections[0] !== "") {
+      setClickedQueue(prev => prev.concat([nodeSelections[0]]))
+    }
 
     setNodeSelections(["", ""]);
     setMetadata(null); 
@@ -100,12 +112,16 @@ const GraphPage = ({ setShowNavbar }) => {
 
     svg.transition()
       .duration(750)
-      .call(zoomRef.current.transform, d3.zoomIdentity.translate(width / 2, height / 2.5).scale(initialView)); 
+      .call(zoomRef.current.transform, d3.zoomIdentity.translate(width / 2, height / 2.5).scale(initialView));
   }
 
-  function clickNewNode(node) {
+  function clickNewNode(node, isBack = 0) {
     const svg = d3.select("#simulation-svg");
     const { width, height } = containerDimensions;
+
+    if(isBack !== 1 && nodeSelections[0] !== "") {
+      setClickedQueue(prev => prev.concat([nodeSelections[0]]))
+    }
 
     setNodeSelections([node.id, node.id]);
     setMetadata(allCourses.find(c => c.section_listings.split('-')[0] === node.id)); 
@@ -325,6 +341,7 @@ const GraphPage = ({ setShowNavbar }) => {
   }, [links, nodes, connectedNodes, containerDimensions]);
 
   // Once we have a "clicked" event => zoom in or out
+  // OVERHERE
   useEffect(() => {
     if (selectedNode[0] === -1) {
       const node = nodes.find(n => n.id === selectedNode[1]);
@@ -345,7 +362,11 @@ const GraphPage = ({ setShowNavbar }) => {
         if (!sourceNode) return;
         clickNewNode(sourceNode);
       }
-    } else if (nodeSelections[0] === "") {
+    } else if(selectedNode[0] === -3) {
+      const node = nodes.find(n => n.id === selectedNode[1]);
+      if (!node) return;
+      clickNewNode(node, 1);
+    }else if (nodeSelections[0] === "") {
       setNodeSelections(["", selectedNode]); // For hover-based selection if needed.
     }
   }, [selectedNode]);
@@ -597,6 +618,9 @@ const GraphPage = ({ setShowNavbar }) => {
         </div>
         
         <div className="metadata-section">
+          <button onClick={() => {getPreviousClicked()}}>
+            Back
+          </button>
           {metadata ? (
             <div className="metadata-content">
               <h4>
