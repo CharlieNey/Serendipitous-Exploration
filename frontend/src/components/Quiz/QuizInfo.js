@@ -143,18 +143,12 @@ export const QuizInfo = () => {
   }
 
   const Quiz_2 = {
-      title: "Just testing",
+      title: "Chemistry Courses",
       // description: "Quiz 2 description",
         questions: [
           {
-            question: 'DISTINCT QUESTIONAIRRE',
-            choices: ['STEM', 'HUMANITIES', 'ART'],
-            type: 'DropDown',
-            filters: [isStem, isHum, isArt] 
-          },
-          {
-            question: 'Choose a Quest Difficulty',
-            choices: ['CHEM', 'NOT CHEM'],
+            question: 'Do you want to take a chemistry class?',
+            choices: ['Yes', 'No'],
             type: 'MCQs',
             filters: [isChem, isNotChem]
           },

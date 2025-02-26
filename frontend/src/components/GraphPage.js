@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import "./GraphPage.css";
 import add_icon from '../images/add.png';
 import help_icon from '../images/quiz.png';
+import back_icon from '../images/back.png';
 import { SavedCoursesContext } from './SavedCoursesContext.js';
 import { SearchContext } from './SearchContext.js';
 import { GraphContext } from './GraphContext.js';
@@ -618,9 +619,11 @@ const GraphPage = ({ setShowNavbar }) => {
         </div>
         
         <div className="metadata-section">
-          <button onClick={() => {getPreviousClicked()}}>
-            Back
-          </button>
+          <div className="icon">
+            <button onClick={() => {getPreviousClicked()}}>
+              <img src={back_icon} alt="Go back" />
+            </button>
+          </div>
           {metadata ? (
             <div className="metadata-content">
               <h4>
