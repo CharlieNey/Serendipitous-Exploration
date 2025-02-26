@@ -216,6 +216,15 @@ text {
   width: 35px;
 }
 
+.back-button {
+  background-color: #104559;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  height: 35px;
+  width: 35px;
+}
+
 .randomizer {
   background-color: #b7caf6;
   position: absolute;
