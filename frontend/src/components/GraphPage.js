@@ -306,7 +306,7 @@ const GraphPage = ({ setShowNavbar }) => {
       linksGroup
         .selectAll("text.line-text")
         .attr("transform", (d) => {
-          const distanceAway = 125; 
+          const distanceAway = 150; 
           const dx = d.target.x - d.source.x;
           const dy = d.target.y - d.source.y;
           const connectionLength = Math.sqrt(dx ** 2 + dy ** 2); // distance between source and target
