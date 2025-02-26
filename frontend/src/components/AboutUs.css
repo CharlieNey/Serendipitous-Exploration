@@ -6,7 +6,7 @@ body {
     padding: 0;
     background-color: #f9f9f9;
     color: #333;
-    display: flex;
+    /* display: flex; DO NOT MAKE THIS FLEX it will break everything :D*/
 }
 
 h3 {
