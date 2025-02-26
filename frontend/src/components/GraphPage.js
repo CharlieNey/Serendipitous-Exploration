@@ -21,6 +21,7 @@ const GraphPage = ({ setShowNavbar }) => {
   const [savedAlertShown, setSavedAlertShown] = useState(false);
   const [searchAlertShown, setSearchAlertShown] = useState(false);
   const [hoveredLink, setHoveredLink] = useState(null);
+  const [nodeAlertShown, setNodeAlertShown] = useState(false);
 
 
   useEffect(() => {
@@ -137,6 +138,19 @@ const GraphPage = ({ setShowNavbar }) => {
       svg.transition()
         .duration(500)
         .call(zoomRef.current.transform, transform);
+    }
+    
+    if (!nodeAlertShown) {
+      setTimeout(() => {
+        alert(
+          `You just clicked on a node!\n\n` +
+          `What does it mean?\n` +
+          `• Related courses are connected by a line.\n` +
+          `• Word(s) on the line explain why they are related.\n` +
+          `• What does "related" mean? Read our info page to learn more!\n\n`
+        );
+        setNodeAlertShown(true);
+      }, 650); // 650ms delay
     }
   }
 
