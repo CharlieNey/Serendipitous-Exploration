@@ -13,6 +13,11 @@ h3 {
     font-family: 'Sigmar';
     font-size: 22px;
     margin: 20px 0;
+    text-align: left;
+    color: #8ba3fb;
+    font-size: 30px;
+    text-shadow:-1px 1px 0 rgb(75, 102, 221),
+    0px 1px 1px rgba(38, 34, 34, 0.4);
 }
 
 .team {
@@ -21,14 +26,23 @@ h3 {
     font-size: 50px;
     text-shadow:-1px 1px 0 #ddd,
     -2px 2px 0 #c8c8c8,
+    0px 1px 1px rgba(38, 34, 34, 0.4);
+}
+.the-model{
+    color: #5f75c3;
+    text-shadow:-1px 1px 0 rgb(75, 102, 221),
     0px 1px 1px rgba(38, 34, 34, 0.4)
     ;
 }
-.about-header{
-    text-align: left;
-    color: #b4c4ff;
-    font-size: 30px;
-    text-shadow:-1px 1px 0 rgb(91, 109, 187),
+.our-web-app{
+    color: #4f63ab;
+    text-shadow:-1px 1px 0 rgb(75, 102, 221),
+    0px 1px 1px rgba(38, 34, 34, 0.4)
+    ;
+}
+.languages-libraries{
+    color: rgb(41, 56, 108);
+    text-shadow:-1px 1px 0 rgb(75, 102, 221),
     0px 1px 1px rgba(38, 34, 34, 0.4)
     ;
 }
