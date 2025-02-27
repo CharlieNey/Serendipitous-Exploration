@@ -65,7 +65,7 @@ const About = ({ setShowNavbar }) => {
                 </div>
                 <div class="team-member">
                     <h4>Willow Gu, '25</h4>
-                    <p> Computer Science and Cognitive Science Major</p>
+                    <p> Computer Science and Cognitive Science Major, Statistics Minor</p>
                     <p>Chengdu, China</p>
                 </div>
                 <div class="team-member">
@@ -80,12 +80,12 @@ const About = ({ setShowNavbar }) => {
                     </div>
                 <div class="team-member">
                     <h4>Charlie Ney, '25</h4>
-                    <p> Computer Science Major</p>
+                    <p> Computer Science Major, Russian Minor</p>
                     <p>Baltimore, MD</p>
                 </div>
                 <div class="team-member">
                     <h4>Kai Weiner, '25</h4>
-                    <p> Computer Science Major</p>
+                    <p> Computer Science Major, Math Minor</p>
                     <p>Albany, CA</p>
                 </div>
             </div>
