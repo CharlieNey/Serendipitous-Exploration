@@ -143,11 +143,11 @@ const GraphPage = ({ setShowNavbar }) => {
     if (!nodeAlertShown) {
       setTimeout(() => {
         alert(
-          `You just clicked on a node!\n\n` +
-          `What does it mean?\n` +
-          `• Related courses are connected by a line.\n` +
-          `• Word(s) on the line explain why they are related.\n` +
-          `• What does "related" mean? Read our info page to learn more!\n\n`
+          `You just clicked on a course!\n\n` +
+          `What is being shown here?\n` +
+          `• Similar courses are connected by a line.\n` +
+          `• Word(s) on the line explain why they are similar.\n` +
+          `• What does "similar" mean? Read our info page to learn more!\n\n`
         );
         setNodeAlertShown(true);
       }, 650); // 650ms delay
@@ -519,7 +519,7 @@ const GraphPage = ({ setShowNavbar }) => {
               onFocus={() => {
                 if (!searchAlertShown) {
                   alert(
-                    `What can I search for?\n` +
+                    `What can you search for?\n` +
                     `This website currently only shows Spring 2025 courses that are:\n` +
                     `• 6-credits\n` +
                     `• Lab courses\n` +
@@ -569,7 +569,7 @@ const GraphPage = ({ setShowNavbar }) => {
                           }
                         });
                         if (!savedAlertShown) {
-                          alert("You just saved a course!\nSee it in your shopping cart.");
+                          alert("You just saved a course!\nSee all your saved courses in your shopping cart.");
                           setSavedAlertShown(true);
                         }
                       }}
@@ -604,10 +604,10 @@ const GraphPage = ({ setShowNavbar }) => {
             src={help_icon}
             className="buttons-on-graph help-button"
             onClick={() => alert(
-              `What am I looking at?\n` +
-              `• Related courses are connected by a line.\n` +
-              `• Word(s) on the line explain why they are related.\n` +
-              `• What does "related" mean? Read our info page to learn more!\n\n` +
+              `What is being shown here?\n` +
+              `• Similar courses are connected by a line.\n` +
+              `• Word(s) on the line explain why they are similar.\n` +
+              `• What does "similar" mean? Read our info page to learn more!\n\n` +
               `What courses are included?\n` +
               `Our website currently only shows Spring 2025 courses that are:\n` +
               `• 6-credits\n` +
