@@ -1,39 +1,74 @@
 @import url('https://fonts.googleapis.com/css2?family=Anek+Malayalam:wght@100;200;300;400;500;600;700;800&display=swap');
 
-.quiz-body {
-  display: flex;
-  justify-content: center; 
-  align-items: center;         
+body {
   margin: 0;
   padding: 0;
+  font-family: 'Inter', sans-serif;
+  background: #fafafa;
+}
+
+.quiz-body {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 2rem 1rem;
   color: #11052c;
 }
 
-
 .quiz-container {
-  position: relative;
-  max-width: 500px;
-  min-width: 250px;
   background: #ffffff;
-  border-radius: 4px;
-  margin-top: 100px;
-  padding: 30px 60px;
+  border-radius: 8px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.07); 
 }
 
-.quiz-container .active-question-no {
-  font-size: 32px;
-  font-weight: 500;
-  color: #800080;
+.quiz-content {
+  text-align: center;
 }
 
-.quiz-container .total-question {
-  font-size: 16px;
-  font-weight: 500;
-  color: #e0dee3;
+.quiz-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+  color: #4a148c;
 }
+
+.quiz-description {
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+  color: #5e5e5e;
+}
+
+.question-info {
+  margin-bottom: 1.25rem;
+}
+
+.active-question-no {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #6a1b9a;
+}
+
+.total-question {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #b39ddb;
+  margin-left: 2px;
+}
+
+.question-text {
+  font-size: 1.125rem;
+  font-weight: 500;
+  margin: 1rem 0 1.5rem;
+  color: #333333;
+}
+
 
 .quiz-container h2 {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 500;
   margin: 0;
 }
@@ -120,4 +155,31 @@
   display: flex;
   justify-content: center;
   margin-top: 1rem;
+}
+
+.dropdown-container {
+  margin: 1rem 0;
+  display: inline-block;
+  margin-bottom: 1.5rem;
+}
+
+.question-dropdown {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.question-dropdown:focus {
+  border-color: #6a1b9a;
+}
+
+.add-to-calendar-button {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
 }
