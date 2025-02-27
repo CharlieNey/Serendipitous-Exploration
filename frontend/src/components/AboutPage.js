@@ -59,28 +59,34 @@ const About = ({ setShowNavbar }) => {
             <h3 class="team">meet the team!</h3>
             <div class="team-grid">
                 <div class="team-member">
-                    <h4>Zoey La, '25</h4>
-                    <p>Computer Science Major, Math Minor</p>
-                </div>
-                <div class="team-member">
-                    <h4>Markus Gunadi, '25</h4>
-                    <p> Computer Science and Cinema and Media Studies Major</p>
-                </div>
-                <div class="team-member">
-                    <h4>Kai Weiner, '25</h4>
+                    <h4>Cathy Duan, '25</h4>
                     <p> Computer Science Major</p>
+                    <p> Doylestown, PA</p>
                 </div>
                 <div class="team-member">
                     <h4>Willow Gu, '25</h4>
                     <p> Computer Science and Cognitive Science Major</p>
+                    <p>Chengdu, China</p>
                 </div>
                 <div class="team-member">
-                    <h4>Cathy Duan, '25</h4>
-                    <p> Computer Science Major</p>
+                    <h4>Markus Gunadi, '25</h4>
+                    <p> Computer Science and Cinema and Media Studies Major</p>
+                    <p>Palo Alto, CA</p>
                 </div>
+                <div class="team-member">
+                    <h4>Zoey La, '25</h4>
+                        <p>Computer Science Major, Math Minor</p>
+                        <p>Ho Chi Minh City, Vietnam</p>
+                    </div>
                 <div class="team-member">
                     <h4>Charlie Ney, '25</h4>
                     <p> Computer Science Major</p>
+                    <p>Baltimore, MD</p>
+                </div>
+                <div class="team-member">
+                    <h4>Kai Weiner, '25</h4>
+                    <p> Computer Science Major</p>
+                    <p>Albany, CA</p>
                 </div>
             </div>
             <h3 class="team">FAQ</h3>

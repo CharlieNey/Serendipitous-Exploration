@@ -27,7 +27,7 @@ def preprocess_text(text):
 
     words = word_tokenize(text)
     # remove stopwords
-    common_word_data = "../data/course_data/stop_words_handpicked.csv"
+    common_word_data = "data/course_data/stop_words_handpicked.csv"
     try:
         stopwords_df = pd.read_csv(common_word_data)
         custom_stopwords = set(stopwords_df["Word"].dropna().str.lower().tolist())
@@ -132,7 +132,7 @@ def find_highlights(desc1, desc2, model):
 
     return top_words
 
-df = pd.read_csv('../data/graph_data/graph_connections.csv')
+df = pd.read_csv('data/graph_data/graph_connections.csv')
 
 # list to store the most similar words
 most_similar_words = []
@@ -163,5 +163,5 @@ df['highlight_words'] = highlight_words
 
 # df['prediction'] = output_words
 
-df.to_csv('../data/graph_data/current_graph_data.csv', index=False)
+df.to_csv('data/graph_data/current_graph_data.csv', index=False)
 print("success!")
