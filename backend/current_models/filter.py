@@ -3,6 +3,7 @@ import csv
 def filter_courses(input_file, output_file):
     count = 0
     good_sections = ["-00", "-01", "-51", "-52"]
+    bad_classes = ["GEOL 230-51"]
     # Open the input CSV file for reading
     with open(input_file, mode='r', newline='', encoding='utf-8') as infile:
         reader = csv.DictReader(infile)
@@ -18,7 +19,7 @@ def filter_courses(input_file, output_file):
             for row in reader:
                 # Check if "OCS" is not in the "Notes" column and "Descriptions" column is not empty
                 if "OCS" not in row['Notes'] and row['Description'].strip():
-                    if "GEOL 230-51" not in row['Section Listings']:
+                    if ("GEOL 230-51" not in row['Section Listings']) and ("EDUC 395" not in row['Section Listings']) and ("ARTS 298" not in row['Section Listings']) and ("ENGL 395" not in row['Section Listings']) and ("GWSS 398" not in row['Section Listings']):
                         for num in good_sections:
                             if num  in row["Section Listings"]:
                         # Write the row to the output CSV
