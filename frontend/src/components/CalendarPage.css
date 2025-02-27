@@ -31,6 +31,8 @@
     position: fixed;
     top: 20px;
     right: 20px;
+    background-color: rgb(86, 89, 119);
+
 }
 
 .icon img {
@@ -88,6 +90,8 @@
     align-items: center;   
     float: right;
     margin-left: 10px;
+    background-color: rgb(86, 89, 119)
+
 }
 
 .add-to-calendar-button img {

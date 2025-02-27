@@ -1,3 +1,14 @@
+'''
+This script trains a Doc2Vec model on course descriptions to compute similarity scores between courses.  
+It preprocesses text by removing stop words (both NLTK and custom ones from a CSV file),  
+tokenizes descriptions, and trains a Doc2Vec model.  
+After training, it computes a similarity matrix between course descriptions  
+and generates two output CSV files:  
+ - 'doc2vec_output_sorted.csv': all similarity scores sorted by course  
+ - 'doc2vec_output_top_10.csv': the top 10 most similar courses for each course  
+The trained Doc2Vec model is saved for future use.  
+'''
+
 import pandas as pd
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 from nltk.tokenize import word_tokenize
@@ -7,19 +18,13 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 
-# Ensure stopwords are downloaded
+# set up stopwods
 nltk.download('stopwords')
 nltk.download('punkt')
-
-# Load NLTK stop words
 nltk_stop_words = set(stopwords.words('english'))
-
-# Load custom stop words from a CSV file
-custom_stop_words_path = 'data/course_data/common_words.csv'  # Update path as needed
+custom_stop_words_path = 'data/course_data/common_words.csv'  
 custom_stop_words_df = pd.read_csv(custom_stop_words_path)
 custom_stop_words = set(custom_stop_words_df['Word'].dropna().str.lower())
-
-# Combine all stop words
 all_stop_words = nltk_stop_words.union(custom_stop_words)
 
 # Load course data

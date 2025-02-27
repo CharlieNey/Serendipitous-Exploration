@@ -1,35 +1,45 @@
+"""
+This script filters course data from a CSV file based on specific criteria.  
+It removes courses that contain "OCS" in the "Notes" column or have an empty "Description" field.  
+Only courses with section numbers in the "good_sections" list are retained,  
+while certain courses listed in "bad_classes" are excluded.  
+The filtered data is saved to a new CSV file, and the total count of retained courses is printed.  
+"""
 import csv
 
 def filter_courses(input_file, output_file):
-    count = 0
-    good_sections = ["-00", "-01", "-51", "-52"]
-    bad_classes = ["GEOL 230-51"]
-    # Open the input CSV file for reading
+    good_sections = {"-00", "-01", "-51", "-52"}  # allowed section suffixes
+    excluded_courses = {"GEOL 230-51", "EDUC 395", "ARTS 298", "ENGL 395", "GWSS 398"}  # courses to exclude
+    count = 0  # Counter for retained courses
+
     with open(input_file, mode='r', newline='', encoding='utf-8') as infile:
         reader = csv.DictReader(infile)
-        
-        # Open the output CSV file for writing
         with open(output_file, mode='w', newline='', encoding='utf-8') as outfile:
             writer = csv.DictWriter(outfile, fieldnames=reader.fieldnames)
-            
-            # Write the header to the output file
-            writer.writeheader()
-            
-            # Iterate through each row in the input CSV
+            writer.writeheader()  # Write CSV header
+
+            # Process each row
             for row in reader:
-                # Check if "OCS" is not in the "Notes" column and "Descriptions" column is not empty
-                if "OCS" not in row['Notes'] and row['Description'].strip():
-                    if ("GEOL 230-51" not in row['Section Listings']) and ("EDUC 395" not in row['Section Listings']) and ("ARTS 298" not in row['Section Listings']) and ("ENGL 395" not in row['Section Listings']) and ("GWSS 398" not in row['Section Listings']):
-                        for num in good_sections:
-                            if num  in row["Section Listings"]:
-                        # Write the row to the output CSV
-                                writer.writerow(row)
-                                count += 1
-    print (count)
-# Specify the input and output file paths
+                section_listings = row['Section Listings']
+                description = row['Description'].strip()
+                notes = row['Notes']
+
+                # Apply filtering conditions
+                if "OCS" in notes or not description:
+                    continue  # Skip courses with "OCS" in notes or empty descriptions
+                
+                if any(course in section_listings for course in excluded_courses):
+                    continue  # Skip explicitly excluded courses
+
+                if any(section in section_listings for section in good_sections):
+                    writer.writerow(row)  # Write valid course to output
+                    count += 1
+
+    print(f"Filtered {count} courses.")
+
+# Specify file paths
 input_csv = 'data/course_data/classes.csv'
 output_csv = 'data/course_data/filtered_classes.csv'
 
 filter_courses(input_csv, output_csv)
-
 print(f"Filtered courses have been saved to {output_csv}")
