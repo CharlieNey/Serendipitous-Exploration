@@ -129,17 +129,14 @@ text {
   margin-left: 10px;
   margin-top: 5px;
   cursor: pointer;
+  background-color: rgb(86, 89, 119)
 }
 
 .add-to-calendar-button:hover {
   transform: scale(1.25);
-  background-color: red;
+  background-color: rgb(197, 180, 24);
 }
 
-.add-to-calendar-button:hover {
-  transform: scale(1.25);
-  background-color: red;
-}
 
 .divider {
   width: 100%;
@@ -200,6 +197,8 @@ text {
 
 .buttons-on-graph:hover {
   background-color: rgb(255, 242, 176);
+  background-color: rgb(197, 180, 24);
+
 }
 
 .buttons-on-graph:active {
@@ -208,7 +207,7 @@ text {
 }
 
 .help-button {
-  background-color: #104559;
+  background-color: rgb(86, 89, 119);
   position: absolute;
   top: 10px;
   left: 10px;
@@ -217,7 +216,7 @@ text {
 }
 
 .back-button {
-  background-color: #104559;
+  background-color: rgb(86, 89, 119);
   position: absolute;
   right: 10px;
   top: 10px;
