@@ -133,13 +133,13 @@ text {
 
 .add-to-calendar-button:hover {
   transform: scale(1.25);
-  background-color: red;
+  background-color: rgb(109, 3, 3);
 }
 
-.add-to-calendar-button:hover {
+/* .add-to-calendar-button:hover {
   transform: scale(1.25);
   background-color: red;
-}
+} */
 
 .divider {
   width: 100%;
@@ -228,8 +228,9 @@ text {
 .randomizer {
   background-color: #b7caf6;
   position: absolute;
-  bottom: 10px;
+  bottom: 20px;
   right: 10px;
+  font-family: 'Gotham';
   /* height: 35px;
   width:  35px; */
   /* padding: 0 18px; */

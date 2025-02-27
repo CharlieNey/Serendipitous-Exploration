@@ -8,6 +8,7 @@ import back_icon from '../images/back.png';
 import { SavedCoursesContext } from './SavedCoursesContext.js';
 import { SearchContext } from './SearchContext.js';
 import { GraphContext } from './GraphContext.js';
+// export { clickNewNode}; 
 
 const GraphPage = ({ setShowNavbar }) => {
   const containerRef = useRef(null);
@@ -109,7 +110,7 @@ const GraphPage = ({ setShowNavbar }) => {
     setNodeSelections(["", ""]);
     setMetadata(null); 
 
-    const initialView = 0.15
+    const initialView = 0.07
     const { width, height } = containerDimensions;
 
     svg.transition()
@@ -117,7 +118,7 @@ const GraphPage = ({ setShowNavbar }) => {
       .call(zoomRef.current.transform, d3.zoomIdentity.translate(width / 2, height / 2.5).scale(initialView));
   }
 
-  function clickNewNode(node, isBack = 0) {
+function clickNewNode(node, isBack = 0) {
     const svg = d3.select("#simulation-svg");
     const { width, height } = containerDimensions;
 
@@ -178,12 +179,12 @@ const GraphPage = ({ setShowNavbar }) => {
 
     if (!zoomRef.current) {
       zoomRef.current = d3.zoom()
-        .scaleExtent([0.1, 3])
+        .scaleExtent([0.07, 3])
         .on("zoom", (event) => {
           d3.select("#zoom-group").attr("transform", event.transform);
         });
         
-      const initialView = 0.15;
+      const initialView = 0.07;
       const initialTransform = d3.zoomIdentity
         .translate(width / 2, height / 2.3) 
         .scale(initialView); 
