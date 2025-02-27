@@ -36,7 +36,11 @@ const About = ({ setShowNavbar }) => {
             <div class="about">
                 <h3>Background of the Project</h3>
                 <p> Carleton College provides students with extensive tools like Workday and the Academic Course Catalog for students to filter and search for classes. These search tools function well and are what all students use to search for classes currently. However, Carleton lacks tools that emphasize exploration and browsing. It is therefore our aim to build a tool that highlights the liberal arts experience. Our tool will function in tandem to the existing tools, to help students consider more unique classes, before they solidify their schedule and register using Workday. </p>
-                <p> Our main inspiration for this project comes from the research paper, The Bohemian Bookshelf: Supporting Serendipitous Book Discoveries through Information Visualization (Thudt, 2012). Researchers, Alice Thudt, Uta Hinrichs and Sheelagh Carpendale, created 5 visualizations of book collections aimed at encouraging “serendipitous discoveries” through highlighting different patterns and connections between books. We hope to emulate their success through encouraging students at Carleton College to have their own “serendipitous discoveries” when exploring courses to register for future terms. We seek to create our own tool to highlight unique connections between Carleton’s courses and use NLP tools on course descriptions </p>
+                <p> Our main inspiration for this project comes from the research paper, The Bohemian Bookshelf: Supporting Serendipitous Book Discoveries through Information Visualization (Thudt, 2012). Researchers, Alice Thudt, Uta Hinrichs and Sheelagh Carpendale, created 5 visualizations of book collections aimed at encouraging “serendipitous discoveries” through highlighting different patterns and connections between books. We hope to emulate their success through encouraging students at Carleton College to have their own “serendipitous discoveries” when exploring courses to register for future terms. We seek to create our own tool to highlight unique connections between Carleton’s courses and use NLP tools on course descriptions. </p>
+            </div>
+            <div class="about">
+                <h3 class="our-data">Our Data</h3>
+                <p>Our data includes 6 credit courses offered in the Spring 2025 term at Carleton College (excluding seminar and capstone courses). It includes only one section for each class, so if you’re curious if a course offers additional sections, please check Carleton’s Course Catalog. </p>
             </div>
             <div class="about">
                 <h3 class="the-model">The Model</h3>
@@ -55,28 +59,34 @@ const About = ({ setShowNavbar }) => {
             <h3 class="team">meet the team!</h3>
             <div class="team-grid">
                 <div class="team-member">
-                    <h4>Zoey La</h4>
-                    <p>Fun Fact: [Fun Fact]</p>
+                    <h4>Zoey La, '25</h4>
+                    <p>Computer Science Major, Math Minor</p>
+                    <p>hometown</p>
                 </div>
                 <div class="team-member">
-                    <h4>Markus Gunadi</h4>
-                    <p>Fun Fact: [Fun Fact]</p>
+                    <h4>Markus Gunadi, '25</h4>
+                    <p> Computer Science and Cinema and Media Studies Major</p>
+                    <p>hometown</p>
                 </div>
                 <div class="team-member">
-                    <h4>Kai Weiner</h4>
-                    <p>Fun Fact: [Fun Fact]</p>
+                    <h4>Kai Weiner, '25</h4>
+                    <p> Computer Science Major</p>
+                    <p>hometown</p>
                 </div>
                 <div class="team-member">
-                    <h4>Willow Gu</h4>
-                    <p>Fun Fact: [Fun Fact]</p>
+                    <h4>Willow Gu, '25</h4>
+                    <p> Computer Science and Cognitive Science Major</p>
+                    <p>hometown</p>
                 </div>
                 <div class="team-member">
-                    <h4>Cathy Duan</h4>
-                    <p> Computer Science Major, Class of '25. From Doylestown, PA.</p>
+                    <h4>Cathy Duan, '25</h4>
+                    <p> Computer Science Major</p>
+                    <p> Doylestown, PA</p>
                 </div>
                 <div class="team-member">
-                    <h4>Charlie Ney</h4>
-                    <p>Fun Fact: [Fun Fact]</p>
+                    <h4>Charlie Ney, '25</h4>
+                    <p> Computer Science Major</p>
+                    <p>hometown</p>
                 </div>
             </div>
         </div>

@@ -1,6 +1,6 @@
 body {
     font-family: 'Playfair Display';
-    font-size: 22px;
+    font-size: 18px;
     line-height: 1;
     margin: 0;
     padding: 0;
@@ -8,13 +8,21 @@ body {
     color: #333;
     /* display: flex; DO NOT MAKE THIS FLEX it will break everything :D*/
 }
+.about-us-page{
+    font-size: 22px;
+}
+
+p {
+    color: black;
+    font-size: 22px; 
+}
 
 h3 {
     font-family: 'Sigmar';
     font-size: 22px;
     margin: 20px 0;
     text-align: left;
-    color: #8ba3fb;
+    color: #849bed;
     font-size: 30px;
     text-shadow:-1px 1px 0 rgb(75, 102, 221),
     0px 1px 1px rgba(38, 34, 34, 0.4);
@@ -28,6 +36,12 @@ h3 {
     -2px 2px 0 #c8c8c8,
     0px 1px 1px rgba(38, 34, 34, 0.4);
 }
+.our-data{
+    color: #798cd1;
+    text-shadow:-1px 1px 0 rgb(75, 102, 221),
+    0px 1px 1px rgba(38, 34, 34, 0.4)
+    ;
+}
 .the-model{
     color: #5f75c3;
     text-shadow:-1px 1px 0 rgb(75, 102, 221),
@@ -35,13 +49,13 @@ h3 {
     ;
 }
 .our-web-app{
-    color: #4f63ab;
+    color: #46599c;
     text-shadow:-1px 1px 0 rgb(75, 102, 221),
     0px 1px 1px rgba(38, 34, 34, 0.4)
     ;
 }
 .languages-libraries{
-    color: rgb(41, 56, 108);
+    color: rgb(54, 68, 120);
     text-shadow:-1px 1px 0 rgb(75, 102, 221),
     0px 1px 1px rgba(38, 34, 34, 0.4)
     ;
@@ -92,8 +106,6 @@ h3 {
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    font-family: 'Poppins';
-
 }
 
 .team-member:hover {
