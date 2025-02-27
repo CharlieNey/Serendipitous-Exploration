@@ -34,43 +34,86 @@ p {
 }
 
 h3 {
+    font-size: 24px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    color: #2c3e50;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 5px;
+    margin: 5%;
+    font-family: 'Gotham';
+    font-weight: medium;
+}
+
+.background {
     font-family: 'Sigmar';
-    font-size: 22px;
+    font-size: 60px;
     margin: 20px 0;
     text-align: left;
-    color: #849bed;
     font-size: 30px;
+    border-bottom: 0px solid;
+    padding-bottom: 0px;
+    color: #798cd1;
     text-shadow:-1px 1px 0 rgb(75, 102, 221),
     0px 1px 1px rgba(38, 34, 34, 0.4);
 }
-
 .team {
+    border-bottom: 0px solid;
+    padding-bottom: 0px;
     text-align: center;
-    color: #2c3e50;
+    color: #ec5d56;
     font-size: 50px;
     text-shadow:-1px 1px 0 #ddd,
     -2px 2px 0 #c8c8c8,
     0px 1px 1px rgba(38, 34, 34, 0.4);
 }
 .our-data{
+    font-family: 'Sigmar';
+    font-size: 60px;
+    margin: 20px 0;
+    text-align: left;
+    font-size: 30px;
+    border-bottom: 0px solid;
+    padding-bottom: 0px;
     color: #798cd1;
     text-shadow:-1px 1px 0 rgb(75, 102, 221),
     0px 1px 1px rgba(38, 34, 34, 0.4)
     ;
 }
 .the-model{
+    font-family: 'Sigmar';
+    font-size: 60px;
+    margin: 20px 0;
+    text-align: left;
+    font-size: 30px;
+    border-bottom: 0px solid;
+    padding-bottom: 0px;
     color: #5f75c3;
     text-shadow:-1px 1px 0 rgb(75, 102, 221),
     0px 1px 1px rgba(38, 34, 34, 0.4)
     ;
 }
 .our-web-app{
+    font-family: 'Sigmar';
+    font-size: 60px;
+    margin: 20px 0;
+    text-align: left;
+    font-size: 30px;
+    border-bottom: 0px solid;
+    padding-bottom: 0px;
     color: #46599c;
     text-shadow:-1px 1px 0 rgb(75, 102, 221),
     0px 1px 1px rgba(38, 34, 34, 0.4)
     ;
 }
 .languages-libraries{
+    font-family: 'Sigmar';
+    font-size: 60px;
+    margin: 20px 0;
+    text-align: left;
+    font-size: 30px;
+    border-bottom: 0px solid;
+    padding-bottom: 0px;
     color: rgb(54, 68, 120);
     text-shadow:-1px 1px 0 rgb(75, 102, 221),
     0px 1px 1px rgba(38, 34, 34, 0.4)
@@ -98,6 +141,8 @@ h3 {
     padding: 20px;
     text-align: right;
     position: right;
+    align-items:flex-start;
+    gap: 50px; 
 }
 
 .about{
@@ -122,6 +167,7 @@ h3 {
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-top: 10px;
 }
 
 .team-member:hover {
@@ -139,14 +185,14 @@ h3 {
 }
 
 .team-member h4 {
-    font-size: 18px;
+    font-size: 22px;
     margin-bottom: 10px;
     color: #2c3e50;
 }
 
 .team-member p {
-    font-size: 14px;
-    color: #777;
+    font-size: 18px;
+    color: rgb(61, 57, 57);
     font-style: italic;
 }
 

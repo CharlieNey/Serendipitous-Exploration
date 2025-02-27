@@ -34,7 +34,7 @@ const About = ({ setShowNavbar }) => {
     <div class="container">
         <div class="left-section">
             <div class="about">
-                <h3>Background</h3>
+                <h3 class="background">Background</h3>
                 <p class="p-about"> Carleton College provides students with extensive tools like Workday and the Academic Course Catalog for students to filter and search for classes. These search tools function well and are what all students use to search for classes currently. However, Carleton lacks tools that emphasize exploration and browsing. It is therefore our aim to build a tool that highlights the liberal arts experience. Our tool will function in tandem to the existing tools, to help students consider more unique classes, before they solidify their schedule and register using Workday. </p>
                 <p class="p-about"> Our main inspiration for this project comes from the research paper, The Bohemian Bookshelf: Supporting Serendipitous Book Discoveries through Information Visualization (Thudt, 2012). Researchers, Alice Thudt, Uta Hinrichs and Sheelagh Carpendale, created 5 visualizations of book collections aimed at encouraging “serendipitous discoveries” through highlighting different patterns and connections between books. We hope to emulate their success through encouraging students at Carleton College to have their own “serendipitous discoveries” when exploring courses to register for future terms. We seek to create our own tool to highlight unique connections between Carleton’s courses and use NLP tools on course descriptions. </p>
             </div>
@@ -61,34 +61,38 @@ const About = ({ setShowNavbar }) => {
                 <div class="team-member">
                     <h4>Zoey La, '25</h4>
                     <p>Computer Science Major, Math Minor</p>
-                    <p>hometown</p>
                 </div>
                 <div class="team-member">
                     <h4>Markus Gunadi, '25</h4>
                     <p> Computer Science and Cinema and Media Studies Major</p>
-                    <p>hometown</p>
                 </div>
                 <div class="team-member">
                     <h4>Kai Weiner, '25</h4>
                     <p> Computer Science Major</p>
-                    <p>hometown</p>
                 </div>
                 <div class="team-member">
                     <h4>Willow Gu, '25</h4>
                     <p> Computer Science and Cognitive Science Major</p>
-                    <p>hometown</p>
                 </div>
                 <div class="team-member">
                     <h4>Cathy Duan, '25</h4>
                     <p> Computer Science Major</p>
-                    <p> Doylestown, PA</p>
                 </div>
                 <div class="team-member">
                     <h4>Charlie Ney, '25</h4>
                     <p> Computer Science Major</p>
-                    <p>hometown</p>
                 </div>
             </div>
+            <h3 class="team">FAQ</h3>
+            <div class="team-member">
+                <h3 class="languages-libraries" >How do we decide if a course is similar?</h3>
+                <p class="p-about">Once our course descriptions are vectorized as is described in "The Model" section, we are able to use cosine similarity to calculate the distance between each course. In other words, we can calculate relative distances, which hopefully indicate semantic/structural similarity in descriptions. If a pair of courses are similar enough to pass a threshold that we set, we will draw a line between each of their nodes on our graph. </p>
+            </div>
+            <div class="team-member">
+                <h3 class="languages-libraries" >What do the words on the lines mean? </h3>
+                <p class="p-about">Each course connection includes two words, each representing the most similar term from the other course’s description. These words are identified using a Word2Vec model, which, like the Doc2Vec model underlying our graph, captures semantic relationships. However, Word2Vec is specifically designed for individual words rather than entire documents. This feature provides a simplified representation of how our Doc2Vec model functions, making its behavior easier to interpret. Additionally, upon hovering over the words on a line, if one of the words is in the description currently opened, that word will be highlighted. </p>
+            </div>
+
         </div>
     </div>
     );
