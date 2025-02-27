@@ -4,3 +4,4 @@ node_modules
 backend/current_models/.env
 backend/psqlConfig.js
 .DS_Store
+backend/psqlConfig.js
