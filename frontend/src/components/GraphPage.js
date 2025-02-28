@@ -22,8 +22,8 @@ const GraphPage = ({ setShowNavbar }) => {
   const [metadata, setMetadata] = useState(null);
   const [savedAlertShown, setSavedAlertShown] = useState(false);
   const [searchAlertShown, setSearchAlertShown] = useState(false);
-  const [hoveredLink, setHoveredLink] = useState(null);
   const [nodeAlertShown, setNodeAlertShown] = useState(false);
+  const [hoveredLink, setHoveredLink] = useState(null);
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -168,15 +168,30 @@ function clickNewNode(node, isBack = 0) {
 
   const color = d3.scaleSequential(d3.interpolatePuBuGn);
 
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     alert(
+  //       `Welcome!\n\n` +
+  //       `To get started, either:\n` +
+  //       `• Look up a course using the search bar; or\n` +
+  //       `• Click on a node`
+  //     );
+  //   }, 650);
+  // }, []);
+
   useEffect(() => {
-    setTimeout(() => {
-      alert(
-        `Welcome!\n\n` +
-        `To get started, either:\n` +
-        `• Look up a course using the search bar; or\n` +
-        `• Click on a node`
-      );
-    }, 650);
+    const isFirstVisit = sessionStorage.getItem('hasVisited');
+    if (!isFirstVisit) {
+      setTimeout(() => {
+        alert(
+          `Welcome!\n\n` +
+          `To get started, either:\n` +
+          `• Look up a course using the search bar; or\n` +
+          `• Click on a node`
+        );
+      }, 650);
+      sessionStorage.setItem('hasVisited', 'true');
+    }
   }, []);
 
   // Build the graph
