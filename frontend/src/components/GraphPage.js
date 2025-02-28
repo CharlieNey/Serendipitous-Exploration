@@ -5,6 +5,7 @@ import "./GraphPage.css";
 import add_icon from '../images/add.png';
 import help_icon from '../images/help.png';
 import back_icon from '../images/back.png';
+import color_legend from '../images/color_legend.png';
 import { SavedCoursesContext } from './SavedCoursesContext.js';
 import { SearchContext } from './SearchContext.js';
 import { GraphContext } from './GraphContext.js';
@@ -21,9 +22,8 @@ const GraphPage = ({ setShowNavbar }) => {
   const [metadata, setMetadata] = useState(null);
   const [savedAlertShown, setSavedAlertShown] = useState(false);
   const [searchAlertShown, setSearchAlertShown] = useState(false);
-  const [hoveredLink, setHoveredLink] = useState(null);
   const [nodeAlertShown, setNodeAlertShown] = useState(false);
-
+  const [hoveredLink, setHoveredLink] = useState(null);
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -144,11 +144,13 @@ function clickNewNode(node, isBack = 0) {
     if (!nodeAlertShown) {
       setTimeout(() => {
         alert(
-          `You just clicked on a course!\n\n` +
+          `You are viewing details about a course!\n\n` +
           `What is being shown here?\n` +
           `• Similar courses are connected by a line.\n` +
           `• Word(s) on the line explain why they are similar.\n` +
-          `• What does "similar" mean? Read our info page to learn more!\n\n`
+          `    • Mouse over to see the word(s) highlighted in the description.\n` +
+          `    • Click to view the course on the other end of the line.\n\n` +
+          `*What does "similar" mean? Read our info page to learn more!`
         );
         setNodeAlertShown(true);
       }, 650); // 650ms delay
@@ -165,6 +167,32 @@ function clickNewNode(node, isBack = 0) {
   }, [searchTerm]);
 
   const color = d3.scaleSequential(d3.interpolatePuBuGn);
+
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     alert(
+  //       `Welcome!\n\n` +
+  //       `To get started, either:\n` +
+  //       `• Look up a course using the search bar; or\n` +
+  //       `• Click on a node`
+  //     );
+  //   }, 650);
+  // }, []);
+
+  useEffect(() => {
+    const isFirstVisit = sessionStorage.getItem('hasVisited');
+    if (!isFirstVisit) {
+      setTimeout(() => {
+        alert(
+          `Welcome!\n\n` +
+          `To get started, either:\n` +
+          `• Look up a course using the search bar; or\n` +
+          `• Click on a node`
+        );
+      }, 650);
+      sessionStorage.setItem('hasVisited', 'true');
+    }
+  }, []);
 
   // Build the graph
   useEffect(() => {
@@ -512,9 +540,10 @@ function clickNewNode(node, isBack = 0) {
 
         <div className="scroll-sidebar">
           <div className="search-section">
+            <label for="siteSearch" class="sr-only">Search</label>
             <input
               type="text"
-              placeholder="Search by course name, description, or number"
+              placeholder="Course name, description, or number"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onFocus={() => {
@@ -535,7 +564,8 @@ function clickNewNode(node, isBack = 0) {
                 }
               }}
               className="search-input"
-            />
+              id="siteSearch"
+            />   
 
             {isLoading ? (
               <p>Loading courses...</p>
@@ -602,13 +632,22 @@ function clickNewNode(node, isBack = 0) {
           </svg>
 
           <img 
+            src={color_legend}
+            alt="Color Legend" 
+            className="color-legend"
+          />
+
+          <img 
             src={help_icon}
+            alt="Get Help" 
             className="buttons-on-graph help-button"
             onClick={() => alert(
               `What is being shown here?\n` +
               `• Similar courses are connected by a line.\n` +
               `• Word(s) on the line explain why they are similar.\n` +
-              `• What does "similar" mean? Read our info page to learn more!\n\n` +
+              `    • Mouse over to see the word(s) highlighted in the description.\n` +
+              `    • Click to view the course on the other end of the line.\n` +
+              `*What does "similar" mean? Read our info page to learn more! \n\n` +
               `What courses are included?\n` +
               `Our website currently only shows Spring 2025 courses that are:\n` +
               `• 6-credits\n` +
@@ -660,7 +699,7 @@ function clickNewNode(node, isBack = 0) {
                       }
                     });
                     if (!savedAlertShown) {
-                      alert("You just saved a course!\nSee it in your shopping cart.");
+                      alert("You just saved a course!\nSee all your saved courses in your shopping cart.");
                       setSavedAlertShown(true);
                     }
                   }}

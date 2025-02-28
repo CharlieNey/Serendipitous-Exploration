@@ -31,8 +31,6 @@
     position: fixed;
     top: 20px;
     right: 20px;
-    background-color: rgb(86, 89, 119);
-
 }
 
 .icon img {
@@ -90,8 +88,6 @@
     align-items: center;   
     float: right;
     margin-left: 10px;
-    background-color: rgb(86, 89, 119)
-
 }
 
 .add-to-calendar-button img {
@@ -108,4 +104,13 @@
     height: 1px;
     background-color: #ccc;
     margin: 20px 0;
+}
+
+.download-button {
+    background-color: #FFD24F;
+    position: fixed;
+    /* left: 38px;
+    top: 75px; */
+    top: 6px;
+    right: 15px;
 }
