@@ -7,6 +7,14 @@ import { Link } from "react-router-dom";
 import add_icon from "../../images/add.png";
 import { SavedCoursesContext } from "../SavedCoursesContext.js";
 
+import easy from "./easy.png";
+import mid from "./mid.png";
+import hard from "./hard.png";
+
+import bird from "./bird.png";
+import whale from "./whale.png";
+import raccoon from "./raccoon.png";
+
 const QuizPage = ({ setShowNavbar }) => {
   const [isQuizSelected, setIsQuizSelected] = useState(true);
   const [activeQuestion, setActiveQuestion] = useState(0);
@@ -25,7 +33,6 @@ const QuizPage = ({ setShowNavbar }) => {
     setResult(allCourses);
   }, [allCourses, setShowNavbar]);
 
-  // Debug logging
   useEffect(() => {
     console.log("Current result:", result);
   }, [result]);
@@ -33,7 +40,7 @@ const QuizPage = ({ setShowNavbar }) => {
   const { title, description, questions } = selectedQuiz;
   const { question, choices, type, filters } = questions[activeQuestion];
 
-  // Helper to find a course object by its "XYZ 123" name
+  // Helper to find a course by "DEPT 123" name
   function getCourseByName(name) {
     for (var i in allCourses) {
       if (allCourses[i].section_listings.split("-")[0] === name) {
@@ -43,7 +50,7 @@ const QuizPage = ({ setShowNavbar }) => {
     return "COURSE NOT FOUND";
   }
 
-  // Takes an array of courses and a filter function. Returns the subset of courses that match.
+  // Filter logic
   function applyQuestionFilter(courses, matchesAnswer) {
     const outputCourses = [];
     for (var i in courses) {
@@ -54,21 +61,16 @@ const QuizPage = ({ setShowNavbar }) => {
     return outputCourses;
   }
 
-  // Determine the next array of courses based on the user’s chosen answer(s) for the current question
   const getNextResult = () => {
     if (selectedAnswerIndex.length === 1) {
-      // single selection => apply corresponding filter
       return applyQuestionFilter(result, filters[selectedAnswerIndex[0]]);
     } else if (selectedAnswerIndex.length > 1) {
-      // multiple selections not supported in this example
       return "More than one selected";
     } else {
-      // no selection
       return "Zero selected";
     }
   };
 
-  // If it’s the final question, pick a random course from nextResult
   const setFinalResult = (nextResult) => {
     if (!Array.isArray(nextResult) || nextResult.length === 0) {
       setResult("No Course");
@@ -81,7 +83,6 @@ const QuizPage = ({ setShowNavbar }) => {
     }
   };
 
-  // Move to next question or finish quiz
   const incrementQuestion = (nextResult) => {
     if (activeQuestion < questions.length - 1) {
       setResult(nextResult);
@@ -101,6 +102,9 @@ const QuizPage = ({ setShowNavbar }) => {
 
   const addLeadingZero = (number) => (number > 9 ? number : `0${number}`);
 
+  const question2Images = [easy, mid, hard];
+  const question3Images = [bird, whale, raccoon];
+
   return (
     <div className="quiz-body">
       <div className="quiz-container">
@@ -110,17 +114,26 @@ const QuizPage = ({ setShowNavbar }) => {
             <p className="quiz-description">{description}</p>
 
             <div className="question-info">
-              <span className="active-question-no">{addLeadingZero(activeQuestion + 1)}</span>
-              <span className="total-question">/{addLeadingZero(questions.length)}</span>
+              <span className="active-question-no">
+                {addLeadingZero(activeQuestion + 1)}
+              </span>
+              <span className="total-question">
+                /{addLeadingZero(questions.length)}
+              </span>
             </div>
 
             <h2 className="question-text">{question}</h2>
 
+            {/* If question uses DropDown, else MCQs */}
             {type === "DropDown" ? (
               <div className="dropdown-container">
                 <select
                   className="question-dropdown"
-                  value={selectedAnswerIndex[0] === undefined ? "" : selectedAnswerIndex[0]}
+                  value={
+                    selectedAnswerIndex[0] === undefined
+                      ? ""
+                      : selectedAnswerIndex[0]
+                  }
                   onChange={(e) => {
                     const val = e.target.value;
                     if (val === "") {
@@ -142,25 +155,45 @@ const QuizPage = ({ setShowNavbar }) => {
               </div>
             ) : (
               <ul className="answer-list">
-                {choices.map((answer, index) => (
-                  <li
-                    key={answer}
-                    onClick={() => setSelectedAnswerIndex([index])}
-                    className={
-                      selectedAnswerIndex.length &&
-                      selectedAnswerIndex[0] === index
-                        ? "selected-answer"
-                        : ""
-                    }
-                  >
-                    {answer}
-                  </li>
-                ))}
+                {choices.map((answer, index) => {
+                  let thisImage = null;
+                  if (activeQuestion === 1) {
+                    thisImage = question2Images[index];
+                  } else if (activeQuestion === 2) {
+                    thisImage = question3Images[index];
+                  }
+
+                  return (
+                    <li
+                      key={answer}
+                      onClick={() => setSelectedAnswerIndex([index])}
+                      className={
+                        selectedAnswerIndex.length &&
+                        selectedAnswerIndex[0] === index
+                          ? "selected-answer"
+                          : ""
+                      }
+                    >
+                      <div className="answer-text">{answer}</div>
+
+                      {thisImage && (
+                        <img
+                          src={thisImage}
+                          alt={answer}
+                          className="answer-image"
+                        />
+                      )}
+                    </li>
+                  );
+                })}
               </ul>
             )}
 
             <div className="next-button-container">
-              <button onClick={onClickNext} disabled={selectedAnswerIndex.length === 0}>
+              <button
+                onClick={onClickNext}
+                disabled={selectedAnswerIndex.length === 0}
+              >
                 {activeQuestion === questions.length - 1 ? "Finish" : "Next"}
               </button>
             </div>
@@ -176,18 +209,17 @@ const QuizPage = ({ setShowNavbar }) => {
             </p>
 
             <div className="button-row">
-            <button
-              onClick={() => {
-                // Clear out old state so the user can re‐take the quiz
-                setShowResult(false);
-                setActiveQuestion(0);
-                setSelectedAnswerIndex([]);
-                setResult(allCourses);
-              }}
-            >
-              Do Another Quiz
-            </button>
-
+              <button
+                onClick={() => {
+                  // Reset quiz so user can retake
+                  setShowResult(false);
+                  setActiveQuestion(0);
+                  setSelectedAnswerIndex([]);
+                  setResult(allCourses);
+                }}
+              >
+                Do Another Quiz
+              </button>
 
               <Link
                 to="/graph"
@@ -214,16 +246,12 @@ const QuizPage = ({ setShowNavbar }) => {
                             saved.section_listings === course.section_listings
                         )
                       ) {
-                        const updatedCourses = savedCourse.filter(
-                          (savedCourse) =>
-                            savedCourse.section_listings !==
-                            course.section_listings
+                        return savedCourse.filter(
+                          (item) =>
+                            item.section_listings !== course.section_listings
                         );
-                        return updatedCourses;
-                      } else {
-                        const updatedCourses = [...savedCourse, course];
-                        return updatedCourses;
                       }
+                      return [...savedCourse, course];
                     });
                   }
                 }}

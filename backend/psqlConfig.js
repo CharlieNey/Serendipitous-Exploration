@@ -1,4 +1,4 @@
-const my_user = 'charlieney'
+const my_user = 'zoeyla'
 const my_database = 'courses'
 const my_password = ''
 

@@ -134,19 +134,9 @@ text {
 
 .add-to-calendar-button:hover {
   transform: scale(1.25);
-<<<<<<< HEAD
-  background-color: rgb(109, 3, 3);
-}
-
-/* .add-to-calendar-button:hover {
-  transform: scale(1.25);
-  background-color: red;
-} */
-=======
   background-color: rgb(197, 180, 24);
 }
 
->>>>>>> 5bfd18019d4595cc41515b7414928267284d112a
 
 .divider {
   width: 100%;
