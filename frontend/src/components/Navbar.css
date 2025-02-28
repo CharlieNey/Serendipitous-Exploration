@@ -44,6 +44,10 @@
     color: #fff;
     text-decoration: none;
   }
+
+  .navbar-center .nav-links :hover {
+    transform: scale(1.05);
+  }
   
   .navbar-right {
     flex: 1; 
@@ -59,7 +63,6 @@
     margin-left: 1rem;
     position: relative;
   }
-  
   .cart-icon:hover {
     transform: scale(1.5);
   }
