@@ -5,6 +5,7 @@ import "./GraphPage.css";
 import add_icon from '../images/add.png';
 import help_icon from '../images/help.png';
 import back_icon from '../images/back.png';
+import color_legend from '../images/color_legend.png';
 import { SavedCoursesContext } from './SavedCoursesContext.js';
 import { SearchContext } from './SearchContext.js';
 import { GraphContext } from './GraphContext.js';
@@ -23,7 +24,6 @@ const GraphPage = ({ setShowNavbar }) => {
   const [searchAlertShown, setSearchAlertShown] = useState(false);
   const [hoveredLink, setHoveredLink] = useState(null);
   const [nodeAlertShown, setNodeAlertShown] = useState(false);
-
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -167,6 +167,17 @@ function clickNewNode(node, isBack = 0) {
   }, [searchTerm]);
 
   const color = d3.scaleSequential(d3.interpolatePuBuGn);
+
+  useEffect(() => {
+    setTimeout(() => {
+      alert(
+        `Welcome!\n\n` +
+        `To get started, either:\n` +
+        `• Look up a course using the search bar; or\n` +
+        `• Click on a node`
+      );
+    }, 650);
+  }, []);
 
   // Build the graph
   useEffect(() => {
@@ -604,6 +615,12 @@ function clickNewNode(node, isBack = 0) {
               <g className="nodes"></g>
             </g>
           </svg>
+
+          <img 
+            src={color_legend}
+            alt="Color Legend" 
+            className="color-legend"
+          />
 
           <img 
             src={help_icon}

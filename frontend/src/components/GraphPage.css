@@ -279,3 +279,10 @@ text {
   height:1px;
   overflow:hidden;
 }
+
+.color-legend {
+  position: absolute;
+  left: 10px;
+  bottom: 25px;
+  width: 300px;
+}
