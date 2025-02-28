@@ -141,5 +141,5 @@ for index, row in df.iterrows():
 
 df['highlight_words'] = highlight_words
 
-df.to_csv('../data/graph_data/current_graph_data1.csv', index=False)
+df.to_csv('../data/graph_data/current_graph_data.csv', index=False)
 print("success!")
