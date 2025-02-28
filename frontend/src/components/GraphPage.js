@@ -514,7 +514,7 @@ function clickNewNode(node, isBack = 0) {
           <div className="search-section">
             <input
               type="text"
-              placeholder="Search by course name, description, or number"
+              placeholder="Course name, description, or number"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onFocus={() => {
@@ -603,6 +603,7 @@ function clickNewNode(node, isBack = 0) {
 
           <img 
             src={help_icon}
+            alt="Get Help" 
             className="buttons-on-graph help-button"
             onClick={() => alert(
               `What is being shown here?\n` +

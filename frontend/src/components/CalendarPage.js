@@ -159,7 +159,7 @@ function Calendar({ setShowNavbar }, props) {
         <div className="scroll-sidebar"> 
 
           <div className="search-section"> 
-            <h1>Your Saved Courses:</h1>
+            <h2>Your Saved Courses:</h2>
               <ul className="course-list"> {/* this is an unordered list of courses */}
                 {savedCourses.map((course) => ( // `map` iterates over the `savedCourses` array and renders a list item for each course
                   <li key={course.section_listings} className="course-item"> 
