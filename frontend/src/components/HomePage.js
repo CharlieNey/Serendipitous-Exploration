@@ -35,7 +35,7 @@ const HomePage = ({ setShowNavbar }) => {
         </Link>
         <br />
         <Link to="/quiz">
-          <button className="homepage-button">Take a Quiz</button>
+          <button className="homepage-button">Find Your Course Quest</button>
         </Link>
         <br />
         <Link to="/about">

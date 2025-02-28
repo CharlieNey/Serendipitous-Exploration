@@ -91,13 +91,12 @@ text {
   overflow-y: scroll;
 }
 
-
 .search-section {
   padding: 10px;
 }
 
 .search-input {
-  width: 91.5%;
+  width: 89%;
   padding: 10px;
   margin-top: 20px;
   margin-bottom: 10px;

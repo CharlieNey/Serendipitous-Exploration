@@ -178,8 +178,15 @@ body {
   border: none !important;
   box-shadow: none !important;
   padding: 0;
-  margin: 0;
+  margin-left: 1;
+  margin-top: 0;
+  margin-right: 0;
+  margin-bottom: 0;
   cursor: pointer;
+}
+
+.add-to-calendar-button:hover {
+  background: #7ca1f6 !important;
 }
 
 .answer-list {

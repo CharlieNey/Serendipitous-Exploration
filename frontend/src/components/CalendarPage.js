@@ -159,7 +159,7 @@ function Calendar({ setShowNavbar }, props) {
         <div className="scroll-sidebar"> 
 
           <div className="search-section"> 
-            <h2>Your Saved Courses:</h2>
+            <h2>Saved Courses:</h2>
               <ul className="course-list"> {/* this is an unordered list of courses */}
                 {savedCourses.map((course) => ( // `map` iterates over the `savedCourses` array and renders a list item for each course
                   <li key={course.section_listings} className="course-item"> 
@@ -222,9 +222,9 @@ function Calendar({ setShowNavbar }, props) {
                   </li>
                 ))}
               </ul>
-            {/* )} */}
           </div>
           <div className="divider"></div> {/* divider for separation in the sidebar */}
+          <button className="buttons-on-graph download-button" onClick={downloadCalendarImage}>Download Calendar as Image</button>
         </div>
 
         <div className="calendar-section">
@@ -260,12 +260,10 @@ function Calendar({ setShowNavbar }, props) {
                 info.el.style.borderColor = "rgb(242, 148, 24)";
               }
             }}
-            
           />
-        </div>
-        <button onClick={downloadCalendarImage}>Download Calendar as Image</button>
-      </div>
 
+        </div>        
+      </div>
     </div>
   );
 }
