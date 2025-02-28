@@ -68,26 +68,42 @@ export const SearchProvider = ({ children }) => {
       setIsLoading(true);
       const response = await fetch("http://localhost:3001/api/courses");
       const courses = await response.json();
-
+  
       setAllCourses(courses);
-
-      // filtered list for the sidebar.
+  
+      // helper function to extract dept prefix (e.g. "MATH")
+      const getDepartment = (listing) => {
+        return listing.split(" ")[0].toUpperCase();
+      };
+  
+      let filteredCourses;
       if (searchTerm === "") {
-        setCourseList(courses);
+        // if no search term, just show everything
+        filteredCourses = courses;
       } else {
-        const reverseDepartmentMap = Object.fromEntries(Object.entries(departmentMap).map(([acronym, fullName]) => [fullName.toLowerCase(), acronym.toLowerCase()]));
-        
+        const reverseDepartmentMap = Object.fromEntries(
+          Object.entries(departmentMap).map(([acronym, fullName]) => [
+            fullName.toLowerCase(),
+            acronym.toLowerCase(),
+          ])
+        );
+  
         const term = searchTerm.toLowerCase();
-        const filteredCourses = courses.filter(course => {
-          const description = course.description ? course.description.toLowerCase() : "";
-          const sectionListings = course.section_listings.toLowerCase(); // course number and title
+        filteredCourses = courses.filter((course) => {
+          const description = course.description
+            ? course.description.toLowerCase()
+            : "";
+          const sectionListings = course.section_listings.toLowerCase();
           const department = sectionListings.split(" ")[0].toLowerCase();
-
+  
           const matchesAcronym = department.includes(term);
-          const matchesFullName = departmentMap[department] && departmentMap[department].toLowerCase().includes(term);
-          const reverseMatch = reverseDepartmentMap[term] === (department);
-          const matchesTitleOrDescription = sectionListings.includes(term) || description.includes(term);
-
+          const matchesFullName =
+            departmentMap[department] &&
+            departmentMap[department].toLowerCase().includes(term);
+          const reverseMatch = reverseDepartmentMap[term] === department;
+          const matchesTitleOrDescription =
+            sectionListings.includes(term) || description.includes(term);
+  
           return (
             matchesTitleOrDescription ||
             matchesAcronym ||
@@ -95,14 +111,25 @@ export const SearchProvider = ({ children }) => {
             reverseMatch
           );
         });
-        setCourseList(filteredCourses);
       }
+  
+      // sort the filteredCourses by their department before setting them in state
+      filteredCourses.sort((a, b) =>
+        getDepartment(a.section_listings).localeCompare(
+          getDepartment(b.section_listings)
+        )
+      );
+  
+      // update state with the now-sorted array
+      setCourseList(filteredCourses);
+  
       setIsLoading(false);
     } catch (error) {
       console.error("Error fetching courses:", error);
       setIsLoading(false);
     }
   };
+  
 
 
 const fetchCourses2 = async () => {
