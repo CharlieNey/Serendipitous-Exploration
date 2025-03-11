@@ -1,5 +1,6 @@
 '''
-This script trains a Doc2Vec model on course descriptions to compute similarity scores between courses.  
+Author: Charlie Ney
+Description: This script trains a Doc2Vec model on course descriptions to compute similarity scores between courses.  
 It preprocesses text by removing stop words (both NLTK and custom ones from a CSV file),  
 tokenizes descriptions, and trains a Doc2Vec model.  
 After training, it computes a similarity matrix between course descriptions  
@@ -27,13 +28,11 @@ custom_stop_words_df = pd.read_csv(custom_stop_words_path)
 custom_stop_words = set(custom_stop_words_df['Word'].dropna().str.lower())
 all_stop_words = nltk_stop_words.union(custom_stop_words)
 
-# Load course data
+# load course data
 file_path = 'data/course_data/filtered_classes.csv'
 data_frame = pd.read_csv(file_path).dropna(subset=["Description"])
 data = data_frame["Description"].tolist()
 course_titles = data_frame["Section Listings"].tolist()
-
-print(course_titles)
 
 tagged_data = [TaggedDocument(words=word_tokenize(doc.lower()), tags=[str(i)]) for i, doc in enumerate(data)]
 

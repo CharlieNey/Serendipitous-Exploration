@@ -1,5 +1,6 @@
 """
-This script evaluates a trained Doc2Vec model by computing similarity scores between course descriptions. 
+Author: Charlie Ney
+Description: This script evaluates a trained Doc2Vec model by computing similarity scores between course descriptions. 
 It loads a our Doc2Vec model and a dataset of categorized course pairs.  
 Each course description is converted into an embedding, and cosine similarity is calculated between pairs.  
 Based on a similarity threshold of 0.90, predictions are made and evaluated against human labels.  
