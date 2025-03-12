@@ -67,8 +67,8 @@ lda_model = gensim.models.ldamodel.LdaModel(corpus=corpus,
                                            update_every=1,
                                            chunksize=100,
                                            passes=100,
-                                           alpha=0.5,
-                                           eta=0.5,
+                                           alpha=0.5, #topics
+                                           eta=0.5, #words
                                            per_word_topics=True)
 
 doc_lda = lda_model[corpus]
@@ -100,10 +100,15 @@ def find_common_topic(desc1, id2word, lda_model):
     processed_text1 = list(sent_to_words([desc1]))
     processed_text1 = remove_stopwords(processed_text1)
     
-    bow_vector1 = id2word.doc2bow(processed_text1[0])  # Convert to BoW
-    topics1 = lda_model.get_document_topics(bow_vector1, minimum_probability=None, minimum_phi_value=None)
-    # Get the top topic from topics1
+    bow_vector1 = id2word.doc2bow(processed_text1[0])  # convert to bag of words, id-freq pair
+
+    #output: topic ids and probability description is in this topic
+    topics1 = lda_model.get_document_topics(bow_vector1, minimum_probability=None, minimum_phi_value=None) #return all topics, and consider all words
+    
+    # get the top topic from topics1
     top_topic1 = max(topics1, key=lambda x: x[1])[0] if topics1 else None  # The topic with highest probability
+    
+    #get keywords
     topic_terms1 = lda_model.get_topic_terms(top_topic1, topn=5)
     keywords = [id2word[word_id] for word_id, _ in topic_terms1]
 
