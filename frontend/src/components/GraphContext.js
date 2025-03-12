@@ -1,16 +1,27 @@
+/**
+ * @file GraphContext.js
+ * @description Loads and manages state variables facilitating creation of the graph and department recommendations. Allows other files to access these variables.
+ * @authors Cathy, Kai, Willow, Zoey
+ * @date 3/12/25
+ */
+
 import React, { createContext, useState, useEffect } from 'react';
 
 export const GraphContext = createContext();
 
 export const GraphProvider = ({ children }) => {
     const [nodes, setNodeList] = useState([]); // stores the list of courses fetched from the server, which act as the graph nodes
-    const [links, setConnectionList] = useState([]); // stores the list of connections fetched from the server, which connect the graph nodes
-    const [selectedNode, setSelectedNode] = useState("")
-    const[connectedNodes, setConnectedNodes] = useState([]);
-    const [minval, setMinval] = useState(0);
-    const [departmentRecommendations, setDepartmentRecommendations] = useState([])
-    const [clickedQueue, setClickedQueue] = useState([])
+    const [links, setConnectionList] = useState([]); // stores the list of connections fetched from the server, which connect the graph links
+    const [selectedNode, setSelectedNode] = useState("") // stores the node that is attempting to be selected
+    const[connectedNodes, setConnectedNodes] = useState([]); // stores a list mapping a node to list of similar nodes
+    const [minval, setMinval] = useState(0); // stores the minimum similarity for the course similarities
+    const [departmentRecommendations, setDepartmentRecommendations] = useState([]) // stores a list mapping departments to their recommended departments
+    const [clickedQueue, setClickedQueue] = useState([]) // stores the queue of nodes that have been clicked by the user
 
+    /**
+     * Saves the list mapping departments to a list of recommended departments in departmentRecommendations.
+     * @returns {void}
+     */
     const fetchDepartmentRecommendations = async () => {
         try {
             const response = await fetch("http://localhost:3001/api/department-recommendations");
@@ -27,6 +38,10 @@ export const GraphProvider = ({ children }) => {
         }
     };
 
+    /**
+     * Stores the list of course nodes as nodes or throws an error.
+     * @returns {void}
+    */
     const fetchNodes = async () => {
         try {
             const response = await fetch("http://localhost:3001/api/nodes");
@@ -43,6 +58,11 @@ export const GraphProvider = ({ children }) => {
         }
     };
 
+    /**
+    * Returns the minimum similarity score from a list of links.
+    * @param {list} links - a list of links
+    * @return {int} min - the minimum similarity score contained in the input list of links.
+    */
     function getMinVal(links) {
         var min = links[0].score
         for (var i in links) {
@@ -53,6 +73,11 @@ export const GraphProvider = ({ children }) => {
         return min
     }
 
+    /**
+    * Stores the list of course connections in links, the minimum similarity score within the linsk in min,
+    * and the list mapping a node to list of similar nodes to connectedNodes.
+    * @return {void}
+    */
     const fetchNodesConnections = async () => {
         try {
             const response = await fetch("http://localhost:3001/api/similarities");
@@ -88,12 +113,16 @@ export const GraphProvider = ({ children }) => {
               }
             }
 
-            setConnectedNodes(connections) // establishes a 'group' of similar courses necessary for hover and clicknode
+            setConnectedNodes(connections)
         } catch (error) {
             console.error('Error fetching nodes:', error);
         }
     };
 
+    /**
+    * Initializes the data necessary to create the graph, scale its coloring, and determine its clicking behavior, and department recommendations.
+    * @return {void}
+    */
     useEffect(() => {
         fetchNodes();
         fetchNodesConnections();

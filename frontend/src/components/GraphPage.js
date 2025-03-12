@@ -1,3 +1,10 @@
+/**
+ * @file GraphContext.js
+ * @description Creates the graph page, defines the structure and behavior of the interactive graph.
+ * @authors Cathy, Kai, Willow, Zoey
+ * @date 3/12/25
+ */
+
 import React, { useState, useEffect, useContext, useRef } from "react";
 import * as d3 from "d3";
 import { Link } from 'react-router-dom';
@@ -9,15 +16,14 @@ import color_legend from '../images/color_legend.png';
 import { SavedCoursesContext } from './SavedCoursesContext.js';
 import { SearchContext } from './SearchContext.js';
 import { GraphContext } from './GraphContext.js';
-// export { clickNewNode}; 
 
 const GraphPage = ({ setShowNavbar }) => {
   const containerRef = useRef(null);
-  const [containerDimensions, setContainerDimensions] = useState({ width: 0, height: 0 });
+  const [containerDimensions, setContainerDimensions] = useState({ width: 0, height: 0 }); // 
   const { savedCourses, setSavedCourses } = useContext(SavedCoursesContext);
   const { allCourses, courseList, searchTerm, isLoading, setSearchTerm, fetchCourses } = useContext(SearchContext);
   const { selectedNode, nodes, links, connectedNodes, minval, clickedQueue, setSelectedNode, setClickedQueue } = useContext(GraphContext);
-  const [ nodeSelections, setNodeSelections] = useState(["", ""]);
+  const [ nodeSelections, setNodeSelections] = useState(["", ""]); // stores a list with the first item containing the currently clicked and second containing the selected node
   const zoomRef = useRef(null);
   const [metadata, setMetadata] = useState(null);
   const [savedAlertShown, setSavedAlertShown] = useState(false);
