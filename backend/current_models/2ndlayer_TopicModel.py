@@ -1,3 +1,5 @@
+# Author: Markus Gunadi
+# Description: Appends Topic Keywords to each Spring 2025 Course Description.
 # Code template used from tutorial: https://www.machinelearningplus.com/nlp/topic-modeling-gensim-python/#9createbigramandtrigrammodels
 from nltk.corpus import stopwords
 import re
@@ -112,7 +114,7 @@ def find_common_topic(desc1, id2word, lda_model):
     topic_terms1 = lda_model.get_topic_terms(top_topic1, topn=5)
     keywords = [id2word[word_id] for word_id, _ in topic_terms1]
 
-    return keywords
+    return keywords**
 
 # loop over each row in the dataframe
 for index, row in df.iterrows():

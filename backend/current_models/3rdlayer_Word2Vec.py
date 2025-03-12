@@ -1,5 +1,8 @@
+# Author: Markus Gunadi
+# Description: Chooses 1-2 Keywords to represent each connection in our Model. 
 # documentation from: https://radimrehurek.com/gensim/models/word2vec.html
 # tutorial: https://radimrehurek.com/gensim/models/word2vec.html
+
 # import modules & set up logging
 import gensim, logging
 import pandas as pd
