@@ -1,15 +1,20 @@
-// import { s } from '@fullcalendar/core/internal-common';
+/**
+ * @file GraphContext.js
+ * @description Loads and manages state variables facilitating the listing of all courses and managing the course search functionality. Allows other files to access these variables.
+ * @authors Cathy, Kai, Willow, Zoey
+ * @date 3/12/25
+ */
 import React, { createContext, useState, useEffect } from 'react';
 
 export const SearchContext = createContext();
 
 export const SearchProvider = ({ children }) => {
-  const [allCourses, setAllCourses] = useState([]);
-  const [courseList, setCourseList] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  const [allCourses, setAllCourses] = useState([]); // stores a list all courses
+  const [searchTerm, setSearchTerm] = useState(""); // stores the current search term
+  const [courseList, setCourseList] = useState([]); // stores a list of courses resulting from the search term
+  const [isLoading, setIsLoading] = useState(true); // stores whether or not requested data is loading
 
-  const departmentMap = { // if lower search term LIKE departmentMap.value, then find class...
+  const departmentMap = { // Maps department codes to their full names
     'AFST': 'African Studies',
     'AMST': 'American Studies',
     'ARBC': 'Arabic',
@@ -63,6 +68,21 @@ export const SearchProvider = ({ children }) => {
     'THEA': 'Theater and Dance',
   };
 
+    // helper function to extract dept prefix (e.g. "MATH")
+
+    /**
+    * Returns the department prefix of a course name
+    * @param {String} listing - the name of a course
+    * @return {String} the department prefix of the course.
+    */
+    const getDepartment = (listing) => {
+      return listing.split(" ")[0].toUpperCase();
+    };
+
+    /**
+    * Initializes the list of all courses
+    * @return {void}
+    */
   const fetchCourses = async () => {
     try {
       setIsLoading(true);
@@ -70,11 +90,6 @@ export const SearchProvider = ({ children }) => {
       const courses = await response.json();
   
       setAllCourses(courses);
-  
-      // helper function to extract dept prefix (e.g. "MATH")
-      const getDepartment = (listing) => {
-        return listing.split(" ")[0].toUpperCase();
-      };
   
       let filteredCourses;
       if (searchTerm === "") {
@@ -122,55 +137,13 @@ export const SearchProvider = ({ children }) => {
   
       // update state with the now-sorted array
       setCourseList(filteredCourses);
-  
       setIsLoading(false);
+
     } catch (error) {
       console.error("Error fetching courses:", error);
       setIsLoading(false);
     }
   };
-  
-
-
-const fetchCourses2 = async () => {
-  try {
-      setIsLoading(true);
-      const response = await fetch("http://localhost:3001/api/courses");
-      const courses = await response.json();
-
-      setAllCourses(courses);
-
-      if (searchTerm === "") {
-          setCourseList(courses);
-      } else {
-          const reverseDepartmentMap = Object.fromEntries(Object.entries(departmentMap).map(([acronym, fullName]) => [fullName.toLowerCase(), acronym.toLowerCase()]));
-  
-          const term = searchTerm.toLowerCase();
-          const filteredCourses = courses.filter(course => {
-              const description = course.description ? course.description.toLowerCase() : "";
-              const sectionListings = course.section_listings.toLowerCase(); // course number and title
-              const department = sectionListings.split(" ")[0].toLowerCase();
-
-              const matchesAcronym = department === term;
-              const matchesFullName = departmentMap[department] && departmentMap[department].toLowerCase() === term;
-              const reverseMatch = reverseDepartmentMap[term] === department;
-
-              return (
-                  sectionListings.includes(term) ||
-                  description.includes(term) ||
-                  matchesAcronym ||
-                  matchesFullName ||
-                  reverseMatch
-              );
-          });
-          setCourseList(filteredCourses);
-      }
-      setIsLoading(false);
-  } catch (error) {
-      console.error("Error fetching courses:", error);
-      setIsLoading(false);
-  }
-};
 
   useEffect(() => {
     fetchCourses();

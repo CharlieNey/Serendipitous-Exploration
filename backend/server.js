@@ -132,46 +132,25 @@ router.get('/:search', async (req, res) => {
       };
     
     try {
-        //const search = req.params.search;
-        // // let searchTerms = [search];
+        const search = req.params.search.toLowerCase();
+        const searchTerms = [];
 
-        // // for (const [acronym, fullName] of Object.entries(departmentMap)) {
-        // //     if (acronym.toLowerCase() === search) {
-        // //         searchTerms.push(fullName.toLowerCase());
-        // //     }
-        // //     if (fullName.toLowerCase() === search) {
-        // //         searchTerms.push(acronym.toLowerCase());
-        // //     }
-        // // }
-        // const departmentSearch = Object.keys(departmentMap).find(
-        //     key => departmentMap[key].toLowerCase().includes(search.toLowerCase())
-        // );
-
-        // const query1 = "SELECT * FROM courses WHERE LOWER(SUBSTRING_INDEX(section_listings, '-', 0)) LIKE '%" + search + "%' OR LOWER(SUBSTRING_INDEX(section_listings, '-', 1)) LIKE '" + search + "%' OR LOWER(SUBSTRING_INDEX(section_listings, '-', 1)) LIKE '%" + search +"'";
-        // const query2 = " OR LOWER(SUBSTRING_INDEX(section_listings, '-', 1)) LIKE '%" + search + "%' OR LOWER(SUBSTRING_INDEX(section_listings, '-', 1)) LIKE '" + search + "%' OR LOWER(SUBSTRING_INDEX(section_listings, '-', 1)) LIKE '%" + search +"'";
-        // const query3 = " OR LOWER(description) LIKE '%" + search + "%' OR LOWER(description) LIKE '" + search + "%' OR LOWER(description) LIKE '%" + search +"'";
-        // const query4 = departmentSearch ? ` OR LOWER(SUBSTRING_INDEX(section_listings, '-', 0)) LIKE '${departmentSearch}%'`: "";
-        // const result = await pool.query(query1 + query2 + query3 + query4);
-
-            const search = req.params.search.toLowerCase();
-            const searchTerms = [];
-
-            for (const [acronym, fullName] of Object.entries(departmentMap)) {
-                if (acronym.toLowerCase().includes(search)) {
-                    searchTerms.push(`%${acronym.toLowerCase()}%`);
-                }
-                if (fullName.toLowerCase().includes(search)) {
-                    searchTerms.push(`%${fullName.toLowerCase()}%`);
-                }
+        for (const [acronym, fullName] of Object.entries(departmentMap)) {
+            if (acronym.toLowerCase().includes(search)) {
+                searchTerms.push(`%${acronym.toLowerCase()}%`);
             }
-    
-            const query = `
-                SELECT * FROM courses 
-                WHERE 
-                    LOWER(section_listings) LIKE ANY($1) OR
-                    LOWER(description) LIKE ANY($1)`;
+            if (fullName.toLowerCase().includes(search)) {
+                searchTerms.push(`%${fullName.toLowerCase()}%`);
+            }
+        }
 
-            const result = await pool.query(query, [searchTerms]);
+        const query = `
+            SELECT * FROM courses 
+            WHERE 
+                LOWER(section_listings) LIKE ANY($1) OR
+                LOWER(description) LIKE ANY($1)`;
+
+        const result = await pool.query(query, [searchTerms]);
 
         res.json(result.rows);
     } catch (err) {
