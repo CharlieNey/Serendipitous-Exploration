@@ -9,7 +9,17 @@ import React, { useEffect } from "react";
 
 import './AboutUs.css'; // Import the CSS file
 
+/**
+* Returns the about page layout.
+* @param {function} setShowNavbar - sets whether or not the navbar is visible on a page.
+* @return {html} the about page's html.
+*/
 const About = ({ setShowNavbar }) => {
+    
+    /**
+     * Set the navbar to show on this page.
+     * @return {void}
+     */
     useEffect(() => {
         setShowNavbar(true);
     }, []);

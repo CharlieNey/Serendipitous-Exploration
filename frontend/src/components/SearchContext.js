@@ -1,5 +1,5 @@
 /**
- * @file GraphContext.js
+ * @file SearchContext.js
  * @description Loads and manages state variables facilitating the listing of all courses and managing the course search functionality. Allows other files to access these variables.
  * @authors Cathy, Kai, Willow, Zoey
  * @date 3/12/25

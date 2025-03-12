@@ -1,3 +1,11 @@
+/**
+ * @file QuizPage.js
+ * @description Creates quiz page and quiz functionality.
+ * @authors Kai, Zoey
+ * @date 3/12/25
+ * @reference - https://www.codevertiser.com/quiz-app-using-reactjs/
+ */
+
 import React, { useState, useEffect, useContext } from "react";
 import { QuizInfo } from "./QuizInfo.js";
 import "./Quiz.css";
@@ -15,32 +23,42 @@ import bird from "./bird.png";
 import whale from "./whale.png";
 import raccoon from "./raccoon.png";
 
+/**
+* Returns the quiz page's layout.
+* @param {function} setShowNavbar - sets whether or not the navbar is visible on a page.
+* @return {html} the quiz page's html.
+*/
 const QuizPage = ({ setShowNavbar }) => {
-  const [isQuizSelected, setIsQuizSelected] = useState(true);
-  const [activeQuestion, setActiveQuestion] = useState(0);
-  const [showResult, setShowResult] = useState(false);
-  const [selectedAnswerIndex, setSelectedAnswerIndex] = useState([]);
-  const [result, setResult] = useState([]);
+  const [activeQuestion, setActiveQuestion] = useState(0); // Stores the currently active question
+  const [showResult, setShowResult] = useState(false); // Stores whether or not the result is being shown
+  const [selectedAnswerIndex, setSelectedAnswerIndex] = useState([]); // Stores the indices of the selected answers
+  const [result, setResult] = useState([]); // Stores potential quiz results or final quiz result
   const { allCourses } = useContext(SearchContext);
   const { setSelectedNode } = useContext(GraphContext);
   const { savedCourses, setSavedCourses } = useContext(SavedCoursesContext);
 
-  const Quizzes = QuizInfo();
-  const [selectedQuiz, setSelectedQuiz] = useState(Quizzes[0]);
+  const Quizzes = QuizInfo(); // Stores all quiz questions
+  const [selectedQuiz, setSelectedQuiz] = useState(Quizzes[0]); // Stores currently selected quiz
 
+  /**
+   * Set the navbar to show on this page. Initialize result as all courses.
+   * @return {void}
+   */
   useEffect(() => {
     setShowNavbar(true);
     setResult(allCourses);
   }, [allCourses, setShowNavbar]);
 
-  useEffect(() => {
-    console.log("Current result:", result);
-  }, [result]);
-
-  const { title, description, questions } = selectedQuiz;
-  const { question, choices, type, filters } = questions[activeQuestion];
+  const { title, description, questions } = selectedQuiz; // Current title, description, and questions of selected quiz
+  const { question, choices, type, filters } = questions[activeQuestion]; // the current question information
 
   // Helper to find a course by "DEPT 123" name
+
+  /**
+   * Get a course from its name encoding.
+   * @param name - a course's name encoding
+   * @return {Object} the course associated with the name encoding or a string detailling no course was found.
+   */
   function getCourseByName(name) {
     for (var i in allCourses) {
       if (allCourses[i].section_listings.split("-")[0] === name) {
@@ -50,7 +68,12 @@ const QuizPage = ({ setShowNavbar }) => {
     return "COURSE NOT FOUND";
   }
 
-  // Filter logic
+  /**
+   * Filter courses to contain only items matching the filter matchesAnswer.
+   * @param {List} courses - list being filtered
+   * @param {Function} matchesAnswer - a boolean filter function
+   * @return {List} outputCourses - the object in courses satisfying the filter matchesAnswer.
+   */
   function applyQuestionFilter(courses, matchesAnswer) {
     const outputCourses = [];
     for (var i in courses) {
@@ -61,6 +84,10 @@ const QuizPage = ({ setShowNavbar }) => {
     return outputCourses;
   }
 
+  /**
+   * Based on the number of selected answers, filter the result down to match the selected filters.
+   * @return {List} the list of potential results after performing filtering.
+   */
   const getNextResult = () => {
     if (selectedAnswerIndex.length === 1) {
       return applyQuestionFilter(result, filters[selectedAnswerIndex[0]]);
@@ -71,6 +98,11 @@ const QuizPage = ({ setShowNavbar }) => {
     }
   };
 
+  /**
+   * Set result to an output course from possible results upon terminating the quiz.
+   * @param {List} nextResult - the final list of possible results
+   * @return {void}
+   */
   const setFinalResult = (nextResult) => {
     if (!Array.isArray(nextResult) || nextResult.length === 0) {
       setResult("No Course");
@@ -83,6 +115,11 @@ const QuizPage = ({ setShowNavbar }) => {
     }
   };
 
+  /**
+   * Change the result and active question.
+   * @param {List} nextResult - the list of possible result courses after the previous question's filter(s).
+   * @return {void}
+   */
   const incrementQuestion = (nextResult) => {
     if (activeQuestion < questions.length - 1) {
       setResult(nextResult);
@@ -94,6 +131,10 @@ const QuizPage = ({ setShowNavbar }) => {
     }
   };
 
+  /**
+   * Update the question and result upon submitting a question's answer.
+   * @return {void}
+   */
   const onClickNext = () => {
     const nextResult = getNextResult();
     setSelectedAnswerIndex([]);

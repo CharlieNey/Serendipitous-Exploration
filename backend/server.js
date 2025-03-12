@@ -1,8 +1,15 @@
+/**
+ * @file server.js
+ * @description Connects to our PostgreSQL database and hosts its tables as accessible urls.
+ * @authors Cathy, Kai, Zoey
+ * @date 3/12/25
+ */
+
 // importing frameworks and libraries: express, Node.js's path module, the pool class from the pg library, and cors
 import {my_user, my_database, my_password} from './psqlConfig.js';
 
 import express from 'express';
-import path from 'path';
+// import path from 'path';
 import pkg from 'pg';
 const {Pool} = pkg;
 import cors from 'cors';

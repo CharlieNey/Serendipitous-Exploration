@@ -1,9 +1,14 @@
-//FROM: https://www.sitepoint.com/creating-a-navbar-in-react/
+/**
+ * @file Navbar.js
+ * @description Creates website navigation bar.
+ * @authors Kai
+ * @date 3/12/25
+ * @reference - https://www.sitepoint.com/creating-a-navbar-in-react/
+ */
 
 import React from 'react';
 import './Navbar.css';
 import { Link } from 'react-router-dom';
-import shopping_cart_logo from '../images/shopping_cart_logo.png';
 import home_icon from '../images/home.png';
 import graph_icon from '../images/graph.png';
 import quiz_icon from '../images/quiz.png';

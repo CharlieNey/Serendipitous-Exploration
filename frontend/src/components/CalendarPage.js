@@ -1,12 +1,24 @@
+/**
+ * @file CalendarPage.js
+ * @description Creates calendar page and calendar functionality.
+ * @authors Kai, Willow
+ * @date 3/12/25
+ */
+
 import React, { useState, useContext, useEffect, useRef } from "react";
 import "./CalendarPage.css";
 import { SavedCoursesContext } from './SavedCoursesContext.js';
-import shopping_cart_logo from '../images/shopping_cart_logo.png'; 
 import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import html2canvas from 'html2canvas';
 import add_icon from '../images/add.png';
 
+/**
+* Returns the graph page's layout.
+* @param {function} setShowNavbar - sets whether or not the navbar is visible on a page.
+* @param {???} props - WHAT IS IT???
+* @return {html} the graph page's html.
+*/
 function Calendar({ setShowNavbar }, props) {
   const {savedCourses, setSavedCourses} = useContext(SavedCoursesContext);
   const [expandedCourse, setExpandedCourse] = useState(null); // stores the course number of the currently expanded course (null by default)
@@ -34,6 +46,10 @@ function Calendar({ setShowNavbar }, props) {
   console.log("These are the saved courses (calendar page):")
   console.log(savedCourses)
 
+  /**
+   * Set the navbar to show on this page.
+   * @return {void}
+   */
   useEffect(() => {
       setShowNavbar(true);
   }, []); 
