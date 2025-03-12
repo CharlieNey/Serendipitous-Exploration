@@ -1,9 +1,14 @@
 """
-This script filters course data from a CSV file based on specific criteria.  
+Author: Charlie Ney
+Description:  This script filters course data from a CSV file based on specific criteria.  
 It removes courses that contain "OCS" in the "Notes" column or have an empty "Description" field.  
 Only courses with section numbers in the "good_sections" list are retained,  
 while certain courses listed in "bad_classes" are excluded.  
 The filtered data is saved to a new CSV file, and the total count of retained courses is printed.  
+
+Sources: 
+# https://stackoverflow.com/questions/61929833/how-to-filter-missing-data-rows-using-python
+# https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.mask.html
 """
 import csv
 
@@ -16,15 +21,14 @@ def filter_courses(input_file, output_file):
         reader = csv.DictReader(infile)
         with open(output_file, mode='w', newline='', encoding='utf-8') as outfile:
             writer = csv.DictWriter(outfile, fieldnames=reader.fieldnames)
-            writer.writeheader()  # Write CSV header
+            writer.writeheader()  
 
-            # Process each row
             for row in reader:
                 section_listings = row['Section Listings']
                 description = row['Description'].strip()
                 notes = row['Notes']
 
-                # Apply filtering conditions
+                # apply filtering conditions
                 if "OCS" in notes or not description:
                     continue  # Skip courses with "OCS" in notes or empty descriptions
                 

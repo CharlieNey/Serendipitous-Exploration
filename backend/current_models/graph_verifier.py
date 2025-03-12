@@ -1,5 +1,6 @@
 '''
-This script counts the occurrences of each course as a source and a target in a directed graph stored in a CSV file.  
+Author: Charlie Ney
+Description: This script counts the occurrences of each course as a source and a target in a directed graph stored in a CSV file.  
 It reads the course connections from 'graph_connections.csv', computes the counts,  
 and writes the results to 'course_counts.csv' with columns for each course's appearance as a source and target.  
 '''
@@ -8,11 +9,11 @@ and writes the results to 'course_counts.csv' with columns for each course's app
 import csv
 from collections import defaultdict
 
-# Initialize dictionaries to count occurrences
+# initialize dictionaries to count occurrences
 first_node_counts = defaultdict(int)
 second_node_counts = defaultdict(int)
 
-# Read the CSV file
+# read the CSV file
 input_csv = 'data/graph_data/graph_connections.csv' 
 output_csv = 'data/graph_data/course_counts.csv'  
 
