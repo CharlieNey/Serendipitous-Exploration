@@ -53,7 +53,10 @@ const GraphPage = ({ setShowNavbar }) => {
     fetchCourses();
   }, [searchTerm]);
 
-  // ZOEY AND/OR CATHY
+  /**
+   * Observes and updates the dimensions of the container element.
+   * @return {void}
+   */
   useEffect(() => {
     const updateDimensions = () => {
       if (containerRef.current) {
@@ -505,9 +508,9 @@ const GraphPage = ({ setShowNavbar }) => {
   }, [nodeSelections]);
 
   /**
-  * ZOEY CAN YOU TAKE THIS ONE?
-  * @param {String} selectedNode - ????
-  * @return {List} meetingDay ????
+  * Formats the meeting times string into a more readable format.
+  * @param {String} dayStartEnd - the string containing the meeting times.
+  * @return {Object} - An object with two properties: 'meetingDay' and 'time'.
   */
   function formatMeetingTimes(dayStartEnd) {
     if (!dayStartEnd) return { meetingDay: '', time: '' };
@@ -533,7 +536,11 @@ const GraphPage = ({ setShowNavbar }) => {
     return { meetingDay, time };
   }
 
-  // ZOEY CAN YOU TAKE THESE ONES AT THE BOTTOM??
+  /**
+  * Formats the liberal arts requirement (LAR) tags into a more readable format
+  * @param {String} courseTags - the string containing the course tags
+  * @return {String} - A string of formatted LARs (with its full name and abbreviation), or 'None' if no requirements are found.
+  */
   function formatLiberalArtsRequirements(courseTags) {
     if (!courseTags) return 'None';
   
@@ -579,6 +586,11 @@ const GraphPage = ({ setShowNavbar }) => {
     return formattedLARs;
   }
 
+  /**
+  * Formats string of words by wrapping each individual word in double quotes and joining them with a comma.
+  * @param {String} wordString - The raw string containing words separated by whitespace.
+  * @return {String} - A formatted string with each word wrapped in quotes and separated by commas.
+  */
   function formatHighlightWords(wordString) {
     if (!wordString) return "";
     let trimmed = wordString.trim();
@@ -586,12 +598,23 @@ const GraphPage = ({ setShowNavbar }) => {
     return words.map(w => `"${w}"`).join(", ");
   }
 
+  /**
+  * Parses raw word string by removing any double quotes and splitting it into an array of words.
+  * @param {String} rawWordString - The raw string containing words separated by whitespace.
+  * @return {Array} - An array of words, with any empty strings filtered out.
+  */
   function parseLinkWords(rawWordString) {
     if (!rawWordString) return [];
     const cleaned = rawWordString.replace(/"/g, "");
     return cleaned.split(/\s+/).filter(Boolean);
   }  
 
+  /**
+  * Generates a version of the course description with certain words highlighted.
+  * Highlights are applied if a hovered link exists and if the course corresponding to the metadata matches the hovered link's nodes.
+  * The words to highlight are determined by parsing the hovered link's word string.
+  * @return {String} - The course description with HTML markup for highlighted words, or the original description if no words are to be highlighted.
+  */
   function getHighlightedDescription() {
     if (!metadata) return "";
     if (!hoveredLink) return metadata.description;
