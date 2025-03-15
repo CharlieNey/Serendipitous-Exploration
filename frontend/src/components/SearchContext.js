@@ -70,19 +70,20 @@ export const SearchProvider = ({ children }) => {
 
     // helper function to extract dept prefix (e.g. "MATH")
 
-    /**
-    * Returns the department prefix of a course name
-    * @param {String} listing - the name of a course
-    * @return {String} the department prefix of the course.
-    */
+  /**
+  * Returns the department prefix of a course name
+  * @param {String} listing - the name of a course
+  * @return {String} the department prefix of the course.
+  */
     const getDepartment = (listing) => {
       return listing.split(" ")[0].toUpperCase();
     };
 
-    /**
-    * Initializes the list of all courses
-    * @return {void}
-    */
+  /**
+   * Initializes the list of all courses by fetching data from the API.
+   * Filters courses based on the current search term and sorts them by department.
+   * @return {void}
+   */
   const fetchCourses = async () => {
     try {
       setIsLoading(true);
@@ -96,6 +97,7 @@ export const SearchProvider = ({ children }) => {
         // if no search term, just show everything
         filteredCourses = courses;
       } else {
+        // Create a reverse mapping of department names to acronyms
         const reverseDepartmentMap = Object.fromEntries(
           Object.entries(departmentMap).map(([acronym, fullName]) => [
             fullName.toLowerCase(),
@@ -104,18 +106,24 @@ export const SearchProvider = ({ children }) => {
         );
   
         const term = searchTerm.toLowerCase();
+        // Filter courses based on several criteria:
         filteredCourses = courses.filter((course) => {
+          // Lowercase the description if it exists
           const description = course.description
             ? course.description.toLowerCase()
             : "";
+          // Lowercase the section listing and extract department code
           const sectionListings = course.section_listings.toLowerCase();
           const department = sectionListings.split(" ")[0].toLowerCase();
-  
+          // Check if the search term matches the department acronym,
+          // full department name, or appears in the course's title/description.
           const matchesAcronym = department.includes(term);
           const matchesFullName =
             departmentMap[department] &&
             departmentMap[department].toLowerCase().includes(term);
+          // Check if the search term matches the full department name in reverse mapping
           const reverseMatch = reverseDepartmentMap[term] === department;
+          // Check if the search term appears in the course's title or description
           const matchesTitleOrDescription =
             sectionListings.includes(term) || description.includes(term);
   
@@ -145,6 +153,8 @@ export const SearchProvider = ({ children }) => {
     }
   };
 
+  // useEffect to fetch all courses when the component mounts
+  // and whenever the search term changes
   useEffect(() => {
     fetchCourses();
   }, [searchTerm]);
@@ -152,11 +162,11 @@ export const SearchProvider = ({ children }) => {
   return (
     <SearchContext.Provider
       value={{
-        allCourses,  
+        allCourses,  // all courses fetched from the API
         courseList,   // filtered data for the sidebar
-        searchTerm,
-        setSearchTerm,
-        isLoading,
+        searchTerm, // current search term
+        setSearchTerm, // function to update the search term
+        isLoading, // loading state for the API request
         fetchCourses
       }}
     >
