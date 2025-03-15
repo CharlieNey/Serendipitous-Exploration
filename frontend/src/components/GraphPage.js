@@ -25,15 +25,15 @@ import { GraphContext } from './GraphContext.js';
 const GraphPage = ({ setShowNavbar }) => {
   const containerRef = useRef(null);
   const [containerDimensions, setContainerDimensions] = useState({ width: 0, height: 0 }); // stores the dimensions of the container
-  const { savedCourses, setSavedCourses } = useContext(SavedCoursesContext);
+  const { savedCourses, setSavedCourses } = useContext(SavedCoursesContext); // stores the user's saved courses
   const { allCourses, courseList, searchTerm, isLoading, setSearchTerm, fetchCourses } = useContext(SearchContext);
   const { selectedNode, nodes, links, connectedNodes, minval, clickedQueue, setSelectedNode, setClickedQueue } = useContext(GraphContext);
   const [ nodeSelections, setNodeSelections] = useState(["", ""]); // stores a list with the first item containing the currently clicked and second containing the selected node
   const zoomRef = useRef(null); // stores
   const [metadata, setMetadata] = useState(null); // stores
-  const [savedAlertShown, setSavedAlertShown] = useState(false); // stores
-  const [searchAlertShown, setSearchAlertShown] = useState(false); // stores
-  const [nodeAlertShown, setNodeAlertShown] = useState(false); // stores
+  const [savedAlertShown, setSavedAlertShown] = useState(false); // stores whether the add to cart button has been clicked at least once
+  const [searchAlertShown, setSearchAlertShown] = useState(false); // stores whether the search bar has been clicked at least once
+  const [nodeAlertShown, setNodeAlertShown] = useState(false); // stores whether course details have been inspected at least once
   const [hoveredLink, setHoveredLink] = useState(null); // stores
 
   /**
@@ -209,7 +209,7 @@ const GraphPage = ({ setShowNavbar }) => {
       }
       
       if (!nodeAlertShown) {
-        setTimeout(() => {
+        setTimeout(() => { // show alert when user inspects a course for the first time
           alert(
             `You are viewing details about a course!\n\n` +
             `What is being shown here?\n` +
@@ -505,7 +505,7 @@ const GraphPage = ({ setShowNavbar }) => {
   }, [nodeSelections]);
 
   /**
-  * WILLOW CAN YOU TAKE THIS ONE?
+  * ZOEY CAN YOU TAKE THIS ONE?
   * @param {String} selectedNode - ????
   * @return {List} meetingDay ????
   */
@@ -634,7 +634,7 @@ const GraphPage = ({ setShowNavbar }) => {
               placeholder="Course name, description, or number"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              onFocus={() => {
+              onFocus={() => { // show alert to user when first time clicks on the search bar
                 if (!searchAlertShown) {
                   alert(
                     `What can you search for?\n` +
@@ -687,7 +687,7 @@ const GraphPage = ({ setShowNavbar }) => {
                             return updatedCourses;
                           }
                         });
-                        if (!savedAlertShown) {
+                        if (!savedAlertShown) { // show alert when user first time saves a course 
                           alert("You just saved a course!\nSee all your saved courses in your shopping cart.");
                           setSavedAlertShown(true);
                         }
@@ -729,7 +729,7 @@ const GraphPage = ({ setShowNavbar }) => {
             src={help_icon}
             alt="Get Help" 
             className="buttons-on-graph help-button"
-            onClick={() => alert(
+            onClick={() => alert( // show alert when user clicks on help button
               `What is being shown here?\n` +
               `• Similar courses are connected by a line.\n` +
               `• Word(s) on the line explain why they are similar.\n` +
@@ -786,7 +786,7 @@ const GraphPage = ({ setShowNavbar }) => {
                         return updatedCourses;
                       }
                     });
-                    if (!savedAlertShown) {
+                    if (!savedAlertShown) { // show alert when user first time saves a course
                       alert("You just saved a course!\nSee all your saved courses in your shopping cart.");
                       setSavedAlertShown(true);
                     }
