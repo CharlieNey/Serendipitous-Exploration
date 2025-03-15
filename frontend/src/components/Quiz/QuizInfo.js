@@ -68,12 +68,18 @@ function getStartHourAndMidday(course) {
 export const QuizInfo = () => {
   const { departmentRecommendations } = useContext(GraphContext);
 
-  // ZOEY I THINK THIS IS YOURS
+  /**
+   * Retrieves a list of all department names.
+   * @return {Array} An array of department names.
+   */
   function getAllDepartments() {
     return departmentRecommendations.map((item) => item.department);
   }
 
-  // ZOEY I THINK
+  /**
+   * Generates a list of recommendation functions for each department.
+   * @return {Array} An array of functions that filter courses based on departmentRecommendations.
+   */
   function getAllDepartmentRecommendationFunctions() {
     return departmentRecommendations.map((item) => {
       const recs = item.recommendations;
