@@ -16,10 +16,9 @@ import add_icon from '../images/add.png';
 /**
 * Returns the graph page's layout.
 * @param {function} setShowNavbar - sets whether or not the navbar is visible on a page.
-* @param {???} props - WHAT IS IT???
 * @return {html} the graph page's html.
 */
-function Calendar({ setShowNavbar }, props) {
+function Calendar({ setShowNavbar }) {
   const {savedCourses, setSavedCourses} = useContext(SavedCoursesContext);
   const [expandedCourse, setExpandedCourse] = useState(null); // stores the course number of the currently expanded course (null by default)
   const courseRefs = useRef({}); //ref to track each course
@@ -124,8 +123,6 @@ function Calendar({ setShowNavbar }, props) {
   lines.forEach(line => {
     const [days, time] = line.split(' | ');
     
-    // const [startTime, endTime] = timeRange.split(' - ');
-
     // extract days of the week
     let daysOfWeekTemp = [];
     if (days.includes('M')) daysOfWeekTemp.push('M');
@@ -244,6 +241,8 @@ function Calendar({ setShowNavbar }, props) {
         </div>
 
         <div className="calendar-section">
+
+          {/* configure calendar */}
           <FullCalendar
             plugins={[ timeGridPlugin ]}
             initialView="timeGridWeek"
@@ -256,8 +255,6 @@ function Calendar({ setShowNavbar }, props) {
             expandRows={true}
             
             events={calendarEvents}
-
-            // eventColor="#003069"
 
             // set clicked course (to be expanded)
             eventClick={(info) => {
@@ -272,7 +269,6 @@ function Calendar({ setShowNavbar }, props) {
               const eventTitle = info.event.title;
               if (eventTitle === expandedCourse) {
                 info.el.style.backgroundColor = "rgb(242, 148, 24)";
-                // info.el.style.backgroundColor = " #FFD24F";
                 info.el.style.borderColor = "rgb(242, 148, 24)";
               }
             }}
