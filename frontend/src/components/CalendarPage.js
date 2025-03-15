@@ -1,13 +1,24 @@
+/**
+ * @file CalendarPage.js
+ * @description Creates calendar page and calendar functionality.
+ * @authors Kai, Willow
+ * @date 3/12/25
+ */
+
 import React, { useState, useContext, useEffect, useRef } from "react";
 import "./CalendarPage.css";
 import { SavedCoursesContext } from './SavedCoursesContext.js';
-import shopping_cart_logo from '../images/shopping_cart_logo.png'; 
 import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import html2canvas from 'html2canvas';
 import add_icon from '../images/add.png';
 
-function Calendar({ setShowNavbar }, props) {
+/**
+* Returns the graph page's layout.
+* @param {function} setShowNavbar - sets whether or not the navbar is visible on a page.
+* @return {html} the graph page's html.
+*/
+function Calendar({ setShowNavbar }) {
   const {savedCourses, setSavedCourses} = useContext(SavedCoursesContext);
   const [expandedCourse, setExpandedCourse] = useState(null); // stores the course number of the currently expanded course (null by default)
   const courseRefs = useRef({}); //ref to track each course
@@ -34,6 +45,10 @@ function Calendar({ setShowNavbar }, props) {
   console.log("These are the saved courses (calendar page):")
   console.log(savedCourses)
 
+  /**
+   * Set the navbar to show on this page.
+   * @return {void}
+   */
   useEffect(() => {
       setShowNavbar(true);
   }, []); 
@@ -108,8 +123,6 @@ function Calendar({ setShowNavbar }, props) {
   lines.forEach(line => {
     const [days, time] = line.split(' | ');
     
-    // const [startTime, endTime] = timeRange.split(' - ');
-
     // extract days of the week
     let daysOfWeekTemp = [];
     if (days.includes('M')) daysOfWeekTemp.push('M');
@@ -228,6 +241,8 @@ function Calendar({ setShowNavbar }, props) {
         </div>
 
         <div className="calendar-section">
+
+          {/* configure calendar */}
           <FullCalendar
             plugins={[ timeGridPlugin ]}
             initialView="timeGridWeek"
@@ -240,8 +255,6 @@ function Calendar({ setShowNavbar }, props) {
             expandRows={true}
             
             events={calendarEvents}
-
-            // eventColor="#003069"
 
             // set clicked course (to be expanded)
             eventClick={(info) => {
@@ -256,7 +269,6 @@ function Calendar({ setShowNavbar }, props) {
               const eventTitle = info.event.title;
               if (eventTitle === expandedCourse) {
                 info.el.style.backgroundColor = "rgb(242, 148, 24)";
-                // info.el.style.backgroundColor = " #FFD24F";
                 info.el.style.borderColor = "rgb(242, 148, 24)";
               }
             }}

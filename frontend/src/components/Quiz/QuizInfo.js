@@ -1,19 +1,19 @@
+/**
+ * @file QuizInfo.js
+ * @description Stores quiz questions and effects.
+ * @authors Kai, Markus, Zoey
+ * @date 3/12/25
+ * @reference - https://www.codevertiser.com/quiz-app-using-reactjs/
+ */
+
 import { useContext } from "react";
 import { GraphContext } from "../GraphContext.js";
 
-const humList = [
-  "AFST", "AMST", "ARBC", "ASLN", "ASST", "CHIN", "CLAS", "ECON", "EDUC",
-  "CCST", "ENGL", "FREN", "GERM", "GRK", "GWSS", "HEBR", "HIST", "JAPN",
-  "LATN", "LTAM", "MELA", "POSC", "RELG", "RUSS", "SOAN", "SPAN"
-];
-
-const stemList = [
-  "BIOC", "BIOL", "CGSC", "CHEM", "GEOL", "STAT", "NEUR", "PHIL", "PSYC",
-  "PHYS", "MATH", "LING", "ASTR", "CS"
-];
-
-const artList = ["THEA", "DANC", "ARTH", "ARTS", "ARCN", "CAMS", "MUSC"];
-
+/**
+* Returns the subject code of a course.
+* @param {Object} course - the input course.
+* @return {String} the course's subject code or null if there is an error.
+*/
 function getSubjectCode(course) {
   if (!course || !course.section_listings || typeof course.section_listings !== "string") {
     return null;
@@ -27,6 +27,11 @@ function getSubjectCode(course) {
   return course.section_listings.substring(0, spaceIdx);
 }
 
+/**
+* Returns the start hour and time of day (AM/PM) a course begins.
+* @param {Object} course - the input course.
+* @return {List} the course's start hour and afternoon code, or null if an error occurred.
+*/
 function getStartHourAndMidday(course) {
   if (!course || !course.day_start_end || typeof course.day_start_end !== "string") {
     return [null, null];
@@ -56,13 +61,25 @@ function getStartHourAndMidday(course) {
   return [hourNum, isAM ? "A" : isPM ? "P" : null];
 }
 
+/**
+* Returns the information of all quizzes.
+* @return {List} a list of all the quiz information objects.
+*/
 export const QuizInfo = () => {
   const { departmentRecommendations } = useContext(GraphContext);
 
+  /**
+   * Retrieves a list of all department names.
+   * @return {Array} An array of department names.
+   */
   function getAllDepartments() {
     return departmentRecommendations.map((item) => item.department);
   }
 
+  /**
+   * Generates a list of recommendation functions for each department.
+   * @return {Array} An array of functions that filter courses based on departmentRecommendations.
+   */
   function getAllDepartmentRecommendationFunctions() {
     return departmentRecommendations.map((item) => {
       const recs = item.recommendations;
@@ -73,21 +90,11 @@ export const QuizInfo = () => {
     });
   }
 
-  function isStem(course) {
-    const subj = getSubjectCode(course);
-    return subj ? stemList.includes(subj) : false;
-  }
-
-  function isHum(course) {
-    const subj = getSubjectCode(course);
-    return subj ? humList.includes(subj) : false;
-  }
-
-  function isArt(course) {
-    const subj = getSubjectCode(course);
-    return subj ? artList.includes(subj) : false;
-  }
-
+  /**
+  * Returns true if a course is 100 level, false otherwise.
+  * @param {Object} course - the input course.
+  * @return {Boolean} true if the course is 100 level, false otherwise.
+  */
   function isEasy(course) {
     if (!course || !course.section_listings || typeof course.section_listings !== "string") {
       return false;
@@ -102,6 +109,11 @@ export const QuizInfo = () => {
     return level_code === "1";
   }
 
+  /**
+  * Returns true if a course is 200 level, false otherwise.
+  * @param {Object} course - the input course.
+  * @return {Boolean} true if the course is 200 level, false otherwise.
+  */
   function isMedium(course) {
     if (!course || !course.section_listings || typeof course.section_listings !== "string") {
       return false;
@@ -114,6 +126,11 @@ export const QuizInfo = () => {
     return level_code === "2";
   }
 
+  /**
+  * Returns true if a course is 300 level, false otherwise.
+  * @param {Object} course - the input course.
+  * @return {Boolean} true if the course is 300 level, false otherwise.
+  */
   function isHard(course) {
     if (!course || !course.section_listings || typeof course.section_listings !== "string") {
       return false;
@@ -126,21 +143,22 @@ export const QuizInfo = () => {
     return level_code === "3";
   }
 
-  function isChem(course) {
-    const subj = getSubjectCode(course);
-    return subj === "CHEM";
-  }
-
-  function isNotChem(course) {
-    return !isChem(course);
-  }
-
+  /**
+  * Returns true if a course is takes place in the morning, false otherwise.
+  * @param {Object} course - the input course.
+  * @return {Boolean} true if the course takes place in the morning, false otherwise.
+  */
   function isMorning(course) {
     const [hour, midday] = getStartHourAndMidday(course);
     // morning => 8, 9, 10 AM
     return midday === "A" && [8, 9, 10].includes(hour);
   }
 
+  /**
+  * Returns true if a course is takes place in the afternoon, false otherwise.
+  * @param {Object} course - the input course.
+  * @return {Boolean} true if the course takes place in the afternoon, false otherwise.
+  */
   function isAfternoon(course) {
     const [hour, midday] = getStartHourAndMidday(course);
     // afternoon => 11AM or 12/1 PM
@@ -149,13 +167,19 @@ export const QuizInfo = () => {
     return false;
   }
 
+  /**
+  * Returns true if a course is takes place in the late afternoon, false otherwise.
+  * @param {Object} course - the input course.
+  * @return {Boolean} true if the course takes place in the late afternoon, false otherwise.
+  */
   function isLateAfternoon(course) {
     const [hour, midday] = getStartHourAndMidday(course);
     // late afternoon => 2, 3, 4, 5 PM
     return midday === "P" && [2, 3, 4, 5].includes(hour);
   }
 
-  // Quizzes
+  // Defines a quiz object: containing title, description, and list of questions
+  // Each question contains: the question being asked, the choices, the question type (ex. multiple choice), and the filter effects of each answer
   const Quiz_1 = {
     title: "Find Your Quest!",
     description: "Obtain a Spring 2025 Carleton course based on your past experience and personal preferences",
@@ -180,18 +204,6 @@ export const QuizInfo = () => {
       }
     ]
   };
-
-  // const Quiz_2 = {
-  //   title: "Chemistry Courses",
-  //   questions: [
-  //     {
-  //       question: "Do you want to take a Chemistry class?",
-  //       choices: ["Yes", "No"],
-  //       type: "MCQs",
-  //       filters: [isChem, isNotChem]
-  //     }
-  //   ]
-  // };
 
   return [Quiz_1];
 };

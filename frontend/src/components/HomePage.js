@@ -1,12 +1,22 @@
+/**
+ * @file HomePage.js
+ * @description Creates website homepage.
+ * @authors Cathy, Kai, Willow, Zoey
+ * @date 3/12/25
+ */
+
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { Link } from 'react-router-dom';
-// import carleton_logo from '../images/carleton_logo.png';
 import carleton_logo from '../images/home_pic.png';
 import './HomePage.css';
 
 const HomePage = ({ setShowNavbar }) => {
   const [picIsHovered, setPicIsHovered] = useState(false);
 
+  /**
+   * Set the navbar not to show on this page.
+   * @return {void}
+   */
   useEffect(() => {
     setShowNavbar(false);
   }, []);
@@ -14,7 +24,6 @@ const HomePage = ({ setShowNavbar }) => {
   return (
     <div className="homepage-container">
       <header className="homepage-header">
-        {/* <img src={carleton_logo} className="homepage-logo" alt="Carleton Logo" /> */}
         <h1>
          Serendipitous Curriculum Exploration
         </h1>
@@ -46,7 +55,6 @@ const HomePage = ({ setShowNavbar }) => {
           <button className="homepage-button">Give Feedback</button>
         </Link>
         <br />
-        {/* <Link to="/about" className="learn-more-link">Learn more about this website</Link> */}
       </header>
     </div>
   );

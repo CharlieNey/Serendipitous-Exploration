@@ -1,16 +1,37 @@
+/**
+ * @file EmailPage.js
+ * @description Creates email page. Allows users to email information about their saved courses and laod their saved courses from email codes.
+ * @authors Kai, Zoey
+ * @date 3/12/25
+ * @reference https://www.emailjs.com/docs/examples/reactjs/
+ */
+
 import React, { useRef, useEffect, useContext } from 'react';
 import emailjs from '@emailjs/browser';
 import { SearchContext } from './SearchContext.js';
 import { SavedCoursesContext } from './SavedCoursesContext.js';
 
-//TODO:
-// 1. Style the page
-// 2. Plug in data we want to send to user (probably shopping cart and courses table?) (could even have gcal functionality?)
-
+/**
+* Returns the email page's layout.
+* @param {function} setShowNavbar - sets whether or not the navbar is visible on a page.
+* @return {html} the email page's html.
+*/
 const ContactUs = ({ setShowNavbar }) => {
   const { allCourses } = useContext(SearchContext);
   const { savedCourses, setSavedCourses } = useContext(SavedCoursesContext);
 
+  /**
+   * Set the navbar to show on this page.
+   * @return {void}
+   */
+  useEffect(() => {
+    setShowNavbar(true);
+  }, []);
+
+  /**
+  * Uses current encoding field value to initialize a user's saved courses to the corresponding encoding.
+  * @return {void}
+  */
   function setCoursesFromEncoding() {
     const encoding = document.getElementById('encoding').value
     var newCourses = []
@@ -24,10 +45,18 @@ const ContactUs = ({ setShowNavbar }) => {
     setSavedCourses(newCourses)
   }
 
+  /**
+  * Returns a user's currently saved courses as a list of encodings.
+  * @return {List} a list of encodings corresponding to a user's saved courses.
+  */
   function getCoursesAsEncoding() {
     return savedCourses.map((course) => allCourses.indexOf(course))
   }
 
+  /**
+  * Returns a user's saved courses as a string.
+  * @return {String} output - the string equivalent of a user's saved courses.
+  */
   function savedCoursesToString() {
     var output = ""
     for(var i in savedCourses) {
@@ -36,13 +65,13 @@ const ContactUs = ({ setShowNavbar }) => {
     return output
   }
 
+  /**
+  * Returns a message detailling a user's saved courses as a string and an encoding.
+  * @return {String} a string detailling a user's saved courses as a string and an encoding
+  */
   function getEmailMessage() {
     return "Your saved courses were: " + savedCoursesToString() + ". Input this phrase to add them back to your cart: " + getCoursesAsEncoding()
   }
-
-  useEffect(() => {
-    setShowNavbar(true);
-  }, []);
 
   const serviceID = 'service_i0niisj'
   const templateID = 'template_du14a4i'
@@ -50,10 +79,19 @@ const ContactUs = ({ setShowNavbar }) => {
 
   const form = useRef();
 
+  /**
+  * Resets all fields in email form
+  * @return {void}
+  */
   function resetForm() {
     document.getElementById("emailForm").reset();
   }
 
+  /**
+  * Uses current email form values to create and send email using Email.js.
+  * @param {Event} e - an event.
+  * @return {void}
+  */
   const sendEmail = (e) => {
     e.preventDefault();
 

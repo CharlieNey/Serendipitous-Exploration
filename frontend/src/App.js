@@ -1,3 +1,10 @@
+/**
+ * @file App.js
+ * @description Creates our course exploration website.
+ * @authors Cathy, Kai, Willow, Zoey
+ * @date 3/12/25
+ */
+
 import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import HomePage from './components/HomePage.js';
@@ -11,6 +18,10 @@ import { SearchProvider } from './components/SearchContext.js';
 import { GraphProvider } from "./components/GraphContext";
 import Navbar from './components/Navbar';
 
+/**
+* Runs front end of webapp.
+* @return the context providers, routes, and program.
+*/
 const App = () => {
   // From https://stackoverflow.com/questions/76942172/in-react-how-to-have-a-navbar-on-specific-pages-only
   const [showNavbar, setShowNavbar] = useState(false);
@@ -35,7 +46,5 @@ const App = () => {
     </SavedCoursesProvider>
   );
 };
-
-
 
 export default App;

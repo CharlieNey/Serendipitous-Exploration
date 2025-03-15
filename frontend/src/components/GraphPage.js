@@ -17,20 +17,46 @@ import { SavedCoursesContext } from './SavedCoursesContext.js';
 import { SearchContext } from './SearchContext.js';
 import { GraphContext } from './GraphContext.js';
 
+/**
+* Returns the graph page's layout.
+* @param {function} setShowNavbar - sets whether or not the navbar is visible on a page.
+* @return {html} the graph page's html.
+*/
 const GraphPage = ({ setShowNavbar }) => {
   const containerRef = useRef(null);
-  const [containerDimensions, setContainerDimensions] = useState({ width: 0, height: 0 }); // 
-  const { savedCourses, setSavedCourses } = useContext(SavedCoursesContext);
+  const [containerDimensions, setContainerDimensions] = useState({ width: 0, height: 0 }); // stores the dimensions of the container
+  const { savedCourses, setSavedCourses } = useContext(SavedCoursesContext); // stores the user's saved courses
   const { allCourses, courseList, searchTerm, isLoading, setSearchTerm, fetchCourses } = useContext(SearchContext);
   const { selectedNode, nodes, links, connectedNodes, minval, clickedQueue, setSelectedNode, setClickedQueue } = useContext(GraphContext);
   const [ nodeSelections, setNodeSelections] = useState(["", ""]); // stores a list with the first item containing the currently clicked and second containing the selected node
-  const zoomRef = useRef(null);
-  const [metadata, setMetadata] = useState(null);
-  const [savedAlertShown, setSavedAlertShown] = useState(false);
-  const [searchAlertShown, setSearchAlertShown] = useState(false);
-  const [nodeAlertShown, setNodeAlertShown] = useState(false);
-  const [hoveredLink, setHoveredLink] = useState(null);
+  const zoomRef = useRef(null); // stores
+  const [metadata, setMetadata] = useState(null); // stores
+  const [savedAlertShown, setSavedAlertShown] = useState(false); // stores whether the add to cart button has been clicked at least once
+  const [searchAlertShown, setSearchAlertShown] = useState(false); // stores whether the search bar has been clicked at least once
+  const [nodeAlertShown, setNodeAlertShown] = useState(false); // stores whether course details have been inspected at least once
+  const [hoveredLink, setHoveredLink] = useState(null); // stores
 
+  /**
+   * Set the navbar to show on this page.
+   * @return {void}
+   */
+  useEffect(() => {
+    setShowNavbar(true);
+  }, []);
+
+  /**
+   * Updates the courseList to match the current search term.
+   * @param {String} searchTerm - the current search input
+   * @return {void}
+   */
+  useEffect(() => {
+    fetchCourses();
+  }, [searchTerm]);
+
+  /**
+   * Observes and updates the dimensions of the container element.
+   * @return {void}
+   */
   useEffect(() => {
     const updateDimensions = () => {
       if (containerRef.current) {
@@ -48,6 +74,11 @@ const GraphPage = ({ setShowNavbar }) => {
     return () => observer.disconnect();
   }, []);
 
+  /**
+  * Returns whether or not a the text on a link should be visible.
+  * @param {Object} link - the link whose text we are finding the opacity of.
+  * @return {int} 1 if the link's source is the currently selected node, 0 otherwise.
+  */
   function getTextOpacity(link) {
     if (link.source.id === nodeSelections[0]) {
       return 1;
@@ -55,6 +86,11 @@ const GraphPage = ({ setShowNavbar }) => {
     return 0;
   }
 
+  /**
+  * Returns the current opacity a link should take based on the selected node.
+  * @param {Object} link - the link we are finding the opacity of.
+  * @return {int} 1 if the link's source is the currently selected node, 0.05 otherwise.
+  */
   function getLinkOpacity(link) {
     if (nodeSelections[1] === "" || link.source.id === nodeSelections[1] || link.target.id === nodeSelections[1]) {
       return 1;
@@ -62,6 +98,11 @@ const GraphPage = ({ setShowNavbar }) => {
     return 0.05;
   }
 
+  /**
+  * Returns the current color a node should take based on whether it is selected, related to the selected node, or none of the above.
+  * @param {Object} node - the node we are finding the color of.
+  * @return {String} the HEX value the input node should take on. 
+  */
   function getNodeColor(node) {
     if (nodeSelections[1] === "" || !connectedNodes[nodeSelections[1]]) {
       return "#FFC20A";
@@ -75,6 +116,11 @@ const GraphPage = ({ setShowNavbar }) => {
     return "#FFC20A";
   }
 
+  /**
+  * Returns the current opacity a node should take based on the selected node.
+  * @param {Object} link - the node we are finding the opacity of.
+  * @return {int} 1 if the node is selected or related to the selected node, 0 otherwise.
+  */
   function getNodeOpacity(node) {
     if (nodeSelections[1] === "" || node === nodeSelections[1] || connectedNodes[nodeSelections[1]].includes(node)) {
       return 1;
@@ -82,6 +128,10 @@ const GraphPage = ({ setShowNavbar }) => {
     return 0.2;
   }
 
+  /**
+  * Redraws elements of a graph which change upon the clicked or selected node changing.
+  * @return {void}
+  */
   async function refreshGraph() {
     d3.select(".links")
       .selectAll("line")
@@ -98,6 +148,10 @@ const GraphPage = ({ setShowNavbar }) => {
       .style("opacity", (d) => getTextOpacity(d))
   }
 
+  /**
+  * Sets the current clicked node to the node clicked directly before the current.
+  * @return {void}
+  */
   async function getPreviousClicked() {
     if (clickedQueue.length !== 0) {
       setClickedQueue(prev => prev.slice(0, prev.length - 1))
@@ -106,6 +160,10 @@ const GraphPage = ({ setShowNavbar }) => {
     }
   }
 
+  /**
+  * Zooms out from, closes the description of, and de-selects the current node after it is clicked a second time, thereby being unselected.
+  * @return {void}
+  */
   function doubleClickNode() {
     const svg = d3.select("#simulation-svg");
 
@@ -124,67 +182,57 @@ const GraphPage = ({ setShowNavbar }) => {
       .call(zoomRef.current.transform, d3.zoomIdentity.translate(width / 2, height / 2.5).scale(initialView));
   }
 
-function clickNewNode(node, isBack = 0) {
-    const svg = d3.select("#simulation-svg");
-    const { width, height } = containerDimensions;
+  /**
+  * Zooms into, opens the description of, and selects a node upon being clicked.
+  * @param {Object} node - the newly clicked Node
+  * @param {int} isBack - 1 if this node was reached by clicking the back button, 0 if not
+  * @return {void}
+  */
+  function clickNewNode(node, isBack = 0) {
+      const svg = d3.select("#simulation-svg");
+      const { width, height } = containerDimensions;
 
-    if(isBack !== 1 && nodeSelections[0] !== "") {
-      setClickedQueue(prev => prev.concat([nodeSelections[0]]))
+      if(isBack !== 1 && nodeSelections[0] !== "") {
+        setClickedQueue(prev => prev.concat([nodeSelections[0]]))
+      }
+
+      setNodeSelections([node.id, node.id]);
+      setMetadata(allCourses.find(c => c.section_listings.split('-')[0] === node.id)); 
+
+      const scale = 1.25; 
+      const transform = d3.zoomIdentity
+        .translate(width / 2, height / 2) 
+        .scale(scale)                    
+        .translate(-node.x, -node.y); 
+
+      if (zoomRef.current) {
+        svg.transition()
+          .duration(500)
+          .call(zoomRef.current.transform, transform);
+      }
+      
+      if (!nodeAlertShown) {
+        setTimeout(() => { // show alert when user inspects a course for the first time
+          alert(
+            `You are viewing details about a course!\n\n` +
+            `What is being shown here?\n` +
+            `• Similar courses are connected by a line.\n` +
+            `• Word(s) on the line explain why they are similar.\n` +
+            `    • Mouse over to see the word(s) highlighted in the description.\n` +
+            `    • Click to view the course on the other end of the line.\n\n` +
+            `*What does "similar" mean? Read our info page to learn more!`
+          );
+          setNodeAlertShown(true);
+        }, 650); // 650ms delay
+      }
     }
 
-    setNodeSelections([node.id, node.id]);
-    setMetadata(allCourses.find(c => c.section_listings.split('-')[0] === node.id)); 
+  const color = d3.scaleSequential(d3.interpolatePuBuGn); // the color scale for this program
 
-    const scale = 1.25; 
-    const transform = d3.zoomIdentity
-      .translate(width / 2, height / 2) 
-      .scale(scale)                    
-      .translate(-node.x, -node.y); 
-
-    if (zoomRef.current) {
-      svg.transition()
-        .duration(500)
-        .call(zoomRef.current.transform, transform);
-    }
-    
-    if (!nodeAlertShown) {
-      setTimeout(() => {
-        alert(
-          `You are viewing details about a course!\n\n` +
-          `What is being shown here?\n` +
-          `• Similar courses are connected by a line.\n` +
-          `• Word(s) on the line explain why they are similar.\n` +
-          `    • Mouse over to see the word(s) highlighted in the description.\n` +
-          `    • Click to view the course on the other end of the line.\n\n` +
-          `*What does "similar" mean? Read our info page to learn more!`
-        );
-        setNodeAlertShown(true);
-      }, 650); // 650ms delay
-    }
-  }
-
-  // if it's of node selected's children, 
-  useEffect(() => {
-    setShowNavbar(true);
-  }, []);
-
-  useEffect(() => {
-    fetchCourses();
-  }, [searchTerm]);
-
-  const color = d3.scaleSequential(d3.interpolatePuBuGn);
-
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     alert(
-  //       `Welcome!\n\n` +
-  //       `To get started, either:\n` +
-  //       `• Look up a course using the search bar; or\n` +
-  //       `• Click on a node`
-  //     );
-  //   }, 650);
-  // }, []);
-
+  /**
+  * Gives the user an alert detailling how the page works upon their first visit to the page.
+  * @return {void}
+  */
   useEffect(() => {
     const isFirstVisit = sessionStorage.getItem('hasVisited');
     if (!isFirstVisit) {
@@ -200,11 +248,20 @@ function clickNewNode(node, isBack = 0) {
     }
   }, []);
 
-  // Build the graph
+  /**
+  * Defines the structure, appearance, interactive behavior, and data pipelines of the graph.
+  * @param {List} links - the similar course connections (links) in the graph.
+  * @param {List} nodes - the courses (nodes) in the graph.
+  * @param {List} connectedNodes - the list mapping nodes to their similar courses.
+  * @param {int, int} containerDimensions - the width and height of the graph container
+  * @return {void}
+  */
   useEffect(() => {
+    // do not create graph element if the nodes length, links length, connectedNodes length, container width, or container height are of size zero/
     if (nodes.length === 0 || links.length === 0 || connectedNodes.length === 0) return;
     if (containerDimensions.width === 0 || containerDimensions.height === 0) return;
-  
+    
+    // Map container dimensions to svg width and height
     const { width, height } = containerDimensions;
     const svg = d3
       .select("#simulation-svg")
@@ -229,7 +286,7 @@ function clickNewNode(node, isBack = 0) {
       svg.call(zoomRef.current);
     }
 
-    // Clicking outside of a node => unselect
+    // Unselect clicked node if user clicks outside of a node object (or link text)
     svg.on("click", function (event) {
       const isNode = event.target.tagName === "circle" || event.target.tagName === "text";
       if (!isNode) {
@@ -237,13 +294,14 @@ function clickNewNode(node, isBack = 0) {
       }
     });
 
+    // Create svg element groupings
     svg.append("g").attr("id", "zoom-group");
     svg.select("#zoom-group").append("g").attr("class", "links");
     svg.select("#zoom-group").append("g").attr("class", "nodes");
 
+    // Set physical properties of graph layout
     const simulation = d3
     .forceSimulation(nodes)
-    // .force("center", d3.forceCenter(width / 2, height / 2))
     .force("charge", d3.forceManyBody().strength(-1000))
     .force("link", d3.forceLink(links)
       .id(d => d.id)
@@ -253,22 +311,20 @@ function clickNewNode(node, isBack = 0) {
       .radius(40)    // ~ circle radius + padding
       .strength(2)   // how firmly to push apart
     )
-    // .force("radial", d3.forceRadial(1000, width / 2, height / 2))
 
-    // Links
+    // Connect links data to graph links
     const linksGroup = d3.select(".links")
       .selectAll("g")
       .data(links)
       .join("g")
 
-    // Nodes: each node is a <g>
-    // Create one <g> per node and add a "node" class
+    // Connect node data to graph nodes (each node is a <g>, there is one <g> per node and an overall "node" class)
     const nodeGroup = d3.select(".nodes")
       .selectAll("g")
       .data(nodes)
       .join("g");
 
-    // Append circle
+    // Append node circles to graph, define hovering and clicking behavior for circles
     nodeGroup.append("circle")
       .attr("r", 40) 
       .style("fill", (d) => getNodeColor(d.id)) 
@@ -280,14 +336,16 @@ function clickNewNode(node, isBack = 0) {
         e.stopPropagation();
         setSelectedNode([-1, d.id]);
       });
-
+    
+    // Append node text to graph, link node course titles to text
     nodeGroup.append("text")
       .attr("text-anchor", "middle")
       .attr("dominant-baseline", "middle")
       .style("font-size", "10px")    
       .style("pointer-events", "none")
       .text(d => d.id);
-
+    
+    // Append link lines to graph
     linksGroup
       .selectAll("line")
       .data((d) => [d])
@@ -295,32 +353,33 @@ function clickNewNode(node, isBack = 0) {
       .style("stroke", (d) => color((d.score - minval) / (1 - minval)))
       .style("stroke-width", 3);
     
-    // Circles
-    nodeGroup
-      .selectAll("circle")
-      .data((d) => [d])
-      .join("circle")
-      .style("r", 30)
-      .style("stroke-width", 0.5)
-      .style("stroke", "black")
-      .on('mouseenter', function(e, d) {
-        setSelectedNode(d.id)
-      })
-      .on('mouseout', function(e, d) {
-        setSelectedNode("")
-      })
-      .on('click', function(e, d) {
-        e.stopPropagation();
-        setSelectedNode([-1, d.id]);
-      });
+    // // Circles
+    // nodeGroup
+    //   .selectAll("circle")
+    //   .data((d) => [d])
+    //   .join("circle")
+    //   .style("r", 30)
+    //   .style("stroke-width", 0.5)
+    //   .style("stroke", "black")
+    //   .on('mouseenter', function(e, d) {
+    //     setSelectedNode(d.id)
+    //   })
+    //   .on('mouseout', function(e, d) {
+    //     setSelectedNode("")
+    //   })
+    //   .on('click', function(e, d) {
+    //     e.stopPropagation();
+    //     setSelectedNode([-1, d.id]);
+    //   });
 
-    nodeGroup
-      .selectAll("text")
-      .data((d) => [d])
-      .join("text")
-      .text((d) => d.id)
-      .attr("dy", 2);
-
+    // nodeGroup
+    //   .selectAll("text")
+    //   .data((d) => [d])
+    //   .join("text")
+    //   .text((d) => d.id)
+    //   .attr("dy", 2);
+    
+    // Append link similarity text to graph, define its behavior when hovered over or clicked
     linksGroup
       .selectAll("text.line-text")
       .data((d) => [d])
@@ -341,10 +400,12 @@ function clickNewNode(node, isBack = 0) {
         setHoveredLink(null);
       });
     
-  
+    // Load stylistic elements of graph which change upon selected/clicked node
     refreshGraph();
-
+    
+    // Adjust graph element positions through simulation of their physical pulling/pushing.
     simulation.on("tick", () => {
+      // Update link line positions
       linksGroup
         .selectAll("line")
         .attr("x1", (d) => d.source.x)
@@ -352,6 +413,7 @@ function clickNewNode(node, isBack = 0) {
         .attr("x2", (d) => d.target.x)
         .attr("y2", (d) => d.target.y);
 
+      // Update link text position and angle
       linksGroup
         .selectAll("text.line-text")
         .attr("transform", (d) => {
@@ -375,12 +437,15 @@ function clickNewNode(node, isBack = 0) {
 
           return `translate(${xPos}, ${yPos}) rotate(${angle})`;
         });
+
+      // Update node circle position
       nodeGroup
         .attr("transform", (d) => {
           return `translate(${d.x},${d.y})`;
         });
     });
 
+    // Stop the simulation and remove svg grouping elements upon termination
     return () => {
       simulation.stop();
       svg.selectAll(".links").remove(); // SHOULD WE CLEAN THESE UP IN OTHER PLACES?
@@ -390,19 +455,27 @@ function clickNewNode(node, isBack = 0) {
 
   }, [links, nodes, connectedNodes, containerDimensions]);
 
-  // Once we have a "clicked" event => zoom in or out
-  // OVERHERE
+  /**
+  * Update the currently selected and clicked node based on requests to select new node.
+  * @param {String} selectedNode - a request to select a new node (often as a list where the first element details the request case)
+  * @return {void}
+  */
   useEffect(() => {
+    // The user is attempting to click a node
     if (selectedNode[0] === -1) {
       const node = nodes.find(n => n.id === selectedNode[1]);
-      if (!node) return;
-      if (nodeSelections[0] === selectedNode[1]) {
+      if (!node) return; // do nothing if the node the user clicked does not exist
+
+      if (nodeSelections[0] === selectedNode[1]) { // double click behavior if user clicked the already clicked node
         doubleClickNode();
-      } else {
+      } else { // click new node behavior if user clicked a new node
         clickNewNode(node);
       }
+    // The user is attempting to click a node by clicking a link's similarity text
     } else if (selectedNode[0] === -2) {
       const link = selectedNode[1];
+
+      // The new clicked node is the node opposite to the currently clicked node on the link whose text was clicked.
       if (nodeSelections[0] === link.source.id) {
           const targetNode = nodes.find(n => n.id === link.target.id);
         if (!targetNode) return;
@@ -412,21 +485,33 @@ function clickNewNode(node, isBack = 0) {
         if (!sourceNode) return;
         clickNewNode(sourceNode);
       }
+    // The user is attempting to click a new node through the back button
     } else if(selectedNode[0] === -3) {
       const node = nodes.find(n => n.id === selectedNode[1]);
-      if (!node) return;
+      if (!node) return; // do nothing if the node the user clicked does not exist
       clickNewNode(node, 1);
+    
+    // No node is currently clicked and the user is hovering over a node
     }else if (nodeSelections[0] === "") {
-      setNodeSelections(["", selectedNode]); // For hover-based selection if needed.
+      setNodeSelections(["", selectedNode]);
     }
   }, [selectedNode]);
   
 
-  // Redraw if hovered/clicked nodes
+  /**
+  * Update the graph whenever a new node is clicked or selected.
+  * @param {List} nodeSelections - the currently clicked and selected node.
+  * @return {void}
+  */
   useEffect(() => {
     refreshGraph();
   }, [nodeSelections]);
 
+  /**
+  * Formats the meeting times string into a more readable format.
+  * @param {String} dayStartEnd - the string containing the meeting times.
+  * @return {Object} - An object with two properties: 'meetingDay' and 'time'.
+  */
   function formatMeetingTimes(dayStartEnd) {
     if (!dayStartEnd) return { meetingDay: '', time: '' };
   
@@ -451,6 +536,11 @@ function clickNewNode(node, isBack = 0) {
     return { meetingDay, time };
   }
 
+  /**
+  * Formats the liberal arts requirement (LAR) tags into a more readable format
+  * @param {String} courseTags - the string containing the course tags
+  * @return {String} - A string of formatted LARs (with its full name and abbreviation), or 'None' if no requirements are found.
+  */
   function formatLiberalArtsRequirements(courseTags) {
     if (!courseTags) return 'None';
   
@@ -495,6 +585,12 @@ function clickNewNode(node, isBack = 0) {
   
     return formattedLARs;
   }
+
+  /**
+  * Formats string of words by wrapping each individual word in double quotes and joining them with a comma.
+  * @param {String} wordString - The raw string containing words separated by whitespace.
+  * @return {String} - A formatted string with each word wrapped in quotes and separated by commas.
+  */
   function formatHighlightWords(wordString) {
     if (!wordString) return "";
     let trimmed = wordString.trim();
@@ -502,12 +598,23 @@ function clickNewNode(node, isBack = 0) {
     return words.map(w => `"${w}"`).join(", ");
   }
 
+  /**
+  * Parses raw word string by removing any double quotes and splitting it into an array of words.
+  * @param {String} rawWordString - The raw string containing words separated by whitespace.
+  * @return {Array} - An array of words, with any empty strings filtered out.
+  */
   function parseLinkWords(rawWordString) {
     if (!rawWordString) return [];
     const cleaned = rawWordString.replace(/"/g, "");
     return cleaned.split(/\s+/).filter(Boolean);
   }  
 
+  /**
+  * Generates a version of the course description with certain words highlighted.
+  * Highlights are applied if a hovered link exists and if the course corresponding to the metadata matches the hovered link's nodes.
+  * The words to highlight are determined by parsing the hovered link's word string.
+  * @return {String} - The course description with HTML markup for highlighted words, or the original description if no words are to be highlighted.
+  */
   function getHighlightedDescription() {
     if (!metadata) return "";
     if (!hoveredLink) return metadata.description;
@@ -516,12 +623,10 @@ function clickNewNode(node, isBack = 0) {
     const sourceId = hoveredLink.source.id;
     const targetId = hoveredLink.target.id;
   
-    
     if (currentCourseId !== sourceId && currentCourseId !== targetId) {
       return metadata.description;
     }
-  
-   
+    
     const wordsArray = parseLinkWords(hoveredLink.word);
     if (wordsArray.length === 0) return metadata.description;
 
@@ -552,7 +657,7 @@ function clickNewNode(node, isBack = 0) {
               placeholder="Course name, description, or number"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              onFocus={() => {
+              onFocus={() => { // show alert to user when first time clicks on the search bar
                 if (!searchAlertShown) {
                   alert(
                     `What can you search for?\n` +
@@ -605,7 +710,7 @@ function clickNewNode(node, isBack = 0) {
                             return updatedCourses;
                           }
                         });
-                        if (!savedAlertShown) {
+                        if (!savedAlertShown) { // show alert when user first time saves a course 
                           alert("You just saved a course!\nSee all your saved courses in your shopping cart.");
                           setSavedAlertShown(true);
                         }
@@ -647,7 +752,7 @@ function clickNewNode(node, isBack = 0) {
             src={help_icon}
             alt="Get Help" 
             className="buttons-on-graph help-button"
-            onClick={() => alert(
+            onClick={() => alert( // show alert when user clicks on help button
               `What is being shown here?\n` +
               `• Similar courses are connected by a line.\n` +
               `• Word(s) on the line explain why they are similar.\n` +
@@ -704,7 +809,7 @@ function clickNewNode(node, isBack = 0) {
                         return updatedCourses;
                       }
                     });
-                    if (!savedAlertShown) {
+                    if (!savedAlertShown) { // show alert when user first time saves a course
                       alert("You just saved a course!\nSee all your saved courses in your shopping cart.");
                       setSavedAlertShown(true);
                     }
