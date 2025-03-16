@@ -1,5 +1,5 @@
 /**
- * @file GraphContext.js
+ * @file SavedCoursesContext.js
  * @description Creates state variable for a user's saved courses, makes it accessible across files.
  * @authors Kai, Willow
  * @date 3/12/25

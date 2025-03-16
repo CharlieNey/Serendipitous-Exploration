@@ -1,7 +1,7 @@
 /**
- * @file GraphContext.js
+ * @file AboutPage.js
  * @description Creates the website's about page.
- * @authors Charlie, Kai
+ * @authors Charlie, Kai, Cathy
  * @date 3/12/25
  */
 

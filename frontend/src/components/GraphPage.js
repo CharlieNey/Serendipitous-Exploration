@@ -1,5 +1,5 @@
 /**
- * @file GraphContext.js
+ * @file GraphPage.js
  * @description Creates the graph page, defines the structure and behavior of the interactive graph.
  * @authors Cathy, Kai, Willow, Zoey
  * @date 3/12/25
@@ -29,7 +29,7 @@ const GraphPage = ({ setShowNavbar }) => {
   const { allCourses, courseList, searchTerm, isLoading, setSearchTerm, fetchCourses } = useContext(SearchContext);
   const { selectedNode, nodes, links, connectedNodes, minval, clickedQueue, setSelectedNode, setClickedQueue } = useContext(GraphContext);
   const [ nodeSelections, setNodeSelections] = useState(["", ""]); // stores a list with the first item containing the currently clicked and second containing the selected node
-  const zoomRef = useRef(null); // stores
+  const zoomRef = useRef(null); // stores a reference to the zoom behavior for controlling zoom and pan capabilites 
   const [metadata, setMetadata] = useState(null); // stores
   const [savedAlertShown, setSavedAlertShown] = useState(false); // stores whether the add to cart button has been clicked at least once
   const [searchAlertShown, setSearchAlertShown] = useState(false); // stores whether the search bar has been clicked at least once
@@ -174,9 +174,10 @@ const GraphPage = ({ setShowNavbar }) => {
     setNodeSelections(["", ""]);
     setMetadata(null); 
 
-    const initialView = 0.07
+    const initialView = 0.07 // default zoomed out graph view  
     const { width, height } = containerDimensions;
 
+    // Resets the zoom transform and centers the graph 
     svg.transition()
       .duration(750)
       .call(zoomRef.current.transform, d3.zoomIdentity.translate(width / 2, height / 2.5).scale(initialView));
@@ -199,13 +200,14 @@ const GraphPage = ({ setShowNavbar }) => {
       setNodeSelections([node.id, node.id]);
       setMetadata(allCourses.find(c => c.section_listings.split('-')[0] === node.id)); 
 
-      const scale = 1.25; 
+      const scale = 1.25; // zoom scale factor 
       const transform = d3.zoomIdentity
         .translate(width / 2, height / 2) 
         .scale(scale)                    
-        .translate(-node.x, -node.y); 
+        .translate(-node.x, -node.y);
 
-      if (zoomRef.current) {
+      // If zoom behavior exists, shift view to new selected node
+      if (zoomRef.current) { 
         svg.transition()
           .duration(500)
           .call(zoomRef.current.transform, transform);
@@ -268,22 +270,24 @@ const GraphPage = ({ setShowNavbar }) => {
       .attr("width", width)
       .attr("height", height);
 
+     // Initialize zoom behavior if it hasn't been 
     if (!zoomRef.current) {
       zoomRef.current = d3.zoom()
         .scaleExtent([0.07, 3])
         .on("zoom", (event) => {
           d3.select("#zoom-group").attr("transform", event.transform);
         });
-        
-      const initialView = 0.07;
+      
+      // Default initial graph zoom  
+      const initialView = 0.07; 
       const initialTransform = d3.zoomIdentity
         .translate(width / 2, height / 2.3) 
         .scale(initialView); 
 
-      svg.call(zoomRef.current);
-      svg.call(zoomRef.current.transform, initialTransform);
+      svg.call(zoomRef.current); // apply zoom behavior
+      svg.call(zoomRef.current.transform, initialTransform); // apply initial transform 
     } else {
-      svg.call(zoomRef.current);
+      svg.call(zoomRef.current); // if zoom behavior intialized, reapply zoom behavior 
     }
 
     // Unselect clicked node if user clicks outside of a node object (or link text)
