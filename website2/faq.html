@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="faq.html">FAQ</a></li>
+                <li><a href="https://github.com/CharlieNey/Serendipitous-Exploration">Github</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="homepage-main">
+
+        <section class="homepage-faq homepage-section">
+            <h2>FAQ</h2>
+            <h1>How do we decide if a course is similar?</h1>
+            <p>Once our course descriptions are vectorized as is described in "The Model" section, we are able to use cosine similarity to calculate the distance between each course. In other words, we can calculate relative distances, which hopefully indicate semantic/structural similarity in descriptions. If a pair of courses are similar enough to pass a threshold that we set, we will draw a line between each of their nodes on our graph.</p>
+            <h2></h2>
+            <h1>What do the words on the lines mean?</h1>
+            <p>Each course connection includes two words, each representing the most similar term from the other course’s description. These words are identified using a Word2Vec model, which, like the Doc2Vec model underlying our graph, captures semantic relationships. However, Word2Vec is specifically designed for individual words rather than entire documents. This feature provides a simplified representation of how our Doc2Vec model functions, making its behavior easier to interpret. Additionally, upon hovering over the words on a line, if one of the words is in the description currently opened, that word will be highlighted.</p>
+        </section>
+
+        <section class="homepage-languages-and-libraries homepage-section">
+            <h2>Languages and Libraries</h2>
+            <p>We used React.js, D3.js, CSS, and postgreSQL to create our web-app.</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; Copyright 2025, Carleton College. All rights reserved.</p>
+    </footer>
+</body>
+</html>
