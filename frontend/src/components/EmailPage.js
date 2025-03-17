@@ -125,7 +125,7 @@ const ContactUs = ({ setShowNavbar }) => {
         to the encoding box to automatically add your saved courses to your cart!
       </p>
       <div className="form-section">
-        <h3>Export saved courses code:</h3>
+        <h3>Export saved courses:</h3>
         <form id="emailForm" ref={form} onSubmit={sendEmail}>
           <div>
             <label>Name:</label>
@@ -142,7 +142,7 @@ const ContactUs = ({ setShowNavbar }) => {
       </div>
 
       <div className="form-section">
-        <h3>Import saved courses code:</h3>
+        <h3>Import saved courses:</h3>
         <form
           id="importForm"
           onSubmit={(e) => {
@@ -151,7 +151,7 @@ const ContactUs = ({ setShowNavbar }) => {
           }}
         >
           <div>
-            <label>Encoding:</label>
+            <label>Input phrase:</label>
             <textarea name="encoding" id="encoding" />
           </div>
           <div>
