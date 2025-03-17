@@ -29,8 +29,16 @@
         </section>
 
         <section class="homepage-our-web-app homepage-section">
-            <h2>Our Web-App</h2>
-            <p>The core feature of our project is a force-directed graph in which every node represents a unique course. With our Doc2Vec model, each node in the graph has a range of 3 to 8 connections to other nodes, depending on the quantity of strong connections a course has with other courses. Moreover, if there is a line between two courses, it means that their descriptions are similar, according to the model that we used. Our graph is navigable through hovers, clicks, and zooms and is connected to a search bar. Our web-app also has a calendar component such that a course that is saved by the user then populates in our built-in calendar to allow users to better visualize a potential schedule. We plan to implement more serendipitous-promoting features.</p>
+            <a href="features.html">
+                <h2>Our Website</h2>
+            </a>
+            <p>The core feature of our project is a force-directed graph in which every node represents a unique course. With our Doc2Vec model, each node in the graph has a range of 3 to 8 connections to other nodes, depending on the quantity of strong connections a course has with other courses. Moreover, if there is a line between two courses, it means that their descriptions are similar, according to the model that we used. Our graph is navigable through hovers, clicks, and zooms and is connected to a search bar. Our web-app also has a calendar component such that a course that is saved by the user then populates in our built-in calendar to allow users to better visualize a potential schedule.</p>
+            <br>
+            <a href="features.html">
+                <img src="media/graph_static.jpg" style="width: 600px; height: auto;">
+            </a>
+            <br>
+            <a href="features.html" class="see-features-link">See our website features!</a>
         </section>
 
         <section class="homepage-background homepage-section">
@@ -49,7 +57,6 @@
             <h2>The Model</h2>
             <p>Before applying our model, we had to filter out the course descriptions that were not relevant to our project. This includes all P.E. courses, courses that are only 1-2 credits, and courses that were missing data. Using this data, we implemented Gensim's Doc2Vec (Paragraph Vector) model to capture the semantic meaning of each course description in a multidimensional space. Unlike traditional bag-of-words models, which disregard word order and relationships, our Document Vectorizer enriches each representation with contextual and structural information, learning fixed-length vectors that encode both word frequencies and their sequences. By simultaneously training individual word vectors and a document vector, the model better captures overall meaning. With our courses vectorized, we used cosine similarity to compare them, calculating the cosine of the angle between vectors to measure their semantic closeness and to give us accurate course recommendations that we could finally use in creating the graph’s connections.</p>
         </section>
-
     </main>
 
     <footer>
