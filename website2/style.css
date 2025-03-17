@@ -179,3 +179,10 @@ footer {
 .homepage-faq {
     background-color: #f0f4f7;
 }
+.homepage-section img {
+    max-width: 100%; 
+    height: auto; 
+    max-height: 500px; 
+    object-fit: contain; 
+    margin-bottom: 20px; 
+}
