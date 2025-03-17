@@ -30,11 +30,11 @@ const GraphPage = ({ setShowNavbar }) => {
   const { selectedNode, nodes, links, connectedNodes, minval, clickedQueue, setSelectedNode, setClickedQueue } = useContext(GraphContext);
   const [ nodeSelections, setNodeSelections] = useState(["", ""]); // stores a list with the first item containing the currently clicked and second containing the selected node
   const zoomRef = useRef(null); // stores a reference to the zoom behavior for controlling zoom and pan capabilites 
-  const [metadata, setMetadata] = useState(null); // stores
+  const [metadata, setMetadata] = useState(null); // stores detailed metadata for the currently selected course node
   const [savedAlertShown, setSavedAlertShown] = useState(false); // stores whether the add to cart button has been clicked at least once
   const [searchAlertShown, setSearchAlertShown] = useState(false); // stores whether the search bar has been clicked at least once
   const [nodeAlertShown, setNodeAlertShown] = useState(false); // stores whether course details have been inspected at least once
-  const [hoveredLink, setHoveredLink] = useState(null); // stores
+  const [hoveredLink, setHoveredLink] = useState(null); // stores the currently hovered link object, used to highlight related words in the course description
 
   /**
    * Set the navbar to show on this page.
