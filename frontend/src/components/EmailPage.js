@@ -1,6 +1,6 @@
 /**
  * @file EmailPage.js
- * @description Creates email page. Allows users to email information about their saved courses and laod their saved courses from email codes.
+ * @description Creates email page. Allows users to email information about their saved courses and load their saved courses from email codes.
  * @authors Kai, Zoey
  * @date 3/12/25
  * @reference https://www.emailjs.com/docs/examples/reactjs/
@@ -10,6 +10,7 @@ import React, { useRef, useEffect, useContext } from 'react';
 import emailjs from '@emailjs/browser';
 import { SearchContext } from './SearchContext.js';
 import { SavedCoursesContext } from './SavedCoursesContext.js';
+import './EmailPage.css';
 
 /**
 * Returns the email page's layout.
@@ -116,39 +117,53 @@ const ContactUs = ({ setShowNavbar }) => {
   };
 
   return (
-    <div>
+    <div className="email-page-container">
       <h3>Save your saved courses!</h3>
-      <p>Done using our webapp for the day but don't want to remember the courses you've saved to your cart?
+      <p>
+        Done using our webapp for the day but don't want to remember the courses you've saved to your cart?
         No problem! You can send a code to your email corresponding to your saved courses. You can then enter this code
         to the encoding box to automatically add your saved courses to your cart!
       </p>
-      <div>
-      <h3>Export saved courses code:</h3>
+      <div className="form-section">
+        <h3>Export saved courses code:</h3>
         <form id="emailForm" ref={form} onSubmit={sendEmail}>
-        <div>
-          <label>Name:</label>
-          <input type="text" name="to_name" id="to_name" />
-        </div>
-        <div>
-          <label>Email:</label>
-          <input type="email" name="to_email" id="to_email"/>
-        </div>
-        <div>
-          <input type="submit" value="Send"/>
-        </div>
-      </form>
-    </div>
+          <div>
+            <label>Name:</label>
+            <input type="text" name="to_name" id="to_name" />
+          </div>
+          <div>
+            <label>Email:</label>
+            <input type="email" name="to_email" id="to_email"/>
+          </div>
+          <div>
+            <input type="submit" value="Send"/>
+          </div>
+        </form>
+      </div>
 
-    <div>
-      <h3>Import saved courses code:</h3>
-      <label>Encoding:</label>
-      <textarea name="encoding" id="encoding" />
+      <div className="form-section">
+        <h3>Import saved courses code:</h3>
+        <form
+          id="importForm"
+          onSubmit={(e) => {
+            e.preventDefault();
+            setCoursesFromEncoding();
+          }}
+        >
+          <div>
+            <label>Encoding:</label>
+            <textarea name="encoding" id="encoding" />
+          </div>
+          <div>
+            <input type="submit" value="Submit" />
+          </div>
+        </form>
+      </div>
+
+
     </div>
-    <div>
-      <button onClick={setCoursesFromEncoding}>Submit</button>
-    </div>
-  </div>
   );
+  
 };
 
 export default ContactUs;

@@ -1,0 +1,84 @@
+body {
+    font-family: 'Playfair Display';
+    font-size: 18px;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
+  }
+  
+  p {
+    font-size: 18px;
+    text-align: justify;
+    color: #555;
+    margin: 10px 5%;
+    font-family: 'Gotham';
+  }
+  
+  h3 {
+    text-align: center;
+    margin: 10px 3%;
+    font-size: 24px;
+    color: #2c3e50;
+    padding-top: 2rem;
+    border-bottom: 2px solid #3498db;
+    font-weight: 500; 
+  }
+
+  .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+  }
+  
+  .email-page-container {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  
+  .form-section {
+    width: 500px;
+    margin: 0 auto;
+  }
+
+  #emailForm,
+  #importForm {
+    padding: 20px;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  
+  #emailForm > div,
+  #importForm > div {
+    margin-bottom: 15px;
+  }
+  
+  #emailForm label,
+  #importForm label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  #emailForm input[type="text"],
+  #emailForm input[type="email"],
+  #emailForm textarea,
+  #importForm textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  
+  #emailForm input[type="submit"],
+  #importForm input[type="submit"] {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    background-color: #3498db;
+    color: #fff;
+    cursor: pointer;
+  }
+  
