@@ -50,15 +50,15 @@
             </article>
             <h3>There are multiple ways to save courses to calendar:</h3>
             <article class="calendar-demo">
-                <p>1. Saving it via the search bar</p>
+                <p>1. Saving via the search bar</p>
                 <img src="./media/calendar-clickonsearch.gif" alt="Saving course via search bar demo">
             </article>
             <article class="calendar-demo">
-                <p>2. Saving it via the information bar</p>
+                <p>2. Saving via the information bar</p>
                 <img src="./media/calendar-clickonmetadatar.gif" alt="Saving course via information bar demo">
             </article>
             <article class="calendar-demo">
-                <p>3. Saving it via the quiz result's page.</p>
+                <p>3. Saving via the quiz result's page.</p>
                 <img src="./media/calendar-clickfromquiz.gif" alt="Saving course via the quiz result's page demo">
             </article>
             
@@ -86,6 +86,7 @@
             <h2>Quiz</h2>
             <article class="graph-demo">
                 <img src="./media/quiz copy.gif" alt="Quiz Demo">
+                <p>This demo recommends a course based on the user's background experience, preferred difficulty, and time of day. The background experience filter leverages department recommendations from our graph.</p>
             </article>
         </section>
 
@@ -95,7 +96,7 @@
             <p>Once our course descriptions are vectorized as is described in "The Model" section, we are able to use cosine similarity to calculate the distance between each course. In other words, we can calculate relative distances, which hopefully indicate semantic/structural similarity in descriptions. If a pair of courses are similar enough to pass a threshold that we set, we will draw a line between each of their nodes on our graph.</p>
             <h2></h2>
             <h1>What do the words on the lines mean?</h1>
-            <p>Each course connection includes two words, each representing the most similar term from the other course’s description. These words are identified using a Word2Vec model, which, like the Doc2Vec model underlying our graph, captures semantic relationships. However, Word2Vec is specifically designed for individual words rather than entire documents. This feature provides a simplified representation of how our Doc2Vec model functions, making its behavior easier to interpret. Additionally, upon hovering over the words on a line, if one of the words is in the description currently opened, that word will be highlighted.</p>
+            <p>Each course connection includes two words, each representing the most similar term from the other course’s description. These words are identified use a Word2Vec model, which, like the Doc2Vec model underlying our graph, captures semantic relationships. However, Word2Vec is specifically designed for individual words rather than entire documents. We also employ a LDA Topic Model to extract keywords from each description, enhancing the scores of specific words in each similarity comparison. This feature provides a simplified representation of how our Doc2Vec model functions, making its behavior easier to interpret. Additionally, upon hovering over the words on a line, if one of the words is in the description currently opened, that word will be highlighted.</p>
         </section>
 
     </main>
