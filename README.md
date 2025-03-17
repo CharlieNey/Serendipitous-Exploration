@@ -2,7 +2,7 @@
 
 Our tool is an interactive forced directed graph that helps students consider more unique classes at Carleton College. 
 
-![][image1]
+![][/images/comps_graphpage.png]
 
 ## Installation: 
 
@@ -43,7 +43,7 @@ Our tool is an interactive forced directed graph that helps students consider mo
 
 ## How Our Project Works
 
-![][image2]
+![][/images/comps_pernstack.png]
 
 ### Client
 
