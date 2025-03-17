@@ -156,7 +156,13 @@ footer {
     line-height: 1.6;
     text-align: center;
 }
-
+.homepage-section img {
+    max-width: 100%; 
+    height: auto; 
+    max-height: 500px; 
+    object-fit: contain; 
+    margin-bottom: 20px; 
+}
 /* .homepage-background {
     background-color: #f9f9f9;
 } */
