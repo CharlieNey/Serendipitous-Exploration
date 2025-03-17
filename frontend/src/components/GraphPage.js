@@ -330,8 +330,8 @@ const GraphPage = ({ setShowNavbar }) => {
 
     // Append node circles to graph, define hovering and clicking behavior for circles
     nodeGroup.append("circle")
-      .attr("r", 40) 
-      .style("fill", (d) => getNodeColor(d.id)) 
+      .attr("r", 40)
+      .style("fill", (d) => getNodeColor(d.id))
       .style("stroke", "black")
       .style("stroke-width", "10px")
       .on('mouseenter', (e, d) => setSelectedNode(d.id))
@@ -345,7 +345,7 @@ const GraphPage = ({ setShowNavbar }) => {
     nodeGroup.append("text")
       .attr("text-anchor", "middle")
       .attr("dominant-baseline", "middle")
-      .style("font-size", "10px")    
+      .style("font-size", "10px")
       .style("pointer-events", "none")
       .text(d => d.id);
     
@@ -357,31 +357,32 @@ const GraphPage = ({ setShowNavbar }) => {
       .style("stroke", (d) => color((d.score - minval) / (1 - minval)))
       .style("stroke-width", 3);
     
-    // // Circles
-    // nodeGroup
-    //   .selectAll("circle")
-    //   .data((d) => [d])
-    //   .join("circle")
-    //   .style("r", 30)
-    //   .style("stroke-width", 0.5)
-    //   .style("stroke", "black")
-    //   .on('mouseenter', function(e, d) {
-    //     setSelectedNode(d.id)
-    //   })
-    //   .on('mouseout', function(e, d) {
-    //     setSelectedNode("")
-    //   })
-    //   .on('click', function(e, d) {
-    //     e.stopPropagation();
-    //     setSelectedNode([-1, d.id]);
-    //   });
+    // Create a secondary set of circle elements for each node
+    nodeGroup
+      .selectAll("circle")
+      .data((d) => [d])
+      .join("circle")
+      .style("r", 30)
+      .style("stroke-width", 0.5)
+      .style("stroke", "black")
+      .on('mouseenter', function(e, d) {
+        setSelectedNode(d.id)
+      })
+      .on('mouseout', function(e, d) {
+        setSelectedNode("")
+      })
+      .on('click', function(e, d) {
+        e.stopPropagation();
+        setSelectedNode([-1, d.id]);
+      });
 
-    // nodeGroup
-    //   .selectAll("text")
-    //   .data((d) => [d])
-    //   .join("text")
-    //   .text((d) => d.id)
-    //   .attr("dy", 2);
+    // Create a secondary set of text labels for each node
+    nodeGroup
+      .selectAll("text")
+      .data((d) => [d])
+      .join("text")
+      .text((d) => d.id)
+      .attr("dy", 2);
     
     // Append link similarity text to graph, define its behavior when hovered over or clicked
     linksGroup
